@@ -9,5 +9,4 @@ public class AquatrackApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AquatrackApplication.class, args);
 	}
-
 }
