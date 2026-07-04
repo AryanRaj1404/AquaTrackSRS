@@ -1,0 +1,27 @@
+.footer{
+
+    padding:40px;
+
+    background:#1E293B;
+
+    color:white;
+
+    text-align:center;
+}
+
+.footer h2{
+
+    margin-bottom:10px;
+}
+
+.footer p{
+
+    margin-bottom:20px;
+
+    color:#CBD5E1;
+}
+
+.footer small{
+
+    color:#94A3B8;
+}

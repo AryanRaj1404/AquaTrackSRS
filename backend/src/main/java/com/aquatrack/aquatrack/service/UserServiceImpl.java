@@ -1,15 +1,14 @@
 package com.aquatrack.aquatrack.service;
 
-import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import com.aquatrack.aquatrack.dto.RegisterRequest; 
-import com.aquatrack.aquatrack.repository.UserRepository;
-import com.aquatrack.aquatrack.security.JwtService;
-import com.aquatrack.aquatrack.entity.User;
-import com.aquatrack.aquatrack.entity.Role;
 import com.aquatrack.aquatrack.dto.AuthResponse;
 import com.aquatrack.aquatrack.dto.LoginRequest;
+import com.aquatrack.aquatrack.dto.RegisterRequest;
+import com.aquatrack.aquatrack.entity.Role;
+import com.aquatrack.aquatrack.entity.User;
+import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.security.JwtService;
 
 @Service
