@@ -215,21 +215,9 @@ AquaTrackSRS is a full-stack web application for apartment water consumption mon
 
 ---
 
-# 📝 Commit Convention
-
-```text
-feat: add apartment CRUD
-fix: resolve login bug
-docs: update README
-refactor: optimize billing engine
-```
-
----
-
 # 📌 Team Rules
 
 - Pull before starting work.
-- Commit small logical changes.
 - Push only tested code.
 - Keep frontend and backend independent.
 - Update this README after completing a feature.
@@ -237,15 +225,3 @@ refactor: optimize billing engine
   - ⏳ Pending
   - 🟡 In Progress
   - ✅ Completed
-
----
-
-# 🚀 Future Scope
-
-- AI Water Consumption Prediction
-- IoT Smart Meter Integration
-- Online Bill Payments
-- Mobile Application
-- Cloud Deployment
-- Analytics Dashboard
-- Multi-Apartment Support
