@@ -1,0 +1,73 @@
+package com.aquatrack.aquatrack.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.aquatrack.aquatrack.dto.ApartmentRequest;
+import com.aquatrack.aquatrack.dto.ApartmentResponse;
+import com.aquatrack.aquatrack.entity.Apartment;
+import com.aquatrack.aquatrack.repository.ApartmentRepository;
+
+@Service
+public class ApartmentServiceImpl implements ApartmentService {
+
+    private final ApartmentRepository apartmentRepository;
+
+    public ApartmentServiceImpl(ApartmentRepository apartmentRepository) {
+        this.apartmentRepository = apartmentRepository;
+    }
+
+    @Override
+    public ApartmentResponse create(ApartmentRequest request) {
+        Apartment apartment = new Apartment();
+        apartment.setName(request.getName());
+        apartment.setAddress(request.getAddress());
+
+        Apartment saved = apartmentRepository.save(apartment);
+        return toResponse(saved);
+    }
+
+    @Override
+    public List<ApartmentResponse> getAll() {
+        return apartmentRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ApartmentResponse getById(Long id) {
+        Apartment apartment = apartmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Apartment not found"));
+        return toResponse(apartment);
+    }
+
+    @Override
+    public ApartmentResponse update(Long id, ApartmentRequest request) {
+        Apartment apartment = apartmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Apartment not found"));
+
+        apartment.setName(request.getName());
+        apartment.setAddress(request.getAddress());
+
+        Apartment saved = apartmentRepository.save(apartment);
+        return toResponse(saved);
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (!apartmentRepository.existsById(id)) {
+            throw new RuntimeException("Apartment not found");
+        }
+        apartmentRepository.deleteById(id);
+    }
+
+    private ApartmentResponse toResponse(Apartment apartment) {
+        return new ApartmentResponse(
+                apartment.getId(),
+                apartment.getName(),
+                apartment.getAddress());
+    }
+}
