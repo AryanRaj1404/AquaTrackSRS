@@ -1,5 +1,7 @@
 package com.aquatrack.aquatrack.controller;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,12 +23,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String Register(@RequestBody RegisterRequest request){
+    public String Register(@Valid @RequestBody RegisterRequest request){
         userService.register(request);
         return "User Registered Successfully";
     }
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest request) {
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         return userService.login(request);
     }
     @GetMapping("/me")
