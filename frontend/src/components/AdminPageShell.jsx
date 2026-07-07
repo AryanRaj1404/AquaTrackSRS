@@ -6,7 +6,6 @@ import {
   Bell,
   Building2,
   Droplets,
-  Gauge,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -109,17 +108,6 @@ function AdminPageShell({
             <span>Households</span>
           </NavLink>
 
-          <NavLink
-            to="/meters"
-            onClick={closeSidebar}
-            className={({ isActive }) =>
-              isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-            }
-          >
-            <Gauge size={20} />
-            <span>Meter Config</span>
-          </NavLink>
-
           <div className="mg-nav-link mg-disabled-link">
             <Droplets size={20} />
             <span>Water Usage</span>
@@ -192,7 +180,7 @@ function AdminPageShell({
               type="button"
               className="mg-notification-button"
               onClick={() =>
-                toast("You have 6 active water-usage alerts.", {
+                toast("No new notifications.", {
                   icon: "🔔",
                 })
               }
@@ -223,7 +211,7 @@ function AdminPageShell({
               <p>{description}</p>
             </div>
 
-            <div>{action}</div>
+            {action && <div>{action}</div>}
           </section>
 
           {children}
