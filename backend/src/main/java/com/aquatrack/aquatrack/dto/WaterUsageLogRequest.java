@@ -1,29 +1,33 @@
 package com.aquatrack.aquatrack.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.*;
 
 import java.time.LocalDate;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class WaterUsageLogRequest {
-    @NotNull(message = "Household id is required")
+
+    @NotNull
     private Long householdId;
 
-    @NotNull(message = "Usage date is required")
+    @NotNull
     private LocalDate usageDate;
 
-    @NotNull(message = "Liters consumed is required")
-    @PositiveOrZero(message = "Liters consumed cannot be negative")
+    @NotNull
+    @PositiveOrZero
     private Double litersConsumed;
 
-    @NotBlank(message = "Source is required")
-    private String source;
+    private Long billingCycleId; // optional
 
-    private Long billingCycleId;
+    public Long getHouseholdId() { return householdId; }
+    public void setHouseholdId(Long householdId) { this.householdId = householdId; }
+
+    public LocalDate getUsageDate() { return usageDate; }
+    public void setUsageDate(LocalDate usageDate) { this.usageDate = usageDate; }
+
+    public Double getLitersConsumed() { return litersConsumed; }
+    public void setLitersConsumed(Double litersConsumed) { this.litersConsumed = litersConsumed; }
+
+    public Long getBillingCycleId() { return billingCycleId; }
+    public void setBillingCycleId(Long billingCycleId) { this.billingCycleId = billingCycleId; }
 }
