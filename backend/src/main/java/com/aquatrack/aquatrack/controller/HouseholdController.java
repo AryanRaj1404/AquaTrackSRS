@@ -29,6 +29,7 @@ public class HouseholdController {
 
     @PostMapping
     public HouseholdResponse create(@Valid @RequestBody HouseholdRequest request) {
+        System.out.println("Household create endpoint reached");
         return householdService.create(request);
     }
 

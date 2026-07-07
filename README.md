@@ -74,13 +74,20 @@ AquaTrackSRS is a full-stack web application for apartment water consumption mon
 | Login API | High | ✅ | 100% |
 | Register API | High | ✅ | 100% |
 | User Entity | High | ✅ | 100% |
-| Apartment Entity | High | ⏳ | 0% |
-| Household Entity | High | ⏳ | 0% |
-| Water Usage Logs | High | ⏳ | 0% |
-| Billing Cycle Entity | Medium | ⏳ | 0% |
-| Tariff Plan Entity | Medium | ⏳ | 0% |
-| Apartment CRUD APIs | High | ⏳ | 0% |
-| Household CRUD APIs | High | ⏳ | 0% |
+| Apartment Entity | High | ✅ | 100% |
+| Household Entity | High | ✅ | 100% |
+| Water Usage Logs Entity | High | ✅ | 100% |
+| Billing Cycle Entity | Medium | ✅ | 100% |
+| Tariff Plan Entity | Medium | ✅ | 100% |
+| Apartment CRUD APIs | High | ✅ | 100% |
+| Household CRUD APIs | High | ✅ | 100% |
+| Apartment DTOs | High | ✅ | 100% |
+| Household DTOs | High | ✅ | 100% |
+| Apartment Repository | High | ✅ | 100% |
+| Household Repository | High | ✅ | 100% |
+| Billing Cycle Repository | Medium | ✅ | 100% |
+| Tariff Plan Repository | Medium | ✅ | 100% |
+| Water Usage Log Repository | Medium | ✅ | 100% |
 | Resident Assignment API | High | ⏳ | 0% |
 | Meter Configuration API | Medium | ⏳ | 0% |
 | Manual Usage Logging | High | ⏳ | 0% |
@@ -102,11 +109,12 @@ AquaTrackSRS is a full-stack web application for apartment water consumption mon
 | Protected Routes | High | ✅ | 100% |
 | Apartment Registration UI | High | ⏳ | 0% |
 | Household Registration UI | High | ⏳ | 0% |
+| Admin Dashboard | High | ⏳ | 0% |
+| Resident Dashboard | High | ⏳ | 0% |
 | Meter Configuration UI | Medium | ⏳ | 0% |
 | Water Usage Entry UI | High | ⏳ | 0% |
 | CSV Upload UI | Medium | ⏳ | 0% |
 | Profile Management | Low | ⏳ | 0% |
-
 ---
 
 # 📅 Milestone 2 — Billing Engine & Alerts
