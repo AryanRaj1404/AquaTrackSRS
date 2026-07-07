@@ -1,82 +1,165 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { login } from "../services/auth";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-import "./../styles/login.css";
+import "../styles/login.css";
 
 function Login() {
-    const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
+  const navigate = useNavigate();
 
-        try {
-            const response = await login({
-                username,
-                password
-            });
+  const handleLogin = (event) => {
+    event.preventDefault();
 
-            const token = response.data.token;
-            localStorage.setItem("token", token);
-            console.log(token);
-            navigate("/dashboard");
+    const cleanUsername = username.trim();
 
-        } catch (error) {
-
-        console.error(error);
-
-        alert("Invalid username or password");
+    if (!cleanUsername) {
+      toast.error("Please enter your username.");
+      return;
     }
-    };
 
-    return (
-        <div className="login-container">
+    if (!password) {
+      toast.error("Please enter your password.");
+      return;
+    }
 
-            <div className="login-card">
+    setIsSubmitting(true);
 
-                <h1>AquaTrack</h1>
+    const loadingToast = toast.loading("Signing in to AquaTrack...");
 
-                <h2>Welcome Back 👋</h2>
+    setTimeout(() => {
+      try {
+        const savedUser = localStorage.getItem("aquatrack_demo_user");
 
-                <p>Sign in to continue</p>
+        if (!savedUser) {
+          toast.error("No account found. Please register first.", {
+            id: loadingToast,
+          });
 
-                <form onSubmit={handleLogin}>
+          setIsSubmitting(false);
+          return;
+        }
 
-                    <label>Username</label>
+        const user = JSON.parse(savedUser);
 
-                    <input
-                        type="text"
-                        placeholder="Enter your username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
+        if (
+          user.username !== cleanUsername ||
+          user.password !== password
+        ) {
+          toast.error("Invalid username or password.", {
+            id: loadingToast,
+          });
 
-                    <label>Password</label>
+          setIsSubmitting(false);
+          return;
+        }
 
-                    <input
-                        type="password"
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+        localStorage.setItem("token", "aquatrack-demo-token");
 
-                    <button type="submit">
-                        Login
-                    </button>
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            username: user.username,
+            role: user.role || "ADMIN",
+          })
+        );
 
-                </form>
+        toast.success("Login successful. Welcome back!", {
+          id: loadingToast,
+        });
 
-                <p className="register-text">
-                    Don't have an account? <Link to="/register">Register</Link>
-                </p>
+        setIsSubmitting(false);
 
-            </div>
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 700);
+      } catch (error) {
+        console.error("Login error:", error);
 
+        toast.error("Unable to sign in. Please try again.", {
+          id: loadingToast,
+        });
+
+        setIsSubmitting(false);
+      }
+    }, 700);
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        <div className="auth-brand">
+          <img
+            src="/aquatrack-logo.svg"
+            alt="AquaTrack logo"
+            className="auth-brand-logo"
+          />
+
+          <h1>AquaTrack</h1>
         </div>
-    );
+
+        <h2>Welcome Back</h2>
+
+        <p className="login-description">
+          Sign in to monitor water usage and manage billing.
+        </p>
+
+        <form onSubmit={handleLogin}>
+          <label htmlFor="login-username">Username</label>
+
+          <input
+            id="login-username"
+            type="text"
+            placeholder="Enter your username"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            autoComplete="username"
+            disabled={isSubmitting}
+          />
+
+          <label htmlFor="login-password">Password</label>
+
+          <div className="password-input-wrapper">
+            <input
+              id="login-password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete="current-password"
+              disabled={isSubmitting}
+            />
+
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword((previous) => !previous)}
+              disabled={isSubmitting}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            className="login-submit-button"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Signing In..." : "Login"}
+          </button>
+        </form>
+
+        <p className="register-text">
+          Don&apos;t have an account?{" "}
+          <Link to="/register">Create account</Link>
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Login;

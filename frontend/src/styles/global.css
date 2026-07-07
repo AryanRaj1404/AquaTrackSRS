@@ -1,11 +1,132 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+:root {
+  font-family: "Poppins", Arial, sans-serif;
+  color: #17233b;
+  background: #f4f7fb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
 }
 
 body {
-    background: #f8fafc;
-    color: #1e293b;
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+/* ================================
+   LANDING PAGE COLOR CONSISTENCY
+================================ */
+
+.hero,
+.hero-section,
+.landing-hero {
+  background:
+    radial-gradient(circle at top right, rgba(7, 129, 165, 0.13), transparent 32%),
+    linear-gradient(135deg, #f6fbff 0%, #e7f4fb 100%) !important;
+}
+
+.hero h1,
+.hero-section h1,
+.landing-hero h1 {
+  color: #17233b !important;
+}
+
+.hero p,
+.hero-section p,
+.landing-hero p {
+  color: #5f7188 !important;
+}
+
+/* Main landing buttons */
+
+.primary-btn,
+.get-started-btn,
+.hero-primary-btn {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #0781a5, #075d78) !important;
+  border-color: transparent !important;
+  box-shadow: 0 10px 24px rgba(7, 93, 120, 0.2) !important;
+}
+
+.primary-btn:hover,
+.get-started-btn:hover,
+.hero-primary-btn:hover {
+  background: linear-gradient(135deg, #075d78, #06334b) !important;
+}
+
+.secondary-btn,
+.hero-secondary-btn {
+  color: #075d78 !important;
+  background: #ffffff !important;
+  border: 2px solid #0781a5 !important;
+}
+
+.secondary-btn:hover,
+.hero-secondary-btn:hover {
+  color: #0781a5 !important;
+  background: #eef7fb !important;
+}
+
+/* Community overview card */
+
+.overview-card,
+.community-card,
+.hero-card {
+  border: 1px solid #dce8ef !important;
+  background: #ffffff !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08) !important;
+}
+
+.overview-card h2,
+.community-card h2,
+.hero-card h2 {
+  color: #06334b !important;
+}
+
+.overview-item,
+.community-item,
+.stat-row {
+  background: #f6fafc !important;
+}
+
+.overview-item span,
+.community-item span,
+.stat-row span {
+  color: #06334b !important;
+}
+
+.overview-item strong,
+.community-item strong,
+.stat-badge,
+.count-badge {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #0781a5, #075d78) !important;
 }

@@ -5,12 +5,15 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="logo">
-        <Link to="/">💧 AquaTrack</Link>
+        <Link to="/">
+          <img src="/aquatrack-logo.svg" alt="AquaTrack logo" />
+          <span>AquaTrack</span>
+        </Link>
       </div>
 
       <ul className="nav-links">
         <li>
-          <Link to="/">Home</Link>
+          <a href="#home">Home</a>
         </li>
 
         <li>
