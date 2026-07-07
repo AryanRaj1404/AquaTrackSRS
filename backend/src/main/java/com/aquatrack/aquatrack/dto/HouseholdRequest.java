@@ -23,4 +23,7 @@ public class HouseholdRequest {
 
     @NotNull(message = "Apartment id is required")
     private Long apartmentId;
+
+    private String meterSerialNumber;
+    private String meterStatus;
 }

@@ -17,4 +17,6 @@ public interface HouseholdService {
     void delete(Long id);
 
     HouseholdResponse assignResident(Long householdId, Long userId);
+
+    HouseholdResponse configureMeter(Long id, String meterSerialNumber, String meterStatus);
 }

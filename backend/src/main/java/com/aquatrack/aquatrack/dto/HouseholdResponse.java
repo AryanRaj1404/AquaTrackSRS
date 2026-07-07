@@ -13,4 +13,6 @@ public class HouseholdResponse {
     private Integer occupancy;
     private Long apartmentId;
     private String apartmentName;
+    private String meterSerialNumber;
+    private String meterStatus;
 }

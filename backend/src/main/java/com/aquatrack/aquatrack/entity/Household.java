@@ -1,6 +1,7 @@
 package com.aquatrack.aquatrack.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +31,13 @@ public class Household {
     private String flatNumber;
     private Double flatSize;
     private Integer occupancy;
+
+    @Column(name = "meter_serial_number")
+    private String meterSerialNumber;
+
+    @Column(name = "meter_status")
+    private String meterStatus;
+
     @ManyToOne
     @JoinColumn(name = "apartment_id")
     private Apartment apartment;

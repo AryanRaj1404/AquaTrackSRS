@@ -40,6 +40,8 @@ public class HouseholdServiceImpl implements HouseholdService {
         household.setFlatSize(request.getFlatSize());
         household.setOccupancy(request.getOccupancy());
         household.setApartment(apartment);
+        household.setMeterSerialNumber(request.getMeterSerialNumber());
+        household.setMeterStatus(request.getMeterStatus());
 
         Household saved = householdRepository.save(household);
         return toResponse(saved);
@@ -72,6 +74,8 @@ public class HouseholdServiceImpl implements HouseholdService {
         household.setFlatSize(request.getFlatSize());
         household.setOccupancy(request.getOccupancy());
         household.setApartment(apartment);
+        household.setMeterSerialNumber(request.getMeterSerialNumber());
+        household.setMeterStatus(request.getMeterStatus());
 
         Household saved = householdRepository.save(household);
         return toResponse(saved);
@@ -106,6 +110,18 @@ public class HouseholdServiceImpl implements HouseholdService {
         return toResponse(household);
     }
 
+    @Override
+    public HouseholdResponse configureMeter(Long id, String meterSerialNumber, String meterStatus) {
+        Household household = householdRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+
+        household.setMeterSerialNumber(meterSerialNumber);
+        household.setMeterStatus(meterStatus);
+
+        Household saved = householdRepository.save(household);
+        return toResponse(saved);
+    }
+
     private HouseholdResponse toResponse(Household household) {
         return new HouseholdResponse(
                 household.getId(),
@@ -113,6 +129,8 @@ public class HouseholdServiceImpl implements HouseholdService {
                 household.getFlatSize(),
                 household.getOccupancy(),
                 household.getApartment() != null ? household.getApartment().getId() : null,
-                household.getApartment() != null ? household.getApartment().getName() : null);
+                household.getApartment() != null ? household.getApartment().getName() : null,
+                household.getMeterSerialNumber(),
+                household.getMeterStatus());
     }
 }
