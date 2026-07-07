@@ -15,7 +15,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
+
         Map<String, String> fieldErrors = new HashMap<>();
+
         ex.getBindingResult().getFieldErrors().forEach(fe ->
                 fieldErrors.put(fe.getField(), fe.getDefaultMessage()));
 
@@ -31,6 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(ResourceNotFoundException ex) {
+
         ApiError error = new ApiError(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
@@ -43,6 +46,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiError> handleRuntimeException(RuntimeException ex) {
+
         ApiError error = new ApiError(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -55,6 +59,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGenericException(Exception ex) {
+
         ApiError error = new ApiError(
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

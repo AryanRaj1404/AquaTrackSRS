@@ -2,8 +2,6 @@ package com.aquatrack.aquatrack.controller;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +15,8 @@ import com.aquatrack.aquatrack.dto.HouseholdRequest;
 import com.aquatrack.aquatrack.dto.HouseholdResponse;
 import com.aquatrack.aquatrack.service.HouseholdService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/households")
 public class HouseholdController {
@@ -29,6 +29,7 @@ public class HouseholdController {
 
     @PostMapping
     public HouseholdResponse create(@Valid @RequestBody HouseholdRequest request) {
+        System.out.println("Household create endpoint reached");
         return householdService.create(request);
     }
 
