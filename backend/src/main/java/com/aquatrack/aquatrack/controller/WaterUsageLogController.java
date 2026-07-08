@@ -2,8 +2,6 @@ package com.aquatrack.aquatrack.controller;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aquatrack.aquatrack.dto.WaterUsageLogRequest;
 import com.aquatrack.aquatrack.dto.WaterUsageLogResponse;
 import com.aquatrack.aquatrack.service.WaterUsageLogService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/usage-logs")
@@ -53,8 +53,8 @@ public class WaterUsageLogController {
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(Long id) {
         waterUsageLogService.delete(id);
-        return "Usage log deleted successfully";
+        return "Water usage log deleted successfully";
     }
 }
