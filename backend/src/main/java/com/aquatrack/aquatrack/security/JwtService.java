@@ -1,8 +1,10 @@
 package com.aquatrack.aquatrack.security;
 
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,8 @@ public class JwtService {
     private static final String SECRET =
             "mySuperSecretKeyForAquaTrackApplication123456789";
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private final SecretKey key =
+        Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
     public String generateToken(User user) {
         return Jwts.builder()
@@ -46,7 +49,7 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
 
         return Jwts.parser()
-                .verifyWith((javax.crypto.SecretKey) key)
+                .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
