@@ -20,11 +20,7 @@ import {
 
 const initialForm = {
   apartmentName: "",
-  blockName: "",
-  totalFloors: "",
-  totalUnits: "",
-  city: "",
-  country: "",
+  address: ""
 };
 
 function Apartments() {
@@ -52,7 +48,7 @@ function Apartments() {
       setApartments([]);
 
       toast.error(
-        "Apartment API is not connected yet. Empty state is shown."
+        "Unable to load apartments."
       );
     } finally {
       setIsLoading(false);
@@ -68,21 +64,11 @@ function Apartments() {
 
     return apartments.filter((apartment) => {
       return (
-        apartment.apartmentName?.toLowerCase().includes(keyword) ||
-        apartment.blockName?.toLowerCase().includes(keyword) ||
-        apartment.city?.toLowerCase().includes(keyword) ||
-        apartment.country?.toLowerCase().includes(keyword)
+        apartment.name?.toLowerCase().includes(keyword) ||
+        apartment.address?.toLowerCase().includes(keyword)
       );
     });
   }, [apartments, query]);
-
-  const totalUnits = apartments.reduce((total, apartment) => {
-    return total + Number(apartment.totalUnits || 0);
-  }, 0);
-
-  const totalFloors = apartments.reduce((total, apartment) => {
-    return total + Number(apartment.totalFloors || 0);
-  }, 0);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -99,28 +85,8 @@ function Apartments() {
       return false;
     }
 
-    if (!form.blockName.trim()) {
-      toast.error("Block name is required.");
-      return false;
-    }
-
-    if (!form.totalFloors || Number(form.totalFloors) <= 0) {
-      toast.error("Enter valid total floors.");
-      return false;
-    }
-
-    if (!form.totalUnits || Number(form.totalUnits) <= 0) {
-      toast.error("Enter valid number of units.");
-      return false;
-    }
-
-    if (!form.city.trim()) {
-      toast.error("City is required.");
-      return false;
-    }
-
-    if (!form.country.trim()) {
-      toast.error("Country is required.");
+    if (!form.address.trim()) {
+      toast.error("Address is required.");
       return false;
     }
 
@@ -135,17 +101,13 @@ function Apartments() {
     }
 
     const apartmentPayload = {
-      apartmentName: form.apartmentName.trim(),
-      blockName: form.blockName.trim(),
-      totalFloors: Number(form.totalFloors),
-      totalUnits: Number(form.totalUnits),
-      city: form.city.trim(),
-      country: form.country.trim(),
+      name: form.apartmentName.trim(),
+      address: form.address.trim(),
     };
 
     setIsSubmitting(true);
 
-    const loadingToast = toast.loading("Creating apartment...");
+    const loadingToast = toast.loading("Registering apartment...");
 
     try {
       const savedApartment = await createApartment(apartmentPayload);
@@ -162,7 +124,7 @@ function Apartments() {
       console.error("Apartment create error:", error);
 
       toast.error(
-        "Apartment creation failed. Please confirm backend endpoint and field names.",
+        "Failed to register apartment.Please try again.",
         {
           id: loadingToast,
         }
@@ -180,7 +142,7 @@ function Apartments() {
   return (
     <AdminPageShell
       title="Apartment Management"
-      description="Create and manage apartment records using backend-ready fields."
+      description="Manage apartment complexes and organize households."
       searchValue={query}
       onSearchChange={setQuery}
       searchPlaceholder="Search apartments..."
@@ -191,7 +153,7 @@ function Apartments() {
           onClick={() => setShowForm(true)}
         >
           <Plus size={18} />
-          Add Apartment
+          Register Apartment
         </button>
       }
     >
@@ -200,28 +162,36 @@ function Apartments() {
           icon={Building2}
           title="Total Apartments"
           value={apartments.length}
-          description="Fetched from backend API"
-        />
-
-        <StatCard
-          icon={CheckCircle2}
-          title="Total Units"
-          value={totalUnits}
-          description="Total registered units"
+          description="Registered apartment complexes"
         />
 
         <StatCard
           icon={Building2}
-          title="Total Floors"
-          value={totalFloors}
-          description="Combined apartment floors"
+          title="Total Households"
+          value="0"
+          description="Will update automatically"
         />
 
         <StatCard
           icon={CheckCircle2}
-          title="Status"
-          value="API Ready"
-          description="No dummy apartment data"
+          title="Residents"
+          value="0"
+          description="Registered residents"
+        />
+
+        <StatCard
+          icon={Building2}
+          title="Latest Apartment"
+          value={
+            apartments.length > 0
+              ? apartments[0].name
+              : "-"
+          }
+          description={
+            apartments.length > 0
+              ? apartments[0].address
+              : "No apartments yet"
+          }
         />
       </section>
 
@@ -229,9 +199,9 @@ function Apartments() {
         <section className="mg-panel" style={{ marginBottom: "20px" }}>
           <div className="mg-toolbar">
             <div>
-              <h2>Add Apartment</h2>
+              <h2>Register Apartment</h2>
               <p>
-                These fields should match Sandhiya&apos;s backend apartment API.
+                Enter the apartment details below.
               </p>
             </div>
 
@@ -263,76 +233,19 @@ function Apartments() {
               </div>
 
               <div className="mg-form-group">
-                <label htmlFor="blockName">Block Name</label>
+                <label htmlFor="address">Address</label>
 
                 <input
-                  id="blockName"
-                  name="blockName"
+                  id="address"
+                  name="address"
                   type="text"
-                  value={form.blockName}
+                  value={form.address}
                   onChange={handleChange}
-                  placeholder="Example: Block A"
+                  placeholder="Sector-62, Noida"
                   disabled={isSubmitting}
                 />
               </div>
 
-              <div className="mg-form-group">
-                <label htmlFor="totalFloors">Total Floors</label>
-
-                <input
-                  id="totalFloors"
-                  name="totalFloors"
-                  type="number"
-                  min="1"
-                  value={form.totalFloors}
-                  onChange={handleChange}
-                  placeholder="Example: 5"
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="mg-form-group">
-                <label htmlFor="totalUnits">Number of Units</label>
-
-                <input
-                  id="totalUnits"
-                  name="totalUnits"
-                  type="number"
-                  min="1"
-                  value={form.totalUnits}
-                  onChange={handleChange}
-                  placeholder="Example: 40"
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="mg-form-group">
-                <label htmlFor="city">City</label>
-
-                <input
-                  id="city"
-                  name="city"
-                  type="text"
-                  value={form.city}
-                  onChange={handleChange}
-                  placeholder="Example: Chennai"
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="mg-form-group">
-                <label htmlFor="country">Country</label>
-
-                <input
-                  id="country"
-                  name="country"
-                  type="text"
-                  value={form.country}
-                  onChange={handleChange}
-                  placeholder="Example: India"
-                  disabled={isSubmitting}
-                />
-              </div>
             </div>
 
             <div className="mg-modal-actions">
@@ -352,7 +265,7 @@ function Apartments() {
                 disabled={isSubmitting}
               >
                 <Save size={17} />
-                {isSubmitting ? "Saving..." : "Create Apartment"}
+                {isSubmitting ? "Registering..." : "Register Apartment"}
               </button>
             </div>
           </form>
@@ -364,8 +277,7 @@ function Apartments() {
           <div>
             <h2>Apartment Records</h2>
             <p>
-              Apartment data will appear here after successful backend API
-              connection.
+              All registered apartment complexes are listed below.
             </p>
           </div>
         </div>
@@ -382,28 +294,36 @@ function Apartments() {
               <thead>
                 <tr>
                   <th>Apartment Name</th>
-                  <th>Block</th>
-                  <th>Total Floors</th>
-                  <th>Total Units</th>
-                  <th>City</th>
-                  <th>Country</th>
+                  <th>Address</th>
+                  <th>Households</th>
+                  <th>Action</th>
                 </tr>
               </thead>
 
               <tbody>
                 {filteredApartments.map((apartment) => (
-                  <tr key={apartment.id || apartment.apartmentName}>
+                  <tr key={apartment.id || apartment.name}>
                     <td>
                       <span className="mg-table-primary">
-                        {apartment.apartmentName}
+                        {apartment.name}
                       </span>
                     </td>
+                    <td>{apartment.address}</td>
+                      <td>
+                        <span className="mg-badge">Coming Soon</span>
+                      </td>
 
-                    <td>{apartment.blockName}</td>
-                    <td>{apartment.totalFloors}</td>
-                    <td>{apartment.totalUnits}</td>
-                    <td>{apartment.city}</td>
-                    <td>{apartment.country}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="mg-secondary-button"
+                          onClick={() =>
+                            toast("Apartment details coming soon.")
+                          }
+                        >
+                          View
+                        </button>
+                      </td>
                   </tr>
                 ))}
               </tbody>
@@ -413,7 +333,7 @@ function Apartments() {
           <EmptyState
             icon={Building2}
             title="No apartments found"
-            description="No fake records are shown. Click Add Apartment after confirming backend fields."
+            description="Create your first apartment to begin managing households."
           />
         )}
       </section>

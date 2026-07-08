@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 import api from "../services/api";
 
@@ -134,6 +135,34 @@ function Login() {
             {isSubmitting ? "Signing In..." : "Login"}
           </button>
         </form>
+
+        <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                const response = await api.post("/auth/google", {
+                  idToken: credentialResponse.credential,
+                });
+
+                localStorage.setItem("token", response.data.token);
+
+                toast.success("Google Login Successful!");
+
+                navigate("/dashboard");
+
+              } catch (error) {
+                console.error(error);
+
+                toast.error(
+                  error.response?.data?.message || "Google Login Failed"
+                );
+              }
+            }}
+            onError={() => {
+              toast.error("Google Login Failed");
+            }}
+          />
+        </div>
 
         <p className="register-text">
           Don't have an account?{" "}

@@ -1,5 +1,8 @@
 package com.aquatrack.aquatrack.entity;
 
+import com.aquatrack.aquatrack.enums.Role;
+import com.aquatrack.aquatrack.enums.AuthProvider;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,7 +33,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable= false)
+    @Column(nullable= true)
     private String password;
 
     @Column(nullable = false)
@@ -42,12 +45,16 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true , unique = true)
     private String mobileNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable= false)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AuthProvider provider;
 
     @ManyToOne
     @JoinColumn(name = "household_id")
