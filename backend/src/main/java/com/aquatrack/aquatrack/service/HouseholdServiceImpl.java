@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.aquatrack.aquatrack.dto.HouseholdRequest;
 import com.aquatrack.aquatrack.dto.HouseholdResponse;
-import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.entity.Apartment;
 import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.User;
+import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;
@@ -107,11 +107,16 @@ public class HouseholdServiceImpl implements HouseholdService {
     }
 
     private HouseholdResponse toResponse(Household household) {
+        List<User> residents = userRepository.findByHouseholdId(household.getId());
+        User resident = residents.isEmpty() ? null : residents.get(0);
+
         return new HouseholdResponse(
                 household.getId(),
                 household.getFlatNumber(),
                 household.getFlatSize(),
                 household.getOccupancy(),
+                resident != null ? resident.getId() : null,
+                resident != null ? resident.getUsername() : null,
                 household.getApartment() != null ? household.getApartment().getId() : null,
                 household.getApartment() != null ? household.getApartment().getName() : null);
     }
