@@ -2,6 +2,8 @@ package com.aquatrack.aquatrack.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +28,7 @@ public class ApartmentController {
     }
 
     @PostMapping
-    public ApartmentResponse create(@RequestBody ApartmentRequest request) {
+    public ApartmentResponse create(@Valid @RequestBody ApartmentRequest request) {
         return apartmentService.create(request);
     }
 
@@ -41,7 +43,7 @@ public class ApartmentController {
     }
 
     @PutMapping("/{id}")
-    public ApartmentResponse update(@PathVariable Long id, @RequestBody ApartmentRequest request) {
+    public ApartmentResponse update(@PathVariable Long id, @Valid @RequestBody ApartmentRequest request) {
         return apartmentService.update(id, request);
     }
 

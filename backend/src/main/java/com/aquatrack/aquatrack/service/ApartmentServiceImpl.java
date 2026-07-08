@@ -7,16 +7,27 @@ import org.springframework.stereotype.Service;
 
 import com.aquatrack.aquatrack.dto.ApartmentRequest;
 import com.aquatrack.aquatrack.dto.ApartmentResponse;
+import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.entity.Apartment;
+import com.aquatrack.aquatrack.entity.Household;
+import com.aquatrack.aquatrack.entity.User;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
+import com.aquatrack.aquatrack.repository.HouseholdRepository;
+import com.aquatrack.aquatrack.repository.UserRepository;
 
 @Service
 public class ApartmentServiceImpl implements ApartmentService {
 
     private final ApartmentRepository apartmentRepository;
+    private final HouseholdRepository householdRepository;
+    private final UserRepository userRepository;
 
-    public ApartmentServiceImpl(ApartmentRepository apartmentRepository) {
+    public ApartmentServiceImpl(ApartmentRepository apartmentRepository,
+            HouseholdRepository householdRepository,
+            UserRepository userRepository) {
         this.apartmentRepository = apartmentRepository;
+        this.householdRepository = householdRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -40,14 +51,14 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public ApartmentResponse getById(Long id) {
         Apartment apartment = apartmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Apartment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
         return toResponse(apartment);
     }
 
     @Override
     public ApartmentResponse update(Long id, ApartmentRequest request) {
         Apartment apartment = apartmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Apartment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
 
         apartment.setName(request.getName());
         apartment.setAddress(request.getAddress());
@@ -59,8 +70,18 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public void delete(Long id) {
         if (!apartmentRepository.existsById(id)) {
-            throw new RuntimeException("Apartment not found");
+            throw new ResourceNotFoundException("Apartment not found");
         }
+
+        List<Household> households = householdRepository.findByApartmentId(id);
+        for (Household household : households) {
+            List<User> residents = userRepository.findByHouseholdId(household.getId());
+            for (User resident : residents) {
+                resident.setHousehold(null);
+            }
+            userRepository.saveAll(residents);
+        }
+
         apartmentRepository.deleteById(id);
     }
 

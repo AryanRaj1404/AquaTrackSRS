@@ -1,5 +1,6 @@
 package com.aquatrack.aquatrack.entity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,6 +26,6 @@ public class Apartment {
     private String name;
     private String address;
     
-    @OneToMany(mappedBy="apartment")
+    @OneToMany(mappedBy="apartment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Household> households;
 }

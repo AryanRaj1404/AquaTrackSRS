@@ -15,6 +15,8 @@ import com.aquatrack.aquatrack.dto.HouseholdRequest;
 import com.aquatrack.aquatrack.dto.HouseholdResponse;
 import com.aquatrack.aquatrack.service.HouseholdService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/households")
 public class HouseholdController {
@@ -26,7 +28,7 @@ public class HouseholdController {
     }
 
     @PostMapping
-    public HouseholdResponse create(@RequestBody HouseholdRequest request) {
+    public HouseholdResponse create(@Valid @RequestBody HouseholdRequest request) {
         System.out.println("Household create endpoint reached");
         return householdService.create(request);
     }
@@ -42,7 +44,7 @@ public class HouseholdController {
     }
 
     @PutMapping("/{id}")
-    public HouseholdResponse update(@PathVariable Long id, @RequestBody HouseholdRequest request) {
+    public HouseholdResponse update(@PathVariable Long id, @Valid @RequestBody HouseholdRequest request) {
         return householdService.update(id, request);
     }
 
