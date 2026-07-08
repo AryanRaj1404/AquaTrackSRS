@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const REGISTER_ENDPOINT = "http://localhost:8081/api/auth/register";
+const REGISTER_ENDPOINT = "http://localhost:8080/auth/register";
 
 const initialForm = {
   firstName: "",
@@ -86,8 +86,7 @@ function Register() {
       email: form.email.trim(),
       mobileNumber: form.mobileNumber.trim(),
       username: form.username.trim(),
-      password: form.password,
-      role: "RESIDENT",
+      password: form.password
     };
 
     setIsSubmitting(true);
@@ -132,7 +131,7 @@ function Register() {
       <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-6xl items-center justify-center">
         <div className="grid w-full overflow-hidden rounded-3xl border border-[#dce8ef] bg-white shadow-[0_24px_70px_rgba(15,23,42,0.12)] lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left branding panel */}
-          <div className="hidden bg-gradient-to-br from-[#06334b] via-[#075d78] to-[#0781a5] p-10 text-white lg:flex lg:flex-col lg:justify-center">
+          <div className="hidden bg-linear-to-br from-[#06334b] via-[#075d78] to-[#0781a5] p-10 text-white lg:flex lg:flex-col lg:justify-center">
             <div>
               <div className="mb-10 flex items-center gap-3">
                 <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white">
@@ -334,7 +333,7 @@ function Register() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex h-[52px] w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#0781a5] to-[#075d78] px-5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(7,93,120,0.22)] transition hover:from-[#075d78] hover:to-[#06334b] disabled:cursor-not-allowed disabled:opacity-70"
+                className="flex h-13 w-full items-center justify-center rounded-xl bg-linear-to-r from-[#0781a5] to-[#075d78] px-5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(7,93,120,0.22)] transition hover:from-[#075d78] hover:to-[#06334b] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {isSubmitting ? "Creating Account..." : "Create Account"}
               </button>
