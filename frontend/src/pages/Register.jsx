@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
-const REGISTER_ENDPOINT = "http://localhost:8080/auth/register";
+import api from "../services/api";
 
 const initialForm = {
   firstName: "",
@@ -94,38 +93,33 @@ function Register() {
     const loadingToast = toast.loading("Creating resident account...");
 
     try {
-      const response = await fetch(REGISTER_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+  await api.post("/auth/register", payload);
 
-      if (!response.ok) {
-        throw new Error("Registration failed.");
-      }
+  toast.success("Resident registered successfully.", {
+    id: loadingToast,
+  });
 
-      toast.success("Resident registered successfully.", {
-        id: loadingToast,
-      });
+  setForm(initialForm);
 
-      setForm(initialForm);
+  setTimeout(() => {
+    navigate("/login");
+  }, 700);
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 700);
-    } catch (error) {
-      console.error("Registration error:", error);
+} catch (error) {
+  console.error("Registration error:", error);
 
-      toast.error("Registration failed. Please check backend API and field names.", {
-        id: loadingToast,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+  const message =
+    error.response?.data?.message ||
+    "Unable to connect to the server. Please try again.";
+
+  toast.error(message, {
+    id: loadingToast,
+  });
+
+} finally {
+  setIsSubmitting(false);
+}
   };
-
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(7,129,165,0.14),transparent_32%),linear-gradient(135deg,#f6fbff_0%,#e7f4fb_100%)] px-4 py-8">
       <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-6xl items-center justify-center">
@@ -354,5 +348,6 @@ function Register() {
     </main>
   );
 }
+
 
 export default Register;

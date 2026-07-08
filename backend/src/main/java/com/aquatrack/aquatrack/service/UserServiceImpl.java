@@ -30,6 +30,18 @@ public class UserServiceImpl implements UserService{
             throw new RuntimeException("Username already Exists");
         }
 
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        if (userRepository.findByMobileNumber(request.getMobileNumber()).isPresent()) {
+            throw new RuntimeException("Mobile number already exists");
+        }
+
         User user = new User();
 
         user.setFirstName(request.getFirstName());

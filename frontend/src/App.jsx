@@ -6,6 +6,8 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Apartments from "./pages/Apartments";
 import Households from "./pages/Households";
+import axios from "axios";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -16,11 +18,32 @@ function App() {
 
       <Route path="/register" element={<Register />} />
 
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/apartments" element={<Apartments />} />
+      <Route
+        path="/apartments"
+        element={
+          <ProtectedRoute>
+            <Apartments />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/households" element={<Households />} />
+      <Route
+        path="/households"
+        element={
+          <ProtectedRoute>
+            <Households />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="*"

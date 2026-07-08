@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import api from "../services/api";
 
 import "../styles/login.css";
 
@@ -12,7 +13,7 @@ function Login() {
 
   const navigate = useNavigate();
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
 
     const cleanUsername = username.trim();
@@ -31,62 +32,43 @@ function Login() {
 
     const loadingToast = toast.loading("Signing in to AquaTrack...");
 
-    setTimeout(() => {
-      try {
-        const savedUser = localStorage.getItem("aquatrack_demo_user");
+    try {
+      const response = await api.post("/auth/login", {
+        username: cleanUsername,
+        password: password,
+      });
 
-        if (!savedUser) {
-          toast.error("No account found. Please register first.", {
-            id: loadingToast,
-          });
+      const token = response.data.token;
 
-          setIsSubmitting(false);
-          return;
-        }
+      localStorage.setItem("token", token);
 
-        const user = JSON.parse(savedUser);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          username: cleanUsername,
+        })
+      );
 
-        if (
-          user.username !== cleanUsername ||
-          user.password !== password
-        ) {
-          toast.error("Invalid username or password.", {
-            id: loadingToast,
-          });
+      toast.success("Login successful. Welcome back!", {
+        id: loadingToast,
+      });
 
-          setIsSubmitting(false);
-          return;
-        }
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 700);
+    } catch (error) {
+      console.error("Login error:", error);
 
-        localStorage.setItem("token", "aquatrack-demo-token");
+      const message =
+        error.response?.data?.message ||
+        "Invalid username or password.";
 
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            username: user.username,
-            role: user.role || "ADMIN",
-          })
-        );
-
-        toast.success("Login successful. Welcome back!", {
-          id: loadingToast,
-        });
-
-        setIsSubmitting(false);
-
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 700);
-      } catch (error) {
-        console.error("Login error:", error);
-
-        toast.error("Unable to sign in. Please try again.", {
-          id: loadingToast,
-        });
-
-        setIsSubmitting(false);
-      }
-    }, 700);
+      toast.error(message, {
+        id: loadingToast,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -116,7 +98,7 @@ function Login() {
             type="text"
             placeholder="Enter your username"
             value={username}
-            onChange={(event) => setUsername(event.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
             disabled={isSubmitting}
           />
@@ -129,7 +111,7 @@ function Login() {
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               disabled={isSubmitting}
             />
@@ -137,7 +119,7 @@ function Login() {
             <button
               type="button"
               className="password-toggle"
-              onClick={() => setShowPassword((previous) => !previous)}
+              onClick={() => setShowPassword((prev) => !prev)}
               disabled={isSubmitting}
             >
               {showPassword ? "Hide" : "Show"}
@@ -154,7 +136,7 @@ function Login() {
         </form>
 
         <p className="register-text">
-          Don&apos;t have an account?{" "}
+          Don't have an account?{" "}
           <Link to="/register">Create account</Link>
         </p>
       </div>

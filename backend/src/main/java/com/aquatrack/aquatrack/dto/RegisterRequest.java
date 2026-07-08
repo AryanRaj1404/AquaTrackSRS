@@ -1,7 +1,5 @@
 package com.aquatrack.aquatrack.dto;
 
-import com.aquatrack.aquatrack.entity.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +22,5 @@ public class RegisterRequest {
     private String username;
 
     private String password;
-
-    private Role role;
+    
 }
