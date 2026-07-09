@@ -1,4 +1,4 @@
-package com.aquatrack.aquatrack.entity;
+package com.aquatrack.aquatrack.enums;
 
 public enum UsageSource {
     METER,
