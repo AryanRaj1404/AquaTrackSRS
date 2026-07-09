@@ -1,8 +1,15 @@
 package com.aquatrack.aquatrack.service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.aquatrack.aquatrack.dto.WaterUsageLogRequest;
 import com.aquatrack.aquatrack.dto.WaterUsageLogResponse;
@@ -35,10 +42,6 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
         log.setUsageDate(request.getUsageDate());
         log.setLitersConsumed(request.getLitersConsumed());
         log.setSource(UsageSource.MANUAL_ENTRY);
-
-        if (request.getBillingCycleId() != null) {
-            // billing cycle linkage can be added here later
-        }
 
         WaterUsageLog saved = waterUsageLogRepository.save(log);
         return toResponse(saved);
@@ -87,6 +90,47 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
     @Override
     public void delete(Long id) {
         waterUsageLogRepository.deleteById(id);
+    }
+
+    @Override
+    public List<WaterUsageLogResponse> uploadCsv(MultipartFile file) {
+        List<WaterUsageLogResponse> results = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+
+            String line;
+            boolean firstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (firstLine) {
+                    firstLine = false;
+                    continue;
+                }
+                if (line.isBlank()) continue;
+
+                String[] parts = line.split(",");
+                if (parts.length < 3) {
+                    throw new IllegalArgumentException("Invalid CSV row: " + line);
+                }
+
+                Long householdId = Long.parseLong(parts[0].trim());
+                LocalDate usageDate = LocalDate.parse(parts[1].trim());
+                Double litersConsumed = Double.parseDouble(parts[2].trim());
+
+                WaterUsageLogRequest request = new WaterUsageLogRequest();
+                request.setHouseholdId(householdId);
+                request.setUsageDate(usageDate);
+                request.setLitersConsumed(litersConsumed);
+
+                results.add(create(request));
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read CSV file: " + e.getMessage());
+        }
+
+        return results;
     }
 
     private WaterUsageLogResponse toResponse(WaterUsageLog log) {
