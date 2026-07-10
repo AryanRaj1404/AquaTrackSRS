@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import com.aquatrack.aquatrack.dto.AuthResponse;
 import com.aquatrack.aquatrack.dto.GoogleAuthRequest;
 import com.aquatrack.aquatrack.dto.LoginRequest;
+import com.aquatrack.aquatrack.dto.ProfileResponse;
 import com.aquatrack.aquatrack.dto.RegisterRequest;
+import com.aquatrack.aquatrack.dto.UpdateProfileRequest;
 import com.aquatrack.aquatrack.entity.User;
 import com.aquatrack.aquatrack.enums.AuthProvider;
 import com.aquatrack.aquatrack.enums.Role;
+import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.security.JwtService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -117,5 +120,50 @@ public class UserServiceImpl implements UserService{
         } catch (Exception e) {
             throw new RuntimeException("Google authentication failed", e);
         }
+    }
+    @Override
+    public ProfileResponse getProfile(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return new ProfileResponse(
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getMobileNumber(),
+                user.getUsername(),
+                user.getRole().name()
+        );
+    }
+    @Override
+    public ProfileResponse updateProfile(
+            String username,
+            UpdateProfileRequest request) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (request.getMobileNumber() != null
+                && !request.getMobileNumber().equals(user.getMobileNumber())
+                && userRepository.findByMobileNumber(request.getMobileNumber()).isPresent()) {
+
+            throw new IllegalArgumentException("Mobile number already exists.");
+        }
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setMobileNumber(request.getMobileNumber());
+
+        userRepository.save(user);
+
+        return new ProfileResponse(
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getMobileNumber(),
+                user.getUsername(),
+                user.getRole().name()
+        );
     }
 }

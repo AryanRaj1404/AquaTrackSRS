@@ -14,9 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.aquatrack.aquatrack.dto.WaterUsageLogRequest;
 import com.aquatrack.aquatrack.dto.WaterUsageLogResponse;
 import com.aquatrack.aquatrack.entity.Household;
+import com.aquatrack.aquatrack.entity.WaterUsageLog;
 import com.aquatrack.aquatrack.enums.UsageSource;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
-import com.aquatrack.aquatrack.entity.WaterUsageLog;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
@@ -34,6 +34,15 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
 
     @Override
     public WaterUsageLogResponse create(WaterUsageLogRequest request) {
+        if (waterUsageLogRepository.existsByHouseholdIdAndUsageDate(
+            request.getHouseholdId(),
+            request.getUsageDate())) {
+
+            throw new IllegalArgumentException(
+                "A water usage log already exists for this household on "
+                + request.getUsageDate());
+        }
+
         Household household = householdRepository.findById(request.getHouseholdId())
                 .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
 
@@ -78,6 +87,16 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
         Household household = householdRepository.findById(request.getHouseholdId())
                 .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
 
+        if (waterUsageLogRepository.existsByHouseholdIdAndUsageDateAndIdNot(
+            request.getHouseholdId(),
+            request.getUsageDate(),
+            id)) {
+
+                throw new IllegalArgumentException(
+                "A water usage log already exists for this household on "
+                + request.getUsageDate());
+        }
+
         log.setHousehold(household);
         log.setUsageDate(request.getUsageDate());
         log.setLitersConsumed(request.getLitersConsumed());
@@ -86,8 +105,9 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
         return toResponse(saved);
     }
 
-    @Override
+   @Override
     public void delete(Long id) {
+
         if (!waterUsageLogRepository.existsById(id)) {
             throw new ResourceNotFoundException("Water usage log not found");
         }
@@ -97,6 +117,14 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
 
     @Override
     public List<WaterUsageLogResponse> uploadCsv(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("CSV file is empty.");
+        }
+        String fileName = file.getOriginalFilename();
+
+        if (fileName == null || !fileName.toLowerCase().endsWith(".csv")) {
+            throw new IllegalArgumentException("Only CSV files are allowed.");
+        }
         List<WaterUsageLogResponse> results = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(
@@ -117,20 +145,28 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
                     throw new IllegalArgumentException("Invalid CSV row: " + line);
                 }
 
-                Long householdId = Long.parseLong(parts[0].trim());
-                LocalDate usageDate = LocalDate.parse(parts[1].trim());
-                Double litersConsumed = Double.parseDouble(parts[2].trim());
+                try {
 
-                WaterUsageLogRequest request = new WaterUsageLogRequest();
-                request.setHouseholdId(householdId);
-                request.setUsageDate(usageDate);
-                request.setLitersConsumed(litersConsumed);
+                    Long householdId = Long.parseLong(parts[0].trim());
+                    LocalDate usageDate = LocalDate.parse(parts[1].trim());
+                    Double litersConsumed = Double.parseDouble(parts[2].trim());
 
-                results.add(create(request));
+                    WaterUsageLogRequest request = new WaterUsageLogRequest();
+                    request.setHouseholdId(householdId);
+                    request.setUsageDate(usageDate);
+                    request.setLitersConsumed(litersConsumed);
+
+                    results.add(create(request));
+
+                } catch (Exception e) {
+
+                    throw new IllegalArgumentException(
+                            "Invalid CSV row: " + line);
+                }
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read CSV file: " + e.getMessage());
+            throw new RuntimeException("Failed to Process CSV file: " , e);
         }
 
         return results;
