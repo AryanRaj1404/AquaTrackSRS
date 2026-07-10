@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.aquatrack.aquatrack.dto.HouseholdRequest;
 import com.aquatrack.aquatrack.dto.HouseholdResponse;
+import com.aquatrack.aquatrack.dto.ResidentResponse;
 
 public interface HouseholdService {
     HouseholdResponse create(HouseholdRequest request);
@@ -17,4 +18,8 @@ public interface HouseholdService {
     void delete(Long id);
 
     HouseholdResponse assignResident(Long householdId, Long userId);
+
+    HouseholdResponse removeResident(Long householdId, Long userId);
+
+    List<ResidentResponse> getUnassignedResidents();
 }

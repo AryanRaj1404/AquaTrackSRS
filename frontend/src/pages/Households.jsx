@@ -17,18 +17,27 @@ import StatCard from "../components/StatCard";
 import {
   createHousehold,
   getHouseholds,
+  assignResident,
+  removeResident,
+  getUnassignedResidents,
 } from "../services/householdService";
+
+import { getApartments } from "../services/apartmentService";
 
 const initialForm = {
   flatNumber: "",
-  residentName: "",
+  flatSize: "",
+  occupancy: "",
   apartmentId: "",
-  membersCount: "",
-  meterNumber: "",
 };
 
 function Households() {
   const [households, setHouseholds] = useState([]);
+  const [apartments, setApartments] = useState([]);
+  const [availableResidents, setAvailableResidents] = useState([]);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedHousehold, setSelectedHousehold] = useState(null);
+  const [selectedResident, setSelectedResident] = useState("");
   const [query, setQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(initialForm);
@@ -40,22 +49,27 @@ function Households() {
   }, []);
 
   const loadHouseholds = async () => {
-    try {
-      setIsLoading(true);
+  try {
+    setIsLoading(true);
 
-      const data = await getHouseholds();
+    const [householdData, apartmentData] = await Promise.all([
+      getHouseholds(),
+      getApartments(),
+    ]);
 
-      setHouseholds(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Household fetch error:", error);
+    setHouseholds(Array.isArray(householdData) ? householdData : []);
 
-      setHouseholds([]);
+    setApartments(Array.isArray(apartmentData) ? apartmentData : []);
+  } catch (error) {
+    console.error(error);
 
-      toast.error("Household API is not connected yet. Empty state is shown.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    setHouseholds([]);
+
+    toast.error("Unable to load households.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const filteredHouseholds = useMemo(() => {
     if (!query.trim()) {
@@ -67,14 +81,14 @@ function Households() {
     return households.filter((household) => {
       return (
         household.flatNumber?.toLowerCase().includes(keyword) ||
-        household.residentName?.toLowerCase().includes(keyword) ||
-        household.meterNumber?.toLowerCase().includes(keyword)
+        household.apartmentName?.toLowerCase().includes(keyword) ||
+        household.residentName?.toLowerCase().includes(keyword)
       );
     });
   }, [households, query]);
 
-  const totalResidents = households.reduce((total, household) => {
-    return total + Number(household.membersCount || 0);
+  const totalOccupancy = households.reduce((total, household) => {
+    return total + Number(household.occupancy || 0);
   }, 0);
 
   const handleChange = (event) => {
@@ -92,23 +106,18 @@ function Households() {
       return false;
     }
 
-    if (!form.residentName.trim()) {
-      toast.error("Resident name is required.");
+    if (!form.flatSize) {
+      toast.error("Flat size is required.");
       return false;
     }
 
-    if (!form.apartmentId.trim()) {
-      toast.error("Apartment ID is required.");
+    if (!form.occupancy) {
+      toast.error("Occupancy is required.");
       return false;
     }
 
-    if (!form.membersCount || Number(form.membersCount) <= 0) {
-      toast.error("Enter a valid members count.");
-      return false;
-    }
-
-    if (!form.meterNumber.trim()) {
-      toast.error("Meter number is required.");
+    if (!form.apartmentId) {
+      toast.error("Apartment is required.");
       return false;
     }
 
@@ -124,10 +133,9 @@ function Households() {
 
     const householdPayload = {
       flatNumber: form.flatNumber.trim(),
-      residentName: form.residentName.trim(),
-      apartmentId: form.apartmentId.trim(),
-      membersCount: Number(form.membersCount),
-      meterNumber: form.meterNumber.trim(),
+      flatSize: Number(form.flatSize),
+      occupancy: Number(form.occupancy),
+      apartmentId: Number(form.apartmentId),
     };
 
     setIsSubmitting(true);
@@ -158,6 +166,90 @@ function Households() {
       setIsSubmitting(false);
     }
   };
+
+  const loadAvailableResidents = async () => {
+  try {
+    const data = await getUnassignedResidents();
+
+    setAvailableResidents(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error(error);
+    toast.error("Unable to load residents.");
+  }
+};
+
+const openAssignResident = async (household) => {
+  setSelectedHousehold(household);
+  setSelectedResident("");
+
+  await loadAvailableResidents();
+
+  setShowAssignModal(true);
+};
+
+const handleAssignResident = async () => {
+  if (!selectedResident) {
+    toast.error("Please select a resident.");
+    return;
+  }
+
+  try {
+    const loadingToast = toast.loading("Assigning resident...");
+
+    await assignResident(
+      selectedHousehold.id,
+      selectedResident
+    );
+
+    toast.success("Resident assigned successfully.", {
+      id: loadingToast,
+    });
+
+    setShowAssignModal(false);
+
+    await loadHouseholds();
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to assign resident."
+    );
+
+  }
+};
+
+const handleRemoveResident = async (household) => {
+
+  try {
+
+    const loadingToast = toast.loading("Removing resident...");
+
+    await removeResident(
+      household.id,
+      household.residentId
+    );
+
+    toast.success("Resident removed.", {
+      id: loadingToast,
+    });
+
+    await loadHouseholds();
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to remove resident."
+    );
+
+  }
+
+};
 
   const handleCancel = () => {
     setForm(initialForm);
@@ -192,9 +284,9 @@ function Households() {
 
         <StatCard
           icon={Users}
-          title="Total Residents"
-          value={totalResidents}
-          description="Based on members count"
+          title="Total Occupancy"
+          value={totalOccupancy}
+          description="Total residents across all households"
         />
 
         <StatCard
@@ -235,6 +327,9 @@ function Households() {
 
           <form onSubmit={handleSubmit}>
             <div className="mg-form-grid">
+
+              {/* Flat Number */}
+
               <div className="mg-form-group">
                 <label htmlFor="flatNumber">Flat Number</label>
 
@@ -249,63 +344,72 @@ function Households() {
                 />
               </div>
 
+              {/* Flat Size */}
+
               <div className="mg-form-group">
-                <label htmlFor="residentName">Resident Name</label>
+                <label htmlFor="flatSize">Flat Size (sq.ft)</label>
 
                 <input
-                  id="residentName"
-                  name="residentName"
-                  type="text"
-                  value={form.residentName}
+                  id="flatSize"
+                  name="flatSize"
+                  type="number"
+                  value={form.flatSize}
                   onChange={handleChange}
-                  placeholder="Example: Arun Kumar"
+                  placeholder="Example: 1200"
                   disabled={isSubmitting}
                 />
               </div>
 
-              <div className="mg-form-group">
-                <label htmlFor="apartmentId">Apartment ID</label>
-
-                <input
-                  id="apartmentId"
-                  name="apartmentId"
-                  type="text"
-                  value={form.apartmentId}
-                  onChange={handleChange}
-                  placeholder="Example: 1"
-                  disabled={isSubmitting}
-                />
-              </div>
+              {/* Occupancy */}
 
               <div className="mg-form-group">
-                <label htmlFor="membersCount">Members Count</label>
+                <label htmlFor="occupancy">Occupancy</label>
 
                 <input
-                  id="membersCount"
-                  name="membersCount"
+                  id="occupancy"
+                  name="occupancy"
                   type="number"
                   min="1"
-                  value={form.membersCount}
+                  value={form.occupancy}
                   onChange={handleChange}
                   placeholder="Example: 4"
                   disabled={isSubmitting}
                 />
               </div>
 
-              <div className="mg-form-group mg-form-group-full">
-                <label htmlFor="meterNumber">Meter Number</label>
+              {/* Apartment */}
 
-                <input
-                  id="meterNumber"
-                  name="meterNumber"
-                  type="text"
-                  value={form.meterNumber}
+              <div className="mg-form-group">
+                <label htmlFor="apartmentId">Apartment</label>
+
+                <select
+                  id="apartmentId"
+                  name="apartmentId"
+                  value={form.apartmentId}
                   onChange={handleChange}
-                  placeholder="Example: AQ-1001"
                   disabled={isSubmitting}
-                />
+                >
+
+                  <option value="">
+                    Select Apartment
+                  </option>
+
+                  {apartments.map((apartment) => (
+
+                    <option
+                      key={apartment.id}
+                      value={apartment.id}
+                    >
+                      {apartment.name}
+                    </option>
+
+                  ))}
+
+                </select>
               </div>
+
             </div>
+            
 
             <div className="mg-modal-actions">
               <button
@@ -331,6 +435,70 @@ function Households() {
         </section>
       )}
 
+      {showAssignModal && (
+  <section className="mg-panel" style={{ marginBottom: "20px" }}>
+    <div className="mg-toolbar">
+      <div>
+        <h2>Assign Resident</h2>
+        <p>
+          Assign a resident to Flat {selectedHousehold?.flatNumber}.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        className="mg-cancel-button"
+        onClick={() => setShowAssignModal(false)}
+      >
+        <X size={16} />
+        Close
+      </button>
+    </div>
+
+    <div className="mg-form-grid">
+      <div className="mg-form-group mg-form-group-full">
+        <label>Select Resident</label>
+
+        <select
+          value={selectedResident}
+          onChange={(e) => setSelectedResident(e.target.value)}
+        >
+          <option value="">Choose Resident</option>
+
+          {availableResidents.map((resident) => (
+            <option
+              key={resident.id}
+              value={resident.id}
+            >
+              {resident.fullName} ({resident.username})
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <div className="mg-modal-actions">
+      <button
+        type="button"
+        className="mg-cancel-button"
+        onClick={() => setShowAssignModal(false)}
+      >
+        <X size={17} />
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        className="mg-primary-button"
+        onClick={handleAssignResident}
+      >
+        <Save size={17} />
+        Assign Resident
+      </button>
+    </div>
+  </section>
+)}
+
       <section className="mg-panel">
         <div className="mg-toolbar">
           <div>
@@ -351,29 +519,67 @@ function Households() {
         ) : filteredHouseholds.length > 0 ? (
           <div className="mg-table-wrapper">
             <table className="mg-table">
-              <thead>
-                <tr>
-                  <th>Flat Number</th>
-                  <th>Resident Name</th>
-                  <th>Apartment ID</th>
-                  <th>Members Count</th>
-                  <th>Meter Number</th>
-                </tr>
-              </thead>
+              <tr>
+                <th>Flat Number</th>
+                <th>Apartment</th>
+                <th>Flat Size</th>
+                <th>Occupancy</th>
+                <th>Resident</th>
+                <th>Actions</th>
+              </tr>
 
               <tbody>
                 {filteredHouseholds.map((household) => (
-                  <tr key={household.id || household.flatNumber}>
+                  <tr key={household.id}>
+
                     <td>
                       <span className="mg-table-primary">
                         {household.flatNumber}
                       </span>
                     </td>
 
-                    <td>{household.residentName}</td>
-                    <td>{household.apartmentId}</td>
-                    <td>{household.membersCount}</td>
-                    <td>{household.meterNumber}</td>
+                    <td>{household.apartmentName}</td>
+
+                    <td>{household.flatSize} sq.ft</td>
+
+                    <td>{household.occupancy}</td>
+
+                    <td>
+                      {household.residentName ? (
+                        household.residentName
+                      ) : (
+                        <span className="mg-badge">
+                          Not Assigned
+                        </span>
+                      )}
+                    </td>
+
+                    <td>
+
+                      {household.residentId ? (
+
+                        <button
+                          className="mg-cancel-button"
+                          type="button"
+                          onClick={() => handleRemoveResident(household)}
+                        >
+                          Remove
+                        </button>
+
+                      ) : (
+
+                        <button
+                          className="mg-primary-button"
+                          type="button"
+                          onClick={() => openAssignResident(household)}
+                        >
+                          Assign
+                        </button>
+
+                      )}
+
+                    </td>
+
                   </tr>
                 ))}
               </tbody>

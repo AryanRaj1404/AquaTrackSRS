@@ -1,27 +1,30 @@
-const API_BASE_URL = "http://localhost:8081/api";
+import api from "./api";
 
 export async function getHouseholds() {
-  const response = await fetch(`${API_BASE_URL}/households`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch households.");
-  }
-
-  return response.json();
+  const response = await api.get("/households");
+  return response.data;
 }
 
 export async function createHousehold(householdData) {
-  const response = await fetch(`${API_BASE_URL}/households`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(householdData),
-  });
+  const response = await api.post("/households", householdData);
+  return response.data;
+}
 
-  if (!response.ok) {
-    throw new Error("Failed to create household.");
-  }
+export async function assignResident(householdId, userId) {
+  const response = await api.put(
+    `/households/${householdId}/residents/${userId}`
+  );
+  return response.data;
+}
 
-  return response.json();
+export async function removeResident(householdId, userId) {
+  const response = await api.delete(
+    `/households/${householdId}/residents/${userId}`
+  );
+  return response.data;
+}
+
+export async function getUnassignedResidents() {
+  const response = await api.get("/households/unassigned-residents");
+  return response.data;
 }

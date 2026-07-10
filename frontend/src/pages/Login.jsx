@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import api from "../services/api";
 
@@ -43,10 +44,15 @@ function Login() {
 
       localStorage.setItem("token", token);
 
+      const decoded = jwtDecode(token);
+
+      localStorage.setItem("role", decoded.role);
+      localStorage.setItem("username", decoded.sub);
+
       localStorage.setItem(
         "user",
         JSON.stringify({
-          username: cleanUsername,
+          username: decoded.sub,
         })
       );
 
@@ -144,7 +150,21 @@ function Login() {
                   idToken: credentialResponse.credential,
                 });
 
-                localStorage.setItem("token", response.data.token);
+                const token = response.data.token;
+
+                localStorage.setItem("token", token);
+
+                const decoded = jwtDecode(token);
+
+                localStorage.setItem("role", decoded.role);
+                localStorage.setItem("username", decoded.sub);
+
+                localStorage.setItem(
+                  "user",
+                  JSON.stringify({
+                    username: decoded.sub,
+                  })
+                );
 
                 toast.success("Google Login Successful!");
 

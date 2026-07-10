@@ -1,7 +1,6 @@
 package com.aquatrack.aquatrack.controller;
 
 import java.util.List;
-import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aquatrack.aquatrack.dto.HouseholdRequest;
 import com.aquatrack.aquatrack.dto.HouseholdResponse;
+import com.aquatrack.aquatrack.dto.ResidentResponse;
 import com.aquatrack.aquatrack.service.HouseholdService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/households")
@@ -35,6 +37,11 @@ public class HouseholdController {
     @GetMapping
     public List<HouseholdResponse> getAll() {
         return householdService.getAll();
+    }
+
+    @GetMapping("/unassigned-residents")
+    public List<ResidentResponse> getUnassignedResidents() {
+        return householdService.getUnassignedResidents();
     }
 
     @GetMapping("/{id}")
@@ -57,4 +64,9 @@ public class HouseholdController {
     public HouseholdResponse assignResident(@PathVariable Long householdId, @PathVariable Long userId) {
         return householdService.assignResident(householdId, userId);
     }
+    @DeleteMapping("/{householdId}/residents/{userId}")
+    public HouseholdResponse removeResident(@PathVariable Long householdId,
+                                            @PathVariable Long userId) {
+        return householdService.removeResident(householdId, userId);
+}
 }

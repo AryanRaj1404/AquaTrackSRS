@@ -31,8 +31,30 @@ public class SecurityConfig {
         .cors(Customizer.withDefaults())
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/register", "/auth/login","/auth/google").permitAll()
-                .anyRequest().authenticated())
+
+            .requestMatchers(
+                    "/auth/register",
+                    "/auth/login",
+                    "/auth/google"
+            ).permitAll()
+
+            .requestMatchers(
+                    "/apartments/**",
+                    "/households/**",
+                    "/meters/**",
+                    "/tariff-plans/**",
+                    "/billing-cycles/**",
+                    "/usage-logs/upload-csv"
+            ).hasRole("ADMIN")
+
+            .requestMatchers(
+                    "/usage-logs/**",
+                    "/auth/profile",
+                    "/auth/profile/update"
+            ).hasAnyRole("ADMIN", "RESIDENT")
+
+            .anyRequest().authenticated()
+        )
         .addFilterBefore(jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class)
         .httpBasic(Customizer.withDefaults());

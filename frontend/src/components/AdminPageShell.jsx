@@ -29,6 +29,8 @@ function AdminPageShell({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
+  const role = localStorage.getItem("role");
+  const username = localStorage.getItem("username");
 
   const closeSidebar = () => {
     setSidebarOpen(false);
@@ -37,6 +39,8 @@ function AdminPageShell({
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
 
     toast.success("Logged out successfully.");
 
@@ -86,27 +90,31 @@ function AdminPageShell({
             <span>Dashboard</span>
           </NavLink>
 
-          <NavLink
-            to="/apartments"
-            onClick={closeSidebar}
-            className={({ isActive }) =>
-              isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-            }
-          >
-            <Building2 size={20} />
-            <span>Apartments</span>
-          </NavLink>
+          {role === "ADMIN" && (
+  <>
+    <NavLink
+      to="/apartments"
+      onClick={closeSidebar}
+      className={({ isActive }) =>
+        isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
+      }
+    >
+      <Building2 size={20} />
+      <span>Apartments</span>
+    </NavLink>
 
-          <NavLink
-            to="/households"
-            onClick={closeSidebar}
-            className={({ isActive }) =>
-              isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-            }
-          >
-            <Users size={20} />
-            <span>Households</span>
-          </NavLink>
+    <NavLink
+      to="/households"
+      onClick={closeSidebar}
+      className={({ isActive }) =>
+        isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
+      }
+    >
+      <Users size={20} />
+      <span>Households</span>
+    </NavLink>
+  </>
+)}
 
           <div className="mg-nav-link mg-disabled-link">
             <Droplets size={20} />
@@ -193,11 +201,13 @@ function AdminPageShell({
             <div className="mg-topbar-divider" />
 
             <div className="mg-profile">
-              <div className="mg-avatar">AD</div>
+              <div className="mg-avatar">
+                {username ? username.charAt(0).toUpperCase() : "U"}
+              </div>
 
               <div className="mg-profile-details">
-                <strong>Administrator</strong>
-                <span>Apartment Admin</span>
+                <strong>{username || "User"}</strong>
+                <span>{role === "ADMIN" ? "Apartment Admin" : "Resident"}</span>
               </div>
             </div>
           </div>

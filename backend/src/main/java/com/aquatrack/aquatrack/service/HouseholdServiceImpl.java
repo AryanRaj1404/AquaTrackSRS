@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-
-import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.aquatrack.aquatrack.dto.HouseholdRequest;
 import com.aquatrack.aquatrack.dto.HouseholdResponse;
+import com.aquatrack.aquatrack.dto.ResidentResponse;
 import com.aquatrack.aquatrack.entity.Apartment;
 import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.User;
+import com.aquatrack.aquatrack.enums.Role;
+import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class HouseholdServiceImpl implements HouseholdService {
@@ -125,19 +126,76 @@ public class HouseholdServiceImpl implements HouseholdService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        if (user.getRole() != Role.RESIDENT) {
+            throw new IllegalArgumentException("Only residents can be assigned to households.");
+        }
+
+        if (user.getHousehold() != null) {
+            throw new IllegalArgumentException("Resident is already assigned to a household.");
+        }
+
         user.setHousehold(household);
         userRepository.save(user);
 
         return toResponse(household);
     }
 
-    private HouseholdResponse toResponse(Household household) {
-        return new HouseholdResponse(
-                household.getId(),
-                household.getFlatNumber(),
-                household.getFlatSize(),
-                household.getOccupancy(),
-                household.getApartment() != null ? household.getApartment().getId() : null,
-                household.getApartment() != null ? household.getApartment().getName() : null);
+    @Override
+    public HouseholdResponse removeResident(Long householdId, Long userId) {
+
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getHousehold() == null ||
+                !user.getHousehold().getId().equals(household.getId())) {
+
+            throw new IllegalArgumentException(
+                    "Resident is not assigned to this household.");
+        }
+
+        user.setHousehold(null);
+
+        userRepository.save(user);
+
+        return toResponse(household);
     }
+
+    @Override
+    public List<ResidentResponse> getUnassignedResidents() {
+
+        return userRepository
+                .findByRoleAndHouseholdIsNull(Role.RESIDENT)
+                .stream()
+                .map(user -> new ResidentResponse(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getFirstName() + " " + user.getLastName()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    private HouseholdResponse toResponse(Household household) {
+
+    User resident = userRepository
+            .findFirstByHouseholdId(household.getId())
+            .orElse(null);
+
+    return new HouseholdResponse(
+            household.getId(),
+            household.getFlatNumber(),
+            household.getFlatSize(),
+            household.getOccupancy(),
+            household.getApartment() != null ? household.getApartment().getId() : null,
+            household.getApartment() != null ? household.getApartment().getName() : null,
+
+            resident != null ? resident.getId() : null,
+            resident != null ? resident.getUsername() : null,
+            resident != null
+                    ? resident.getFirstName() + " " + resident.getLastName()
+                    : null
+    );
+}
 }
