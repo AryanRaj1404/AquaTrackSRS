@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
+
 import com.aquatrack.aquatrack.dto.HouseholdRequest;
 import com.aquatrack.aquatrack.dto.HouseholdResponse;
 import com.aquatrack.aquatrack.entity.Apartment;
@@ -13,6 +15,7 @@ import com.aquatrack.aquatrack.entity.User;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class HouseholdServiceImpl implements HouseholdService {
@@ -31,8 +34,17 @@ public class HouseholdServiceImpl implements HouseholdService {
 
     @Override
     public HouseholdResponse create(HouseholdRequest request) {
+
         Apartment apartment = apartmentRepository.findById(request.getApartmentId())
-                .orElseThrow(() -> new RuntimeException("Apartment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
+
+        if (householdRepository.existsByApartmentIdAndFlatNumber(
+                request.getApartmentId(),
+                request.getFlatNumber())) {
+
+            throw new IllegalArgumentException(
+                    "Flat number already exists in this apartment.");
+        }
 
         Household household = new Household();
         household.setFlatNumber(request.getFlatNumber());
@@ -41,6 +53,7 @@ public class HouseholdServiceImpl implements HouseholdService {
         household.setApartment(apartment);
 
         Household saved = householdRepository.save(household);
+
         return toResponse(saved);
     }
 
@@ -55,17 +68,26 @@ public class HouseholdServiceImpl implements HouseholdService {
     @Override
     public HouseholdResponse getById(Long id) {
         Household household = householdRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Household not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
         return toResponse(household);
     }
 
     @Override
     public HouseholdResponse update(Long id, HouseholdRequest request) {
         Household household = householdRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Household not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
 
         Apartment apartment = apartmentRepository.findById(request.getApartmentId())
-                .orElseThrow(() -> new RuntimeException("Apartment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
+
+        if (householdRepository.existsByApartmentIdAndFlatNumberAndIdNot(
+                request.getApartmentId(),
+                request.getFlatNumber(),
+                id)) {
+
+            throw new IllegalArgumentException(
+                    "Flat number already exists in this apartment.");
+        }
 
         household.setFlatNumber(request.getFlatNumber());
         household.setFlatSize(request.getFlatSize());
@@ -76,21 +98,32 @@ public class HouseholdServiceImpl implements HouseholdService {
         return toResponse(saved);
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
+
         if (!householdRepository.existsById(id)) {
-            throw new RuntimeException("Household not found");
+            throw new ResourceNotFoundException("Household not found");
         }
+
+        List<User> residents = userRepository.findByHouseholdId(id);
+
+        for (User resident : residents) {
+            resident.setHousehold(null);
+        }
+
+        userRepository.saveAll(residents);
+
         householdRepository.deleteById(id);
     }
 
     @Override
     public HouseholdResponse assignResident(Long householdId, Long userId) {
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new RuntimeException("Household not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         user.setHousehold(household);
         userRepository.save(user);
