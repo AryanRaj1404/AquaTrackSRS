@@ -14,6 +14,7 @@ import {
   Users,
   X,
   Gauge,
+  BadgeDollarSign,
 } from "lucide-react";
 
 import "../styles/management.css";
@@ -127,6 +128,16 @@ function AdminPageShell({
 </NavLink>
 </>
 )}
+<NavLink
+  to="/tariff-plans"
+  onClick={closeSidebar}
+  className={({ isActive }) =>
+    isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
+  }
+>
+  <BadgeDollarSign size={20} />
+  <span>Tariff Plans</span>
+</NavLink>
 
           <NavLink
             to="/water-usage"
@@ -138,14 +149,19 @@ function AdminPageShell({
             <Droplets size={20} />
             <span>Water Usage</span>
           </NavLink>
-
           
-
-          <div className="mg-nav-link mg-disabled-link">
-            <ReceiptText size={20} />
-            <span>Billing</span>
-            <small>Soon</small>
-          </div>
+          <NavLink
+              to="/billing-cycles"
+              onClick={closeSidebar}
+              className={({ isActive }) =>
+                  isActive
+                      ? "mg-nav-link mg-nav-active"
+                      : "mg-nav-link"
+              }
+          >
+              <ReceiptText size={20} />
+              <span>Billing Cycles</span>
+          </NavLink>
         </nav>
 
         <div className="mg-sidebar-bottom">

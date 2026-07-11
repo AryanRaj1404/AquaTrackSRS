@@ -10,6 +10,8 @@ import MeterConfig from "./pages/MeterConfig";
 import axios from "axios";
 import WaterUsage from "./pages/WaterUsage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TariffPlans from "./pages/TariffPlans";
+import BillingCycles from "./pages/BillingCycles";
 
 function App() {
   return (
@@ -56,6 +58,15 @@ function App() {
       />
 
       <Route
+        path="/billing-cycles"
+        element={
+          <ProtectedRoute role="ADMIN">
+            <BillingCycles />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/meters"
         element={
           <ProtectedRoute role="ADMIN">
@@ -63,6 +74,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route 
+        path="/tariff-plans" 
+        element={
+          <ProtectedRoute role="ADMIN">
+            <TariffPlans />
+          </ProtectedRoute>
+        } />
 
       <Route
         path="*"

@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import {
-  AlertTriangle,
   Building2,
   Droplets,
   Plus,
@@ -18,62 +18,87 @@ function Dashboard() {
 
   const [query, setQuery] = useState("");
 
-  /*
-    Backend-ready structure:
-    Later, these values should come from Spring Boot APIs.
+  const [apartments, setApartments] = useState([]);
+  const [households, setHouseholds] = useState([]);
+  const [meters, setMeters] = useState([]);
+  const [recentReadings, setRecentReadings] = useState([]);
 
-    Example:
-    const apartments = await getApartments();
-    const residents = await getResidents();
-    const alerts = await getAlerts();
+  const dashboardStats = useMemo(() => ({
+    totalApartments: apartments.length,
+    totalHouseholds: households.length,
+    totalMeters: meters.length,
+    totalUsageLogs: recentReadings.length,
+  }), [apartments, households, meters, recentReadings]);
 
-    For now, keep them empty.
-    Do not add fake dummy records.
-  */
-
-  const apartments = [];
-  const residents = [];
-  const alerts = [];
-  const recentReadings = [];
-
-  const dashboardStats = useMemo(() => {
-    return {
-      totalApartments: apartments.length,
-      totalResidents: residents.length,
-      activeAlerts: alerts.length,
-      totalReadings: recentReadings.length,
-    };
-  }, [apartments, residents, alerts, recentReadings]);
-
-  const filteredResidents = useMemo(() => {
+  const filteredHouseholds = useMemo(() => {
     if (!query.trim()) {
-      return residents;
+      return households;
     }
 
     const keyword = query.toLowerCase();
 
-    return residents.filter((resident) => {
+    return households.filter((household) => {
       return (
-        resident.firstName?.toLowerCase().includes(keyword) ||
-        resident.lastName?.toLowerCase().includes(keyword) ||
-        resident.email?.toLowerCase().includes(keyword) ||
-        resident.mobileNumber?.toLowerCase().includes(keyword) ||
-        resident.username?.toLowerCase().includes(keyword)
+        household.flatNumber?.toLowerCase().includes(keyword)
       );
     });
-  }, [query, residents]);
+  }, [query, households]);
 
   const goToAddApartment = () => {
-  navigate("/apartments");
-};
+    navigate("/apartments");
+  };
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const [
+          apartmentRes,
+          householdRes,
+          meterRes,
+          usageRes,
+        ] = await Promise.all([
+          axios.get("http://localhost:8080/apartments", config),
+          axios.get("http://localhost:8080/households", config),
+          axios.get("http://localhost:8080/meters", config),
+          axios.get("http://localhost:8080/usage-logs", config),
+        ]);
+
+        setApartments(apartmentRes.data);
+        setHouseholds(householdRes.data);
+        setMeters(meterRes.data);
+
+        setRecentReadings(
+          usageRes.data
+            .sort(
+              (a, b) =>
+                new Date(b.usageDate) -
+                new Date(a.usageDate)
+            )
+            .slice(0, 5)
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   return (
     <AdminPageShell
       title="Dashboard Overview"
-      description="Monitor residents, apartments and water-management activities."
+      description="Monitor apartments, households, meters and water usage across the system."
       searchValue={query}
       onSearchChange={setQuery}
-      searchPlaceholder="Search residents, apartments..."
+      searchPlaceholder="Search households or apartments..."
       action={
         <button
           type="button"
@@ -95,64 +120,64 @@ function Dashboard() {
 
         <StatCard
           icon={Users}
-          title="Total Residents"
-          value={dashboardStats.totalResidents}
-          description="Registered resident accounts"
+          title="Total Households"
+          value={dashboardStats.totalHouseholds}
+          description="Registered households"
         />
 
         <StatCard
-          icon={AlertTriangle}
-          title="Active Alerts"
-          value={dashboardStats.activeAlerts}
-          description="Alerts requiring attention"
+          icon={Building2}
+          title="Total Meters"
+          value={dashboardStats.totalMeters}
+          description="Installed water meters"
         />
 
         <StatCard
           icon={Droplets}
-          title="Meter Readings"
-          value={dashboardStats.totalReadings}
-          description="Water usage records"
+          title="Water Usage Logs"
+          value={dashboardStats.totalUsageLogs}
+          description="Recorded usage entries"
         />
       </section>
 
       <section className="mg-panel">
         <div className="mg-toolbar">
           <div>
-            <h2>Residents Overview</h2>
+            <h2>Registered Households</h2>
             <p>
-              Resident data will be displayed here after backend API
+              Household information will appear here after backend API
               integration.
             </p>
           </div>
         </div>
 
         <div className="mg-table-wrapper">
-          {filteredResidents.length > 0 ? (
+          {filteredHouseholds.length > 0 ? (
             <table className="mg-table">
               <thead>
                 <tr>
-                  <th>Resident Name</th>
-                  <th>Email ID</th>
-                  <th>Mobile Number</th>
-                  <th>Username</th>
+                  <th>Flat Number</th>
+                  <th>Apartment</th>
+                  <th>Resident</th>
+                  <th>Occupancy</th>
                   <th>Status</th>
                 </tr>
               </thead>
 
               <tbody>
-                {filteredResidents.map((resident) => (
-                  <tr key={resident.id}>
+                {filteredHouseholds.map((household) => (
+                  <tr key={household.id}>
                     <td>
                       <span className="mg-table-primary">
-                        {resident.firstName} {resident.lastName}
+                        {household.flatNumber}
                       </span>
                     </td>
 
-                    <td>{resident.email}</td>
+                    <td>{household.apartmentName}</td>
 
-                    <td>{resident.mobileNumber}</td>
+                    <td>{household.residentName ?? "Not Assigned"}</td>
 
-                    <td>{resident.username}</td>
+                    <td>{household.occupancy}</td>
 
                     <td>
                       <span className="mg-status mg-status-active">
@@ -176,7 +201,7 @@ function Dashboard() {
       <section className="mg-panel" style={{ marginTop: "20px" }}>
         <div className="mg-toolbar">
           <div>
-            <h2>Apartments Overview</h2>
+            <h2>Registered Apartments</h2>
             <p>
               Apartment data will be displayed here after the Add Apartment
               feature is connected.
@@ -198,33 +223,30 @@ function Dashboard() {
             <table className="mg-table">
               <thead>
                 <tr>
-                  <th>Apartment Name</th>
-                  <th>Location</th>
-                  <th>Total Units</th>
+                  <th>Apartment</th>
+                  <th>Address</th>
                   <th>Status</th>
                 </tr>
               </thead>
 
-              <tbody>
-                {apartments.map((apartment) => (
-                  <tr key={apartment.id}>
-                    <td>
-                      <span className="mg-table-primary">
-                        {apartment.name}
-                      </span>
-                    </td>
+                <tbody>
+                  {apartments.map((apartment) => (
+                    <tr key={apartment.id}>
+                      <td>
+                        <span className="mg-table-primary">
+                          {apartment.name}
+                        </span>
+                      </td>
 
-                    <td>{apartment.location}</td>
+                      <td>{apartment.address}</td>
 
-                    <td>{apartment.totalUnits}</td>
-
-                    <td>
-                      <span className="mg-status mg-status-active">
-                        Active
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                      <td>
+                        <span className="mg-status mg-status-active">
+                          Active
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           ) : (
@@ -232,6 +254,58 @@ function Dashboard() {
               icon={Building2}
               title="No apartments found"
               description="Click Add Apartment to create a new apartment after confirming backend fields."
+            />
+          )}
+        </div>
+      </section>
+      <section className="mg-panel" style={{ marginTop: "20px" }}>
+        <div className="mg-toolbar">
+          <div>
+            <h2>Recent Water Usage Logs</h2>
+            <p>
+              Latest water usage entries recorded in the system.
+            </p>
+          </div>
+        </div>
+
+        <div className="mg-table-wrapper">
+          {recentReadings.length > 0 ? (
+            <table className="mg-table">
+              <thead>
+                <tr>
+                  <th>Apartment</th>
+                  <th>Flat</th>
+                  <th>Usage Date</th>
+                  <th>Liters</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {recentReadings.map((reading) => (
+                  <tr key={reading.id}>
+                    <td>{reading.apartmentName}</td>
+
+                    <td>
+                      <span className="mg-table-primary">
+                        {reading.flatNumber}
+                      </span>
+                    </td>
+
+                    <td>{reading.usageDate}</td>
+
+                    <td>{reading.litersConsumed} L</td>
+
+                    <td>{reading.source}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <EmptyState
+              icon={Droplets}
+              title="No water usage logs found"
+              description="Water usage records will appear here after they are added."
             />
           )}
         </div>
