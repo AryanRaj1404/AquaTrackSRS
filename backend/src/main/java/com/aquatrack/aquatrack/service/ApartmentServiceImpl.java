@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.aquatrack.aquatrack.dto.ApartmentRequest;
 import com.aquatrack.aquatrack.dto.ApartmentResponse;
 import com.aquatrack.aquatrack.entity.Apartment;
+import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
 
 @Service
@@ -40,14 +41,14 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public ApartmentResponse getById(Long id) {
         Apartment apartment = apartmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Apartment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
         return toResponse(apartment);
     }
 
     @Override
     public ApartmentResponse update(Long id, ApartmentRequest request) {
         Apartment apartment = apartmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Apartment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
 
         apartment.setName(request.getName());
         apartment.setAddress(request.getAddress());
@@ -59,7 +60,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public void delete(Long id) {
         if (!apartmentRepository.existsById(id)) {
-            throw new RuntimeException("Apartment not found");
+            throw new ResourceNotFoundException("Apartment not found");
         }
         apartmentRepository.deleteById(id);
     }

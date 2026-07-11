@@ -72,7 +72,7 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
     public WaterUsageLogResponse getById(Long id) {
 
         WaterUsageLog log = waterUsageLogRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Water usage log not found"));
 
         return toResponse(log);
     }
@@ -91,7 +91,7 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
 
         WaterUsageLog log = waterUsageLogRepository.findById(id)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Water usage log not found with id: " + id));
+                        new ResourceNotFoundException("Water usage log not found"));
 
         Household household = householdRepository.findById(request.getHouseholdId())
                 .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
