@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getHouseholds } from "../services/householdService";
 import toast from "react-hot-toast";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 import {
-  Activity,
   CheckCircle2,
   Clock3,
   Edit3,
@@ -13,103 +14,91 @@ import {
   Zap,
 } from "lucide-react";
 
-import AdminPageShell from "../components/AdminPageShell";
+import {
+  getMeters,
+  createMeter,
+  updateMeter,
+  deleteMeter,
+} from "../services/meterService";
 
-const initialMeters = [
-  {
-    id: 1,
-    meterNumber: "AQ-1001",
-    household: "A-101",
-    resident: "Arun Kumar",
-    apartment: "Green Valley Apartments",
-    meterType: "Digital",
-    installationDate: "2026-07-01",
-    lastService: "2026-07-04",
-    status: "Active",
-  },
-  {
-    id: 2,
-    meterNumber: "AQ-1002",
-    household: "A-102",
-    resident: "Priya S",
-    apartment: "Green Valley Apartments",
-    meterType: "Digital",
-    installationDate: "2026-07-01",
-    lastService: "2026-07-04",
-    status: "Active",
-  },
-  {
-    id: 3,
-    meterNumber: "AQ-1024",
-    household: "B-204",
-    resident: "Vignesh R",
-    apartment: "Lake View Residency",
-    meterType: "Analog",
-    installationDate: "2026-06-20",
-    lastService: "2026-07-02",
-    status: "Active",
-  },
-  {
-    id: 4,
-    meterNumber: "AQ-1041",
-    household: "C-301",
-    resident: "Nivetha M",
-    apartment: "Sunrise Enclave",
-    meterType: "Digital",
-    installationDate: "2026-06-25",
-    lastService: "Pending",
-    status: "Pending",
-  },
-];
+import AdminPageShell from "../components/AdminPageShell";
 
 const emptyForm = {
   meterNumber: "",
-  household: "",
-  resident: "",
-  apartment: "Green Valley Apartments",
-  meterType: "Digital",
-  installationDate: "",
-  status: "Active",
+  meterType: "DIGITAL",
+  installedDate: "",
+  householdId: "",
 };
 
 function MeterConfig() {
-  const [meters, setMeters] = useState(initialMeters);
+  const [meters, setMeters] = useState([]);
+  const [households, setHouseholds] = useState([]); 
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [meterToDelete, setMeterToDelete] = useState(null);
   const [form, setForm] = useState(emptyForm);
 
+  useEffect(() => {
+    loadMeters();
+  }, []);
+
+  const loadMeters = async () => {
+  try {
+    const [meterData, householdData] = await Promise.all([
+    getMeters(),
+    getHouseholds(),
+  ]);
+
+  setMeters(Array.isArray(meterData) ? meterData : []);
+
+  setHouseholds(Array.isArray(householdData) ? householdData : []);
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Unable to load meters.");
+    setMeters([]);
+
+  }
+};
+
   const filteredMeters = useMemo(() => {
-    return meters.filter((meter) => {
-      const keyword = query.toLowerCase();
+  const keyword = query.toLowerCase();
 
-      const matchesSearch =
-        meter.meterNumber.toLowerCase().includes(keyword) ||
-        meter.household.toLowerCase().includes(keyword) ||
-        meter.resident.toLowerCase().includes(keyword) ||
-        meter.apartment.toLowerCase().includes(keyword);
+  return meters.filter((meter) => {
+    const matchesSearch =
+      meter.meterNumber?.toLowerCase().includes(keyword) ||
+      meter.flatNumber?.toLowerCase().includes(keyword) ||
+      meter.apartmentName?.toLowerCase().includes(keyword);
 
-      const matchesStatus =
-        statusFilter === "All" || meter.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "All" ||
+      (statusFilter === "Active" && meter.active) ||
+      (statusFilter === "Inactive" && !meter.active);
 
-      return matchesSearch && matchesStatus;
-    });
-  }, [meters, query, statusFilter]);
+    return matchesSearch && matchesStatus;
+  });
+}, [meters, query, statusFilter]);
 
-  const activeMeters = meters.filter((meter) => meter.status === "Active").length;
+  const activeMeters = meters.filter(
+    (meter) => meter.active
+  ).length;
 
-  const pendingMeters = meters.filter(
-    (meter) => meter.status === "Pending"
+  const inactiveMeters = meters.filter(
+    (meter) => !meter.active
   ).length;
 
   const digitalMeters = meters.filter(
-    (meter) => meter.meterType === "Digital"
+    (meter) => meter.meterType === "DIGITAL"
   ).length;
 
   const openAddModal = () => {
     setEditingId(null);
+
     setForm(emptyForm);
+
     setShowModal(true);
   };
 
@@ -118,12 +107,9 @@ function MeterConfig() {
 
     setForm({
       meterNumber: meter.meterNumber,
-      household: meter.household,
-      resident: meter.resident,
-      apartment: meter.apartment,
       meterType: meter.meterType,
-      installationDate: meter.installationDate,
-      status: meter.status,
+      installedDate: meter.installedDate,
+      householdId: meter.householdId,
     });
 
     setShowModal(true);
@@ -144,71 +130,90 @@ function MeterConfig() {
     }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    if (
-      !form.meterNumber.trim() ||
-      !form.household.trim() ||
-      !form.resident.trim() ||
-      !form.installationDate
-    ) {
-      toast.error("Please complete all meter details.");
-      return;
-    }
+  if (
+    !form.meterNumber.trim() ||
+    !form.householdId ||
+    !form.installedDate
+  ) {
+    toast.error("Please complete all meter details.");
+    return;
+  }
 
-    if (editingId) {
-      setMeters((previous) =>
-        previous.map((meter) =>
-          meter.id === editingId
-            ? {
-                ...meter,
-                meterNumber: form.meterNumber.trim(),
-                household: form.household.trim(),
-                resident: form.resident.trim(),
-                apartment: form.apartment,
-                meterType: form.meterType,
-                installationDate: form.installationDate,
-                status: form.status,
-              }
-            : meter
-        )
-      );
-
-      toast.success("Meter configuration updated successfully.");
-    } else {
-      const newMeter = {
-        id: Date.now(),
-        meterNumber: form.meterNumber.trim(),
-        household: form.household.trim(),
-        resident: form.resident.trim(),
-        apartment: form.apartment,
-        meterType: form.meterType,
-        installationDate: form.installationDate,
-        lastService: "Pending",
-        status: form.status,
-      };
-
-      setMeters((previous) => [newMeter, ...previous]);
-
-      toast.success("Meter configured successfully.");
-    }
-
-    closeModal();
+  const meterPayload = {
+    meterNumber: form.meterNumber.trim(),
+    meterType: form.meterType,
+    installedDate: form.installedDate,
+    householdId: Number(form.householdId),
   };
 
-  const handleDelete = (meter) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete meter ${meter.meterNumber}?`
-    );
+  const loadingToast = toast.loading(
+    editingId ? "Updating meter..." : "Creating meter..."
+  );
 
-    if (!confirmed) {
+  try {
+    if (editingId) {
+      await updateMeter(editingId, meterPayload);
+
+      toast.success("Meter updated successfully.", {
+        id: loadingToast,
+      });
+    } else {
+      await createMeter(meterPayload);
+
+      toast.success("Meter created successfully.", {
+        id: loadingToast,
+      });
+    }
+
+    await loadMeters();
+
+    closeModal();
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      editingId
+        ? "Unable to update meter."
+        : "Unable to create meter.",
+      {
+        id: loadingToast,
+      }
+    );
+  }
+};
+
+  const handleDelete = (meter) => {
+    setMeterToDelete(meter);
+    setShowDeleteDialog(true);
+  };
+  const confirmDelete = async () => {
+    if (!meterToDelete) {
       return;
     }
 
-    setMeters((previous) => previous.filter((item) => item.id !== meter.id));
+    const loadingToast = toast.loading("Deleting meter...");
 
-    toast.success("Meter deleted successfully.");
+    try {
+      await deleteMeter(meterToDelete.id);
+
+      await loadMeters();
+
+      toast.success("Meter deleted successfully.", {
+        id: loadingToast,
+      });
+
+      setShowDeleteDialog(false);
+      setMeterToDelete(null);
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Unable to delete meter.", {
+        id: loadingToast,
+      });
+    }
   };
 
   return (
@@ -217,7 +222,7 @@ function MeterConfig() {
       description="Assign and manage water meters for registered households."
       searchValue={query}
       onSearchChange={setQuery}
-      searchPlaceholder="Search meter, household or resident..."
+      searchPlaceholder="Search meter, apartment or flat..."
       action={
         <button
           type="button"
@@ -258,8 +263,8 @@ function MeterConfig() {
           </div>
 
           <div>
-            <p>Pending Meters</p>
-            <h2>{pendingMeters}</h2>
+            <p>Inactive Meters</p>
+            <h2>{inactiveMeters}</h2>
           </div>
         </article>
 
@@ -289,7 +294,7 @@ function MeterConfig() {
           >
             <option value="All">All Status</option>
             <option value="Active">Active</option>
-            <option value="Pending">Pending</option>
+            <option value="Inactive">Inactive</option>
           </select>
         </div>
 
@@ -298,12 +303,10 @@ function MeterConfig() {
             <thead>
               <tr>
                 <th>Meter Number</th>
-                <th>Household</th>
-                <th>Resident</th>
                 <th>Apartment</th>
+                <th>Flat</th>
                 <th>Meter Type</th>
                 <th>Installed Date</th>
-                <th>Last Service</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -316,45 +319,48 @@ function MeterConfig() {
                     <span className="mg-table-primary">
                       {meter.meterNumber}
                     </span>
-
-                    <span className="mg-table-secondary">
-                      ID: M-{meter.id}
-                    </span>
                   </td>
 
-                  <td>{meter.household}</td>
+                  <td>{meter.apartmentName}</td>
 
-                  <td>{meter.resident}</td>
-
-                  <td>{meter.apartment}</td>
+                  <td>{meter.flatNumber}</td>
 
                   <td>{meter.meterType}</td>
 
-                  <td>{meter.installationDate}</td>
-
-                  <td>{meter.lastService}</td>
-
+                  <td>
+                    {new Date(meter.installedDate).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
                   <td>
                     <span
                       className={`mg-status ${
-                        meter.status === "Active"
+                        meter.active
                           ? "mg-status-active"
                           : "mg-status-pending"
                       }`}
                     >
-                      {meter.status}
+                      {meter.active ? "Active" : "Inactive"}
                     </span>
                   </td>
 
                   <td>
-                    <div style={{ display: "flex", gap: "7px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                        justifyContent: "center",
+                      }}
+                    >
                       <button
                         type="button"
                         className="mg-action-button"
                         onClick={() => openEditModal(meter)}
                         title="Edit"
                       >
-                        <Edit3 size={14} />
+                        <Edit3 size={15} />
                       </button>
 
                       <button
@@ -363,7 +369,7 @@ function MeterConfig() {
                         onClick={() => handleDelete(meter)}
                         title="Delete"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </td>
@@ -372,9 +378,17 @@ function MeterConfig() {
             </tbody>
           </table>
 
-          {filteredMeters.length === 0 && (
+          {filteredMeters.length > 0 ? (
+            <div className="mg-table-wrapper">
+              <table className="mg-table">
+                {/* Table */}
+              </table>
+            </div>
+          ) : (
             <div className="mg-empty-state">
-              No meters match your search.
+              {meters.length === 0
+                ? "No meters have been configured yet."
+                : "No meters match your search."}
             </div>
           )}
         </div>
@@ -419,55 +433,24 @@ function MeterConfig() {
                 </div>
 
                 <div className="mg-form-group">
-                  <label htmlFor="household">Household</label>
-
-                  <input
-                    id="household"
-                    name="household"
-                    type="text"
-                    value={form.household}
-                    onChange={handleInputChange}
-                    placeholder="A-101"
-                  />
-                </div>
-
-                <div className="mg-form-group">
-                  <label htmlFor="resident">Resident name</label>
-
-                  <input
-                    id="resident"
-                    name="resident"
-                    type="text"
-                    value={form.resident}
-                    onChange={handleInputChange}
-                    placeholder="Arun Kumar"
-                  />
-                </div>
-
-                <div className="mg-form-group">
-                  <label htmlFor="apartment">Apartment</label>
+                  <label htmlFor="householdId">Household</label>
 
                   <select
-                    id="apartment"
-                    name="apartment"
-                    value={form.apartment}
+                    id="householdId"
+                    name="householdId"
+                    value={form.householdId}
                     onChange={handleInputChange}
                   >
-                    <option value="Green Valley Apartments">
-                      Green Valley Apartments
-                    </option>
+                    <option value="">Select Household</option>
 
-                    <option value="Lake View Residency">
-                      Lake View Residency
-                    </option>
-
-                    <option value="Sunrise Enclave">
-                      Sunrise Enclave
-                    </option>
-
-                    <option value="Ocean Breeze Towers">
-                      Ocean Breeze Towers
-                    </option>
+                    {households.map((household) => (
+                      <option
+                        key={household.id}
+                        value={household.id}
+                      >
+                        {household.apartmentName} - {household.flatNumber}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -480,38 +463,25 @@ function MeterConfig() {
                     value={form.meterType}
                     onChange={handleInputChange}
                   >
-                    <option value="Digital">Digital</option>
-                    <option value="Analog">Analog</option>
+                    <option value="DIGITAL">DIGITAL</option>
+                    <option value="ANALOG">ANALOG</option>
                   </select>
                 </div>
 
                 <div className="mg-form-group">
-                  <label htmlFor="installationDate">
-                    Installation date
+                  <label htmlFor="installednDate">
+                    Installed date
                   </label>
 
                   <input
-                    id="installationDate"
-                    name="installationDate"
+                    id="installedDate"
+                    name="installedDate"
                     type="date"
-                    value={form.installationDate}
+                    value={form.installedDate}
                     onChange={handleInputChange}
                   />
                 </div>
 
-                <div className="mg-form-group mg-form-group-full">
-                  <label htmlFor="status">Status</label>
-
-                  <select
-                    id="status"
-                    name="status"
-                    value={form.status}
-                    onChange={handleInputChange}
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Pending">Pending</option>
-                  </select>
-                </div>
               </div>
 
               <div className="mg-modal-actions">
@@ -531,6 +501,20 @@ function MeterConfig() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Delete Meter"
+        message={
+          meterToDelete
+            ? `Are you sure you want to delete meter "${meterToDelete.meterNumber}"?`
+            : ""
+        }
+        onCancel={() => {
+          setShowDeleteDialog(false);
+          setMeterToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+      />
     </AdminPageShell>
   );
 }

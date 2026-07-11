@@ -6,7 +6,9 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Apartments from "./pages/Apartments";
 import Households from "./pages/Households";
+import MeterConfig from "./pages/MeterConfig";
 import axios from "axios";
+import WaterUsage from "./pages/WaterUsage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -26,6 +28,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/water-usage"
+        element={
+          <ProtectedRoute role="ADMIN">
+            <WaterUsage />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/apartments"
@@ -41,6 +51,15 @@ function App() {
         element={
           <ProtectedRoute role="ADMIN">
             <Households />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/meters"
+        element={
+          <ProtectedRoute role="ADMIN">
+            <MeterConfig />
           </ProtectedRoute>
         }
       />

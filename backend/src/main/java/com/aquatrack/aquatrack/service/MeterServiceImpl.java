@@ -101,7 +101,8 @@ public class MeterServiceImpl implements MeterService {
                 meter.getInstalledDate(),
                 meter.getActive(),
                 meter.getHousehold().getId(),
-                meter.getHousehold().getFlatNumber()
+                meter.getHousehold().getFlatNumber(),
+                meter.getHousehold().getApartment().getName()
         );
     }
 }

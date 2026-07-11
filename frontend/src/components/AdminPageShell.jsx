@@ -13,6 +13,7 @@ import {
   Search,
   Users,
   X,
+  Gauge,
 } from "lucide-react";
 
 import "../styles/management.css";
@@ -113,14 +114,32 @@ function AdminPageShell({
       <Users size={20} />
       <span>Households</span>
     </NavLink>
-  </>
+  
+  <NavLink
+  to="/meters"
+  onClick={closeSidebar}
+  className={({ isActive }) =>
+    isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
+  }
+>
+  <Gauge size={20} />
+  <span>Meters</span>
+</NavLink>
+</>
 )}
 
-          <div className="mg-nav-link mg-disabled-link">
+          <NavLink
+            to="/water-usage"
+            onClick={closeSidebar}
+            className={({ isActive }) =>
+              isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
+            }
+          >
             <Droplets size={20} />
             <span>Water Usage</span>
-            <small>Soon</small>
-          </div>
+          </NavLink>
+
+          
 
           <div className="mg-nav-link mg-disabled-link">
             <ReceiptText size={20} />

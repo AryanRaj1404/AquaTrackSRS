@@ -11,9 +11,10 @@ public class MeterResponse {
     private Boolean active;
     private Long householdId;
     private String flatNumber;
+    private String apartmentName;
 
     public MeterResponse(Long id, String meterNumber, String meterType, LocalDate installedDate,
-                          Boolean active, Long householdId, String flatNumber) {
+                          Boolean active, Long householdId, String flatNumber, String apartmentName) {
         this.id = id;
         this.meterNumber = meterNumber;
         this.meterType = meterType;
@@ -21,6 +22,7 @@ public class MeterResponse {
         this.active = active;
         this.householdId = householdId;
         this.flatNumber = flatNumber;
+        this.apartmentName = apartmentName;
     }
 
     public Long getId() { return id; }
@@ -30,4 +32,5 @@ public class MeterResponse {
     public Boolean getActive() { return active; }
     public Long getHouseholdId() { return householdId; }
     public String getFlatNumber() { return flatNumber; }
+    public String getApartmentName() { return apartmentName; }
 }

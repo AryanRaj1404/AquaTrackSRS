@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,21 +27,24 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
     private final WaterUsageLogRepository waterUsageLogRepository;
     private final HouseholdRepository householdRepository;
 
-    public WaterUsageLogServiceImpl(WaterUsageLogRepository waterUsageLogRepository,
-                                     HouseholdRepository householdRepository) {
+    public WaterUsageLogServiceImpl(
+            WaterUsageLogRepository waterUsageLogRepository,
+            HouseholdRepository householdRepository) {
+
         this.waterUsageLogRepository = waterUsageLogRepository;
         this.householdRepository = householdRepository;
     }
 
     @Override
     public WaterUsageLogResponse create(WaterUsageLogRequest request) {
+
         if (waterUsageLogRepository.existsByHouseholdIdAndUsageDate(
-            request.getHouseholdId(),
-            request.getUsageDate())) {
+                request.getHouseholdId(),
+                request.getUsageDate())) {
 
             throw new IllegalArgumentException(
-                "A water usage log already exists for this household on "
-                + request.getUsageDate());
+                    "A water usage log already exists for this household on "
+                            + request.getUsageDate());
         }
 
         Household household = householdRepository.findById(request.getHouseholdId())
@@ -66,13 +70,16 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
 
     @Override
     public WaterUsageLogResponse getById(Long id) {
+
         WaterUsageLog log = waterUsageLogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+
         return toResponse(log);
     }
 
     @Override
     public List<WaterUsageLogResponse> getByHousehold(Long householdId) {
+
         return waterUsageLogRepository.findByHouseholdId(householdId)
                 .stream()
                 .map(this::toResponse)
@@ -81,20 +88,22 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
 
     @Override
     public WaterUsageLogResponse update(Long id, WaterUsageLogRequest request) {
+
         WaterUsageLog log = waterUsageLogRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Water usage log not found with id: " + id));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Water usage log not found with id: " + id));
 
         Household household = householdRepository.findById(request.getHouseholdId())
                 .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
 
         if (waterUsageLogRepository.existsByHouseholdIdAndUsageDateAndIdNot(
-            request.getHouseholdId(),
-            request.getUsageDate(),
-            id)) {
+                request.getHouseholdId(),
+                request.getUsageDate(),
+                id)) {
 
-                throw new IllegalArgumentException(
-                "A water usage log already exists for this household on "
-                + request.getUsageDate());
+            throw new IllegalArgumentException(
+                    "A water usage log already exists for this household on "
+                            + request.getUsageDate());
         }
 
         log.setHousehold(household);
@@ -102,10 +111,11 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
         log.setLitersConsumed(request.getLitersConsumed());
 
         WaterUsageLog saved = waterUsageLogRepository.save(log);
+
         return toResponse(saved);
     }
 
-   @Override
+    @Override
     public void delete(Long id) {
 
         if (!waterUsageLogRepository.existsById(id)) {
@@ -117,14 +127,17 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
 
     @Override
     public List<WaterUsageLogResponse> uploadCsv(MultipartFile file) {
+
         if (file.isEmpty()) {
             throw new IllegalArgumentException("CSV file is empty.");
         }
+
         String fileName = file.getOriginalFilename();
 
         if (fileName == null || !fileName.toLowerCase().endsWith(".csv")) {
-            throw new IllegalArgumentException("Only CSV files are allowed.");
+            throw new IllegalArgumentException("Please upload a .csv file.");
         }
+
         List<WaterUsageLogResponse> results = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(
@@ -134,15 +147,22 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
             boolean firstLine = true;
 
             while ((line = reader.readLine()) != null) {
+
                 if (firstLine) {
                     firstLine = false;
                     continue;
                 }
-                if (line.isBlank()) continue;
+
+                if (line.isBlank()) {
+                    continue;
+                }
 
                 String[] parts = line.split(",");
-                if (parts.length < 3) {
-                    throw new IllegalArgumentException("Invalid CSV row: " + line);
+
+                if (parts.length != 3) {
+                    throw new IllegalArgumentException(
+                            "Invalid CSV row: " + line
+                                    + ". Expected exactly 3 columns: householdId,usageDate,litersConsumed");
                 }
 
                 try {
@@ -158,28 +178,42 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
 
                     results.add(create(request));
 
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
 
                     throw new IllegalArgumentException(
-                            "Invalid CSV row: " + line);
+                            "Invalid CSV row: " + line
+                                    + ". Household ID and liters consumed must be numeric.");
+
+                } catch (DateTimeParseException e) {
+
+                    throw new IllegalArgumentException(
+                            "Invalid CSV row: " + line
+                                    + ". Date must be in YYYY-MM-DD format.");
+
                 }
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to Process CSV file: " , e);
+
+            throw new RuntimeException(
+                    "Failed to process CSV file.", e);
         }
 
         return results;
     }
 
     private WaterUsageLogResponse toResponse(WaterUsageLog log) {
+
         return new WaterUsageLogResponse(
                 log.getId(),
                 log.getHousehold().getId(),
+                log.getHousehold().getFlatNumber(),
+                log.getHousehold().getApartment().getName(),
                 log.getUsageDate(),
                 log.getLitersConsumed(),
                 log.getSource().name(),
-                log.getBillingCycle() != null ? log.getBillingCycle().getId() : null
-        );
+                log.getBillingCycle() != null
+                        ? log.getBillingCycle().getId()
+                        : null);
     }
 }
