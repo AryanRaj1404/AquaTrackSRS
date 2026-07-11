@@ -1,235 +1,293 @@
-# AquaTrackSRS 🌊
+# 🌊 AquaTrack
 
-> **Smart Water Consumption & Billing Management Platform**  
-> **Version:** `v1.0-auth`  
-> **Status:** 🟢 Authentication Module Completed
+> Smart Water Consumption & Billing Management Platform
 
----
-
-# 🎯 Project Overview
-
-AquaTrackSRS is a full-stack web application for apartment water consumption monitoring, billing management, leak detection, and usage analytics. The system is being developed using **Spring Boot**, **React (Vite)** and **PostgreSQL**.
+AquaTrack is a full-stack web application that helps apartment communities monitor water consumption, manage households and meters, calculate billing cycles, and promote efficient water usage through a modern web interface.
 
 ---
 
-# 🎨 UI Color Palette
+## 🚀 Tech Stack
 
-| Purpose | Color | Hex |
-|---------|-------|-----|
-| Primary Blue | 🟦 | `#2563EB` |
-| Light Blue | 🟦 | `#0EA5E9` |
-| Background | ⬜ | `#F8FAFC` |
-| White | ⬜ | `#FFFFFF` |
-| Primary Text | ⬛ | `#1E293B` |
-| Secondary Text | ◻ | `#64748B` |
-| Border | ◽ | `#E2E8F0` |
+### Frontend
+- React (Vite)
+- React Router
+- Axios
+- React Hot Toast
+- Lucide React
+
+### Backend
+- Spring Boot 3
+- Spring Security 6
+- JWT Authentication
+- Spring Data JPA
+- Hibernate
+- Maven
+
+### Database
+- PostgreSQL
+
+### Testing
+- JUnit 5
+- Mockito
+- Spring Boot Test
+- MockMvc
 
 ---
 
-# 🛠 Technology Stack
+# ✨ Features
 
-| Layer | Technology |
-|--------|------------|
-| Frontend | React (Vite), React Router, Axios |
-| Backend | Spring Boot, Spring Security, JWT |
-| Database | PostgreSQL |
-| ORM | Spring Data JPA / Hibernate |
-| Build Tools | Maven, npm |
-| Version Control | Git & GitHub |
+## Authentication
 
----
-
-# ✅ Current Progress
-
-## Backend
-- Authentication completed
-- JWT implemented
-- Spring Security configured
-- Login/Register APIs completed
-- PostgreSQL integrated
-- BCrypt password encryption
-- CORS configured
-
-## Frontend
-- Landing Page
+- JWT Authentication
 - Login
-- Register
+- Registration
+- BCrypt Password Encryption
+- Role Based Authorization
 - Protected Routes
-- JWT Storage
-- Axios Integration
+
+---
+
+## Apartment Management
+
+- Create Apartment
+- View Apartments
+- Search Apartments
 - Backend Integration
+- Form Validation
 
 ---
 
-# 📅 Milestone 1 — Foundation & Core APIs
+## Household Management
 
-## Backend Team
-
-| Feature | Priority | Status | Progress |
-|---------|----------|--------|---------:|
-| Spring Boot Setup | High | ✅ | 100% |
-| PostgreSQL Configuration | High | ✅ | 100% |
-| JWT Authentication | High | ✅ | 100% |
-| Spring Security | High | ✅ | 100% |
-| Login API | High | ✅ | 100% |
-| Register API | High | ✅ | 100% |
-| User Entity | High | ✅ | 100% |
-| Apartment Entity | High | ✅ | 100% |
-| Household Entity | High | ✅ | 100% |
-| Water Usage Logs Entity | High | ✅ | 100% |
-| Billing Cycle Entity | Medium | ✅ | 100% |
-| Tariff Plan Entity | Medium | ✅ | 100% |
-| Apartment CRUD APIs | High | ✅ | 100% |
-| Household CRUD APIs | High | ✅ | 100% |
-| Apartment DTOs | High | ✅ | 100% |
-| Household DTOs | High | ✅ | 100% |
-| Apartment Repository | High | ✅ | 100% |
-| Household Repository | High | ✅ | 100% |
-| Billing Cycle Repository | Medium | ✅ | 100% |
-| Tariff Plan Repository | Medium | ✅ | 100% |
-| Water Usage Log Repository | Medium | ✅ | 100% |
-| Resident Assignment API | High | ⏳ | 0% |
-| Meter Configuration API | Medium | ⏳ | 0% |
-| Manual Usage Logging | High | ⏳ | 0% |
-| CSV Upload API | Medium | ⏳ | 0% |
-| Bean Validation | Medium | ⏳ | 0% |
-| Flyway Migration | Medium | ⏳ | 0% |
-| Unit Tests | Medium | ⏳ | 0% |
-| Integration Tests | Medium | ⏳ | 0% |
-
-## Frontend Team
-
-| Feature | Priority | Status | Progress |
-|---------|----------|--------|---------:|
-| React + Vite Setup | High | ✅ | 100% |
-| Landing Page | High | ✅ | 100% |
-| Login | High | ✅ | 100% |
-| Register | High | ✅ | 100% |
-| JWT Storage | High | ✅ | 100% |
-| Protected Routes | High | ✅ | 100% |
-| Apartment Registration UI | High | ⏳ | 0% |
-| Household Registration UI | High | ⏳ | 0% |
-| Admin Dashboard | High | ⏳ | 0% |
-| Resident Dashboard | High | ⏳ | 0% |
-| Meter Configuration UI | Medium | ⏳ | 0% |
-| Water Usage Entry UI | High | ⏳ | 0% |
-| CSV Upload UI | Medium | ⏳ | 0% |
-| Profile Management | Low | ⏳ | 0% |
----
-
-# 📅 Milestone 2 — Billing Engine & Alerts
-
-## Backend Team
-
-| Feature | Priority | Status |
-|---------|----------|--------|
-| Tiered Billing Engine | High | ⏳ |
-| Tariff Management | High | ⏳ |
-| Bulk Water Purchase | High | ⏳ |
-| Cost Distribution Algorithm | High | ⏳ |
-| Billing Cycle Management | High | ⏳ |
-| Invoice Generation Logic | High | ⏳ |
-| Alert Scheduler | Medium | ⏳ |
-| Leak Detection (2σ) | Medium | ⏳ |
-| Email Notification APIs | Medium | ⏳ |
-
-## Frontend Team
-
-| Feature | Priority | Status |
-|---------|----------|--------|
-| Billing Summary | High | ⏳ |
-| Billing History | Medium | ⏳ |
-| Invoice Details | Medium | ⏳ |
-| Tariff Configuration UI | Medium | ⏳ |
-| Alert Notification UI | Medium | ⏳ |
+- Create Household
+- Update Household
+- Delete Household
+- Search Household
+- Apartment Mapping
 
 ---
 
-# 📅 Milestone 3 — Dashboard & Reporting
+## Meter Management
 
-## Backend Team
-
-| Feature | Priority | Status |
-|---------|----------|--------|
-| Dashboard APIs | High | ⏳ |
-| Statistics APIs | High | ⏳ |
-| PDF Invoice Generation | High | ⏳ |
-| JavaMail / SendGrid | Medium | ⏳ |
-| Resident Comparison APIs | Medium | ⏳ |
-| Admin Dashboard APIs | High | ⏳ |
-
-## Frontend Team
-
-| Feature | Priority | Status |
-|---------|----------|--------|
-| Dashboard | High | ⏳ |
-| Sidebar | High | ⏳ |
-| Navbar | High | ⏳ |
-| Logout | High | ⏳ |
-| Dashboard Cards | High | ⏳ |
-| Recharts Integration | Medium | ⏳ |
-| Monthly Charts | Medium | ⏳ |
-| Comparison Charts | Medium | ⏳ |
-| Resident Dashboard | High | ⏳ |
-| Admin Dashboard | High | ⏳ |
-| Invoice Download | Medium | ⏳ |
-| Water Saving Tips | Low | ⏳ |
+- Register Meter
+- Update Meter
+- Delete Meter
+- Meter Listing
 
 ---
 
-# 📅 Milestone 4 — Integration & Finalization
+## Water Usage Logs
 
-## Backend Team
-
-| Feature | Priority | Status |
-|---------|----------|--------|
-| End-to-End Integration | High | ⏳ |
-| Swagger Documentation | Medium | ⏳ |
-| Docker Compose | Medium | ⏳ |
-| Load Testing | Medium | ⏳ |
-| Performance Optimization | Medium | ⏳ |
-
-## Frontend Team
-
-| Feature | Priority | Status |
-|---------|----------|--------|
-| Responsive UI | High | ⏳ |
-| Cross Browser Testing | Medium | ⏳ |
-| Error Handling | Medium | ⏳ |
-| UI Polish | Medium | ⏳ |
-| Demo Preparation | High | ⏳ |
+- Manual Usage Entry
+- Update Usage Log
+- Delete Usage Log
+- Search Logs
+- Household Mapping
 
 ---
 
-# 📂 Core Database Entities
+## Tariff Plans
+
+- Create Tariff Plan
+- Update Tariff Plan
+- Delete Tariff Plan
+- Search Tariff Plans
+- Effective Date Management
+
+---
+
+## Billing Cycles
+
+- Create Billing Cycle
+- Update Billing Cycle
+- Delete Billing Cycle
+- Status Management
+- Household & Tariff Mapping
+
+---
+
+## Dashboard
+
+- Live Statistics
+- Apartment Count
+- Household Count
+- Meter Count
+- Water Usage Count
+- Backend Connected
+
+---
+
+## User Experience
+
+- Toast Notifications
+- Confirmation Dialogs
+- Loading Indicators
+- Empty States
+- Responsive Layout
+- Search on Every Module
+
+---
+
+# 📂 Project Structure
+
+```
+backend/
+    controller/
+    service/
+    repository/
+    entity/
+    dto/
+    security/
+    exception/
+    config/
+    test/
+
+frontend/
+    pages/
+    components/
+    services/
+    layouts/
+```
+
+---
+
+# 🗄 Database Entities
 
 - Users
 - Apartments
 - Households
+- Meters
 - Water Usage Logs
 - Tariff Plans
 - Billing Cycles
-- Invoices
 
 ---
 
-# 🌳 Git Branch Strategy
+# 🧪 Testing
 
-| Branch | Usage |
-|---------|-------|
-| main | Stable code |
-| backend/* | Backend features |
-| frontend/* | Frontend features |
+### Unit Tests
+
+- Apartment Service
+- Household Service
+- Meter Service
+- Water Usage Log Service
+- Tariff Plan Service
+- Billing Cycle Service
+
+### Controller Tests
+
+- Apartment Controller
+- Household Controller
+- Meter Controller
+- Water Usage Log Controller
+- Tariff Plan Controller
+- Billing Cycle Controller
 
 ---
 
-# 📌 Team Rules
+# 📈 Current Project Progress
 
-- Pull before starting work.
-- Push only tested code.
-- Keep frontend and backend independent.
-- Update this README after completing a feature.
-- Change feature status:
-  - ⏳ Pending
-  - 🟡 In Progress
-  - ✅ Completed
+| Module | Status |
+|---------|--------|
+| Authentication | ✅ Completed |
+| Apartment Module | ✅ Completed |
+| Household Module | ✅ Completed |
+| Meter Module | ✅ Completed |
+| Water Usage Logs | ✅ Completed |
+| Tariff Plans | ✅ Completed |
+| Billing Cycles | ✅ Completed |
+| Dashboard | ✅ Completed |
+| Backend Integration | ✅ Completed |
+| Controller Tests | ✅ Completed |
+| Service Tests | ✅ Completed |
+
+---
+
+# 📅 Milestone 1
+
+| Feature | Status |
+|---------|--------|
+| Database Schema | ✅ Completed |
+| JWT Authentication | ✅ Completed |
+| Spring Security | ✅ Completed |
+| Apartment CRUD | ✅ Completed |
+| Household CRUD | ✅ Completed |
+| Meter CRUD | ✅ Completed |
+| Water Usage Log CRUD | ✅ Completed |
+| Tariff Plan CRUD | ✅ Completed |
+| Billing Cycle CRUD | ✅ Completed |
+| Bean Validation | ✅ Completed |
+| Dashboard Integration | ✅ Completed |
+| Backend–Frontend Integration | ✅ Completed |
+| Unit Tests | ✅ Completed |
+| Controller Integration Tests | ✅ Completed |
+
+### Milestone Status
+
+🟢 **Completed (100%)**
+
+
+---
+
+## Milestone 2
+
+- ⏳ Tiered Billing Engine
+- ⏳ Consumption Distribution
+- ⏳ Invoice Generation
+- ⏳ Alert Scheduler
+- ⏳ Email Notifications
+
+**Progress:** **≈ 10%**
+
+---
+
+## Milestone 3
+
+- ⏳ Charts
+- ⏳ Resident Dashboard
+- ⏳ Admin Analytics
+- ⏳ PDF Invoice
+- ⏳ Comparison Dashboard
+
+**Progress:** **0%**
+
+---
+
+## Milestone 4
+
+- ⏳ Swagger
+- ⏳ Docker
+- ⏳ Performance Testing
+- ⏳ Deployment
+- ⏳ Final Presentation
+
+**Progress:** **0%**
+
+---
+
+# 📊 Project Progress
+
+| Milestone | Progress |
+|-----------|----------|
+| Milestone 1 | ✅ 100% |
+| Milestone 2 | 🟡 10% |
+| Milestone 3 | ⏳ 0% |
+| Milestone 4 | ⏳ 0% |
+
+---
+
+# 🔮 Future Enhancements
+
+- Email Notifications
+- Leak Detection
+- Tiered Billing Engine
+- Invoice PDF Generation
+- Dashboard Charts
+- Water Saving Recommendations
+- Google OAuth Login
+- Docker Deployment
+- Swagger API Documentation
+
+---
+
+Spring Boot • React • PostgreSQL
