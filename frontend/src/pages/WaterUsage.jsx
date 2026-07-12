@@ -315,6 +315,7 @@ function WaterUsage() {
         : "-";
   return (
     <AdminPageShell
+    searchPlaceholder="Search by household, source..."
         action={
             <div style={{ display: "flex", gap: "10px" }}>
                 <button

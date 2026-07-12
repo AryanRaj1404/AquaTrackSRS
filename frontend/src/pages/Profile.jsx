@@ -86,6 +86,7 @@ function Profile() {
   <AdminPageShell
     title="My Profile"
     description="View and update your personal information."
+    searchPlaceholder= "Your profile"
   >
     <section className="mg-panel">
 
