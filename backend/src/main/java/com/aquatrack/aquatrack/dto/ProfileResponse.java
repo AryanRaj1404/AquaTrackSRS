@@ -12,4 +12,5 @@ public class ProfileResponse {
     private String mobileNumber;
     private String username;
     private String role;
+    private String provider;
 }

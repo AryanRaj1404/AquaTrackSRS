@@ -12,6 +12,7 @@ import WaterUsage from "./pages/WaterUsage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TariffPlans from "./pages/TariffPlans";
 import BillingCycles from "./pages/BillingCycles";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -35,6 +36,15 @@ function App() {
         element={
           <ProtectedRoute role="ADMIN">
             <WaterUsage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         }
       />

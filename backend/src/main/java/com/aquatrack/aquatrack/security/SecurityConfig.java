@@ -35,7 +35,8 @@ public class SecurityConfig {
             .requestMatchers(
                     "/auth/register",
                     "/auth/login",
-                    "/auth/google"
+                    "/auth/google",
+                    "/public/**"
             ).permitAll()
 
             .requestMatchers(

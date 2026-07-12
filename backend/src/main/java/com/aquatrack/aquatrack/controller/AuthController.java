@@ -42,6 +42,7 @@ public class AuthController {
     }
     @GetMapping("/me")
     public ProfileResponse me(Authentication authentication) {
+        System.out.println("Authenticated User = " + authentication.getName());
         return userService.getProfile(authentication.getName());
     }
     @PutMapping("/profile")

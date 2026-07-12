@@ -19,6 +19,7 @@ import com.aquatrack.aquatrack.dto.RegisterRequest;
 import com.aquatrack.aquatrack.dto.UpdateProfileRequest;
 import com.aquatrack.aquatrack.entity.User;
 import com.aquatrack.aquatrack.enums.Role;
+import com.aquatrack.aquatrack.enums.AuthProvider;
 import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.security.JwtService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -107,6 +108,7 @@ class UserServiceImplTest {
         user.setEmail("aryan@test.com");
         user.setMobileNumber("9999999999");
         user.setRole(Role.RESIDENT);
+        user.setProvider(AuthProvider.LOCAL);
 
         when(userRepository.findByUsername("aryan"))
                 .thenReturn(Optional.of(user));
@@ -128,6 +130,7 @@ class UserServiceImplTest {
         user.setEmail("aryan@test.com");
         user.setMobileNumber("9999999999");
         user.setRole(Role.RESIDENT);
+        user.setProvider(AuthProvider.LOCAL);
 
         UpdateProfileRequest request =
                 new UpdateProfileRequest();

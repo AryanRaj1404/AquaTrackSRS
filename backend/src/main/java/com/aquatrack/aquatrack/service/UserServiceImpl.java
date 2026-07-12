@@ -133,7 +133,8 @@ public class UserServiceImpl implements UserService{
                 user.getEmail(),
                 user.getMobileNumber(),
                 user.getUsername(),
-                user.getRole().name()
+                user.getRole().name(),
+                user.getProvider().name()
         );
     }
     @Override
@@ -163,7 +164,8 @@ public class UserServiceImpl implements UserService{
                 user.getEmail(),
                 user.getMobileNumber(),
                 user.getUsername(),
-                user.getRole().name()
+                user.getRole().name(),
+                user.getProvider().name()
         );
     }
 }

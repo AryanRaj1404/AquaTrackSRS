@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import api from "../services/api";
 
@@ -93,32 +95,68 @@ function Register() {
     const loadingToast = toast.loading("Creating resident account...");
 
     try {
-  await api.post("/auth/register", payload);
+      await api.post("/auth/register", payload);
 
-  toast.success("Resident registered successfully.", {
-    id: loadingToast,
-  });
+      toast.success("Resident registered successfully.", {
+        id: loadingToast,
+      });
 
-  setForm(initialForm);
+      setForm(initialForm);
 
-  setTimeout(() => {
-    navigate("/login");
-  }, 700);
+      setTimeout(() => {
+        navigate("/login");
+      }, 700);
 
-} catch (error) {
-  console.error("Registration error:", error);
+    } catch (error) {
+      console.error("Registration error:", error);
 
-  const message =
-    error.response?.data?.message ||
-    "Unable to connect to the server. Please try again.";
+      const message =
+        error.response?.data?.message ||
+        "Unable to connect to the server. Please try again.";
 
-  toast.error(message, {
-    id: loadingToast,
-  });
+      toast.error(message, {
+        id: loadingToast,
+      });
 
-} finally {
-  setIsSubmitting(false);
-}
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleRegister = async (credentialResponse) => {
+    try {
+      const response = await api.post("/auth/google", {
+        idToken: credentialResponse.credential,
+      });
+
+      const token = response.data.token;
+
+      localStorage.setItem("token", token);
+
+      const decoded = jwtDecode(token);
+
+      localStorage.setItem("role", decoded.role);
+      localStorage.setItem("username", decoded.sub);
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          username: decoded.sub,
+        })
+      );
+
+      toast.success("Google Sign-In Successful!");
+
+      navigate("/dashboard");
+
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message ||
+        "Google Sign-In Failed"
+      );
+    }
   };
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(7,129,165,0.14),transparent_32%),linear-gradient(135deg,#f6fbff_0%,#e7f4fb_100%)] px-4 py-8">
@@ -332,6 +370,25 @@ function Register() {
                 {isSubmitting ? "Creating Account..." : "Create Account"}
               </button>
             </form>
+
+            <div className="my-6 flex items-center">
+              <div className="h-px flex-1 bg-slate-300"></div>
+
+              <span className="mx-4 text-sm text-slate-500">
+                OR
+              </span>
+
+              <div className="h-px flex-1 bg-slate-300"></div>
+            </div>
+
+            <div className="my-6 flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleRegister}
+                onError={() => {
+                  toast.error("Google Sign-In Failed");
+                }}
+              />
+            </div>
 
             <p className="mt-7 text-center text-sm text-slate-500">
               Already have an account?{" "}

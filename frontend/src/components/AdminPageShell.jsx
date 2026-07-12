@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import {
+  CircleUser,
   Bell,
   Building2,
   Droplets,
@@ -49,6 +50,10 @@ function AdminPageShell({
     setTimeout(() => {
       navigate("/login");
     }, 500);
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
   };
 
   return (
@@ -174,6 +179,19 @@ function AdminPageShell({
             </div>
           </div>
 
+          <NavLink
+            to="/profile"
+            onClick={closeSidebar}
+            className={({ isActive }) =>
+              isActive
+                ? "mg-nav-link mg-nav-active"
+                : "mg-nav-link"
+            }
+          >
+            <CircleUser size={20} />
+            <span>My Profile</span>
+          </NavLink>
+
           <button
             type="button"
             className="mg-logout-button"
@@ -235,16 +253,37 @@ function AdminPageShell({
 
             <div className="mg-topbar-divider" />
 
-            <div className="mg-profile">
+            <div
+              className="mg-profile"
+              onClick={handleProfileClick}
+              role="button"
+              tabIndex={0}
+              style={{
+                cursor: "pointer",
+                borderRadius: "14px",
+                padding: "8px 12px",
+                transition: "0.25s",
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleProfileClick();
+                }
+              }}
+            >
               <div className="mg-avatar">
                 {username ? username.charAt(0).toUpperCase() : "U"}
               </div>
 
               <div className="mg-profile-details">
                 <strong>{username || "User"}</strong>
-                <span>{role === "ADMIN" ? "Apartment Admin" : "Resident"}</span>
+                <span>
+                  {role === "ADMIN"
+                    ? "Apartment Admin"
+                    : "Resident"}
+                </span>
               </div>
             </div>
+
           </div>
         </header>
 

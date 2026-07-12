@@ -1,7 +1,32 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "../styles/hero.css";
 
 function HeroSection() {
+  const [stats, setStats] = useState({
+    apartments: 0,
+    households: 0,
+    waterUsage: 0,
+    residents: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/public/stats"
+        );
+
+        setStats(response.data);
+      } catch (error) {
+        console.error("Failed to load statistics", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <section className="hero">
 
@@ -40,22 +65,24 @@ function HeroSection() {
 
           <div className="dashboard-item">
             <span>🏢 Apartments</span>
-            <spam className="badge">12</spam>
+            <span className="badge">{stats.apartments}</span>
           </div>
 
           <div className="dashboard-item">
             <span>🏠 Households</span>
-            <spam className="badge">48</spam>
+            <span className="badge">{stats.households}</span>
           </div>
 
           <div className="dashboard-item">
             <span>💧 Water Usage</span>
-            <span className="badge">2540 L</span>
+            <span className="badge">
+              {(stats.waterUsage ?? 0).toLocaleString()} L
+            </span>
           </div>
 
           <div className="dashboard-item">
             <span>👤 Residents</span>
-            <spam className="badge">96</spam>
+            <span className="badge">{stats.residents}</span>
           </div>
 
         </div>
