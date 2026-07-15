@@ -25,12 +25,19 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final GoogleIdTokenVerifier googleIdTokenVerifier;
+    private final EmailService emailService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService,GoogleIdTokenVerifier googleIdTokenVerifier){
+    public UserServiceImpl(UserRepository userRepository,
+         PasswordEncoder passwordEncoder, 
+         JwtService jwtService,
+         GoogleIdTokenVerifier googleIdTokenVerifier,
+        EmailService emailService
+        ){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.googleIdTokenVerifier = googleIdTokenVerifier;
+        this.emailService = emailService;
     }
 
     @Override
@@ -61,7 +68,12 @@ public class UserServiceImpl implements UserService{
         user.setRole(Role.RESIDENT);
         user.setProvider(AuthProvider.LOCAL);
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        emailService.sendWelcomeEmail(
+            savedUser.getEmail(),
+            savedUser.getFirstName()
+        );
     }
 
     @Override
@@ -110,7 +122,12 @@ public class UserServiceImpl implements UserService{
                 user.setRole(Role.RESIDENT);
                 user.setProvider(AuthProvider.GOOGLE);
 
-                userRepository.save(user);
+                User savedUser = userRepository.save(user);
+
+                emailService.sendWelcomeEmail(
+                    savedUser.getEmail(),
+                    savedUser.getFirstName()
+                );
             }
 
             String token = jwtService.generateToken(user);

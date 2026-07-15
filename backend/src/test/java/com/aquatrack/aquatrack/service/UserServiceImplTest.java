@@ -18,8 +18,8 @@ import com.aquatrack.aquatrack.dto.ProfileResponse;
 import com.aquatrack.aquatrack.dto.RegisterRequest;
 import com.aquatrack.aquatrack.dto.UpdateProfileRequest;
 import com.aquatrack.aquatrack.entity.User;
-import com.aquatrack.aquatrack.enums.Role;
 import com.aquatrack.aquatrack.enums.AuthProvider;
+import com.aquatrack.aquatrack.enums.Role;
 import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.security.JwtService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -38,6 +38,9 @@ class UserServiceImplTest {
 
     @Mock
     private GoogleIdTokenVerifier googleIdTokenVerifier;
+
+    @Mock
+    private EmailService emailService;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -66,9 +69,17 @@ class UserServiceImplTest {
         when(passwordEncoder.encode("password"))
                 .thenReturn("encodedPassword");
 
+        when(userRepository.save(any(User.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
         userService.register(request);
 
         verify(userRepository).save(any(User.class));
+
+        verify(emailService).sendWelcomeEmail(
+        "aryan@test.com",
+        "Aryan"
+);
     }
 
     @Test
