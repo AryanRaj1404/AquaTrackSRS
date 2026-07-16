@@ -13,7 +13,7 @@ public interface BillingCycleService {
 
     BillingCycleResponse getById(Long id);
 
-    List<BillingCycleResponse> getByHousehold(Long householdId);
+    List<BillingCycleResponse> getByApartmentId(Long apartmentId);
 
     BillingCycleResponse update(Long id, BillingCycleRequest request);
 

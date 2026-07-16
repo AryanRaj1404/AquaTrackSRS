@@ -58,7 +58,7 @@ class BillingCycleServiceImplTest {
         tariffPlan.setPlanName("Residential");
 
         BillingCycleRequest request = new BillingCycleRequest();
-        request.setHouseholdId(1L);
+        request.setApartmentId(1L);
         request.setTariffPlanId(1L);
         request.setStartDate(LocalDate.now());
         request.setEndDate(LocalDate.now().plusMonths(1));
@@ -67,7 +67,7 @@ class BillingCycleServiceImplTest {
 
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setId(1L);
-        billingCycle.setHousehold(household);
+        billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
         billingCycle.setStartDate(request.getStartDate());
         billingCycle.setEndDate(request.getEndDate());
@@ -99,7 +99,11 @@ class BillingCycleServiceImplTest {
 
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setId(1L);
-        billingCycle.setHousehold(household);
+        Apartment apartment = new Apartment();
+        apartment.setId(1L);
+        apartment.setName("ABC Residency");
+
+        billingCycle.setApartment(apartment);
 
         when(billingCycleRepository.findById(1L))
                 .thenReturn(Optional.of(billingCycle));
@@ -130,7 +134,11 @@ class BillingCycleServiceImplTest {
 
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setId(1L);
-        billingCycle.setHousehold(household);
+        Apartment apartment = new Apartment();
+        apartment.setId(1L);
+        apartment.setName("ABC Residency");
+
+        billingCycle.setApartment(apartment);
 
         when(billingCycleRepository.findAll())
                 .thenReturn(List.of(billingCycle));

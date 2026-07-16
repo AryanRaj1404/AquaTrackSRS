@@ -42,9 +42,9 @@ public class BillingCycleController {
         return billingCycleService.getById(id);
     }
 
-    @GetMapping("/household/{householdId}")
-    public List<BillingCycleResponse> getByHousehold(@PathVariable Long householdId) {
-        return billingCycleService.getByHousehold(householdId);
+    @GetMapping("/apartment/{apartmentId}")
+    public List<BillingCycleResponse> getByApartmentId(@PathVariable Long householdId) {
+        return billingCycleService.getByApartmentId(householdId);
     }
 
     @PutMapping("/{id}")

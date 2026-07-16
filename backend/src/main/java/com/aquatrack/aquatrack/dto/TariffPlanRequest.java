@@ -1,6 +1,7 @@
 package com.aquatrack.aquatrack.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,8 +17,7 @@ public class TariffPlanRequest {
     private String planName;
 
     @NotNull
-    @Positive
-    private Double ratePerUnit;
+    private List<TariffTierRequest> tiers;
 
     @NotNull
     @Positive

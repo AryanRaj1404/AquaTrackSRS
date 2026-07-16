@@ -1,13 +1,8 @@
 package com.aquatrack.aquatrack.entity;
 
-import java.time.LocalDate;
-
-import com.aquatrack.aquatrack.enums.BillingCycleStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,25 +18,25 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BillingCycle {
+public class TariffTier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Double totalAmount;
+    @Column(nullable = false)
+    private Integer tierOrder;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable=false)
-    private BillingCycleStatus status;
+    /**
+     * Maximum KL covered by this tier.
+     * NULL means unlimited.
+     */
+    private Double uptoKl;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "apartment_id")
-    private Apartment apartment;
+    @Column(nullable = false)
+    private Double ratePerKl;
 
-    @ManyToOne
-    @JoinColumn(name = "tariff_plan_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tariff_plan_id", nullable = false)
     private TariffPlan tariffPlan;
 }

@@ -68,7 +68,6 @@ class BillingCycleControllerTest {
         TariffPlan tariffPlan = new TariffPlan();
 
         tariffPlan.setPlanName("Standard");
-        tariffPlan.setRatePerUnit(12.5);
         tariffPlan.setFixedCharge(200.0);
         tariffPlan.setEffectiveFrom(LocalDate.of(2026,1,1));
         tariffPlan.setEffectiveTo(LocalDate.of(2026,12,31));
@@ -130,7 +129,11 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026,7,31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        billingCycle.setHousehold(household);
+        Apartment apartment = new Apartment();
+        apartment.setId(1L);
+        apartment.setName("ABC Residency");
+
+        billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
         billingCycleRepository.save(billingCycle);
@@ -151,7 +154,11 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026,7,31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        billingCycle.setHousehold(household);
+        Apartment apartment = new Apartment();
+        apartment.setId(1L);
+        apartment.setName("ABC Residency");
+
+        billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
         billingCycle = billingCycleRepository.save(billingCycle);
@@ -182,7 +189,11 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026,7,31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        billingCycle.setHousehold(household);
+        Apartment apartment = new Apartment();
+        apartment.setId(1L);
+        apartment.setName("ABC Residency");
+
+        billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
         billingCycleRepository.save(billingCycle);
@@ -202,7 +213,11 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026, 7, 31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        billingCycle.setHousehold(household);
+        Apartment apartment = new Apartment();
+        apartment.setId(1L);
+        apartment.setName("ABC Residency");
+
+        billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
         billingCycle = billingCycleRepository.save(billingCycle);
@@ -262,7 +277,11 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026, 7, 31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        billingCycle.setHousehold(household);
+        Apartment apartment = new Apartment();
+        apartment.setId(1L);
+        apartment.setName("ABC Residency");
+
+        billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
         billingCycle = billingCycleRepository.save(billingCycle);

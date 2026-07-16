@@ -10,6 +10,10 @@ import com.aquatrack.aquatrack.entity.WaterUsageLog;
 public interface WaterUsageLogRepository extends JpaRepository<WaterUsageLog, Long>{
     List<WaterUsageLog> findByHouseholdId(Long householdId);
     List<WaterUsageLog> findByBillingCycleId(Long billingCycleId);
+
+    List<WaterUsageLog> findByBillingCycleIdAndHouseholdId(
+        Long billingCycleId,
+        Long householdId);
     boolean existsByHouseholdIdAndUsageDate(
         Long householdId,
         LocalDate usageDate

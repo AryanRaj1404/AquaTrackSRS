@@ -1,6 +1,7 @@
 package com.aquatrack.aquatrack.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.aquatrack.aquatrack.dto.TariffPlanRequest;
 import com.aquatrack.aquatrack.dto.TariffPlanResponse;
+import com.aquatrack.aquatrack.dto.TariffTierRequest;
 import com.aquatrack.aquatrack.entity.TariffPlan;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.TariffPlanRepository;
@@ -35,14 +37,22 @@ class TariffPlanServiceImplTest {
 
         TariffPlanRequest request = new TariffPlanRequest();
         request.setPlanName("Residential");
-        request.setRatePerUnit(5.5);
+        List<TariffTierRequest> tiers = new ArrayList<>();
+
+        TariffTierRequest tier = new TariffTierRequest();
+        tier.setTierOrder(1);
+        tier.setUptoKl(null);
+        tier.setRatePerKl(5.0);
+
+        tiers.add(tier);
+
+        request.setTiers(tiers);
         request.setFixedCharge(100.0);
         request.setEffectiveFrom(LocalDate.now());
 
         TariffPlan plan = new TariffPlan();
         plan.setId(1L);
         plan.setPlanName("Residential");
-        plan.setRatePerUnit(5.5);
         plan.setFixedCharge(100.0);
         plan.setEffectiveFrom(LocalDate.now());
 

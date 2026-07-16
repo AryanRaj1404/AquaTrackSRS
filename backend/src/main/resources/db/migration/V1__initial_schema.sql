@@ -84,8 +84,6 @@ CREATE TABLE tariff_plan (
 
     plan_name VARCHAR(255) NOT NULL,
 
-    rate_per_unit DOUBLE PRECISION NOT NULL,
-
     fixed_charge DOUBLE PRECISION NOT NULL,
 
     effective_from DATE,
@@ -107,13 +105,13 @@ CREATE TABLE billing_cycle (
 
     status VARCHAR(50) NOT NULL,
 
-    household_id BIGINT NOT NULL,
+    apartment_id BIGINT NOT NULL,
 
     tariff_plan_id BIGINT,
 
-    CONSTRAINT fk_billing_household
-        FOREIGN KEY (household_id)
-        REFERENCES household(id)
+    CONSTRAINT fk_billing_apartment
+        FOREIGN KEY (apartment_id)
+        REFERENCES apartment(id)
         ON DELETE CASCADE,
 
     CONSTRAINT fk_billing_tariff
@@ -156,8 +154,8 @@ ON users(household_id);
 CREATE INDEX idx_meter_household
 ON meter(household_id);
 
-CREATE INDEX idx_billing_household
-ON billing_cycle(household_id);
+CREATE INDEX idx_billing_apartment
+ON billing_cycle(apartment_id);
 
 CREATE INDEX idx_billing_tariff
 ON billing_cycle(tariff_plan_id);

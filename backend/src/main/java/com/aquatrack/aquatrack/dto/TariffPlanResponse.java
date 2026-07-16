@@ -1,6 +1,7 @@
 package com.aquatrack.aquatrack.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +12,7 @@ public class TariffPlanResponse {
 
     private Long id;
     private String planName;
-    private Double ratePerUnit;
+    private List<TariffTierResponse> tiers;
     private Double fixedCharge;
     private LocalDate effectiveFrom;
     private LocalDate effectiveTo;

@@ -49,7 +49,7 @@ public class AuthController {
     public ProfileResponse updateProfile(
             Authentication authentication,
             @Valid @RequestBody UpdateProfileRequest request) {
-
+                
         return userService.updateProfile(authentication.getName(), request);
     }
 }

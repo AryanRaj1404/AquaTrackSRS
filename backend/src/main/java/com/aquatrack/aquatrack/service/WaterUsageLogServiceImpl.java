@@ -14,10 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.aquatrack.aquatrack.dto.WaterUsageLogRequest;
 import com.aquatrack.aquatrack.dto.WaterUsageLogResponse;
+import com.aquatrack.aquatrack.entity.BillingCycle;
 import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.WaterUsageLog;
 import com.aquatrack.aquatrack.enums.UsageSource;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
+import com.aquatrack.aquatrack.repository.BillingCycleRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
@@ -26,13 +28,17 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
 
     private final WaterUsageLogRepository waterUsageLogRepository;
     private final HouseholdRepository householdRepository;
+    private final BillingCycleRepository billingCycleRepository;
 
     public WaterUsageLogServiceImpl(
             WaterUsageLogRepository waterUsageLogRepository,
-            HouseholdRepository householdRepository) {
+            HouseholdRepository householdRepository,
+            BillingCycleRepository billingCycleRepository
+        ) {
 
         this.waterUsageLogRepository = waterUsageLogRepository;
         this.householdRepository = householdRepository;
+        this.billingCycleRepository = billingCycleRepository;
     }
 
     @Override
@@ -50,11 +56,20 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
         Household household = householdRepository.findById(request.getHouseholdId())
                 .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
 
+        BillingCycle billingCycle = null;
+
+        if (request.getBillingCycleId() != null) {
+            billingCycle = billingCycleRepository.findById(request.getBillingCycleId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Billing cycle not found"));
+        }
+
         WaterUsageLog log = new WaterUsageLog();
         log.setHousehold(household);
         log.setUsageDate(request.getUsageDate());
         log.setLitersConsumed(request.getLitersConsumed());
         log.setSource(UsageSource.MANUAL_ENTRY);
+        log.setBillingCycle(billingCycle);
 
         WaterUsageLog saved = waterUsageLogRepository.save(log);
         return toResponse(saved);
