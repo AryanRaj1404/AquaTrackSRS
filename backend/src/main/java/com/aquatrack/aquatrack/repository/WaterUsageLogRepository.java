@@ -12,6 +12,8 @@ public interface WaterUsageLogRepository extends JpaRepository<WaterUsageLog, Lo
     List<WaterUsageLog> findByHouseholdId(Long householdId);
     List<WaterUsageLog> findByBillingCycleId(Long billingCycleId);
 
+    boolean existsByBillingCycleId(Long billingCycleId);
+
     List<WaterUsageLog> findByBillingCycleIdAndHouseholdId(
         Long billingCycleId,
         Long householdId);
@@ -50,4 +52,6 @@ public interface WaterUsageLogRepository extends JpaRepository<WaterUsageLog, Lo
     ORDER BY SUM(w.litersConsumed) DESC
     """)
     List<Object[]> getTopHouseholds();
+
+
 }

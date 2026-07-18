@@ -84,6 +84,40 @@ public class BulkWaterPurchaseServiceImpl implements BulkWaterPurchaseService {
         repository.deleteById(id);
     }
 
+    @Override
+    public BulkWaterPurchaseResponse update(
+            Long id,
+            BulkWaterPurchaseRequest request) {
+
+        BulkWaterPurchase purchase = repository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Purchase not found"));
+
+        Apartment apartment = apartmentRepository.findById(request.getApartmentId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Apartment not found"));
+
+        BillingCycle billingCycle = billingCycleRepository
+                .findById(request.getBillingCycleId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Billing cycle not found"));
+
+        purchase.setApartment(apartment);
+        purchase.setBillingCycle(billingCycle);
+        purchase.setPurchaseDate(request.getPurchaseDate());
+        purchase.setSource(request.getSource());
+        purchase.setVolumeKl(request.getVolumeKl());
+        purchase.setUnitCost(request.getUnitCost());
+
+        purchase.setTotalCost(
+                request.getVolumeKl() *
+                request.getUnitCost());
+
+        purchase.setSupplier(request.getSupplier());
+
+        return toResponse(repository.save(purchase));
+    }
+
     private BulkWaterPurchaseResponse toResponse(
             BulkWaterPurchase purchase) {
 

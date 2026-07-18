@@ -44,4 +44,13 @@ public class GlobalExceptionHandler {
                 // .body("Something went wrong.");
                 .body(ex.toString());
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalState(
+            IllegalStateException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(ex.getMessage());
+    }
 }

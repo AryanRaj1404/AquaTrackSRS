@@ -19,20 +19,35 @@ export async function deleteUsageLog(id) {
   await api.delete(`/usage-logs/${id}`);
 }
 
-export async function uploadCsv(file) {
-  const formData = new FormData();
+export const uploadCsv = async (
+    file,
+    billingCycleId
+) => {
 
-  formData.append("file", file);
+    const formData = new FormData();
 
-  const response = await api.post(
-    "/usage-logs/upload-csv",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+    formData.append("file", file);
 
-  return response.data;
-}
+    formData.append(
+        "billingCycleId",
+        billingCycleId
+    );
+
+    const response = await api.post(
+
+        "/usage-logs/upload-csv",
+
+        formData,
+
+        {
+            headers: {
+                "Content-Type":
+                    "multipart/form-data",
+            },
+        }
+
+    );
+
+    return response.data;
+
+};

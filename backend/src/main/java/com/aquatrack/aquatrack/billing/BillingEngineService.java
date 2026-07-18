@@ -66,6 +66,12 @@ public class BillingEngineService {
         double purchasedCost =
                 bulkWaterCostCalculator.calculateTotalCost(purchases);
 
+        System.out.println("Purchases = " + purchases.size());
+
+        System.out.println("Purchased Volume = " + purchasedVolume);
+
+        System.out.println("Purchased Cost = " + purchasedCost);
+
         double purchasedRate = 0;
 
         if (purchasedVolume > 0) {
@@ -84,18 +90,18 @@ public class BillingEngineService {
                         .mapToDouble(HouseholdBill::getTotalAmount)
                         .sum();
 
-        double adjustmentPool = purchasedCost - totalCollected;
-
-        costDistributionCalculator.distributeAdjustment(
-                bills,
-                adjustmentPool);
+        costDistributionCalculator
+                .distributeBulkWaterCost(
+                        bills,
+                        purchasedCost,
+                        purchasedRate
+                );
 
         return BillingSummary.builder()
                 .totalPurchasedVolume(purchasedVolume)
                 .totalPurchasedCost(purchasedCost)
                 .totalConsumption(totalConsumption)
                 .totalCollected(totalCollected)
-                .adjustmentPool(adjustmentPool)
                 .purchasedRate(purchasedRate)
                 .build();
     }

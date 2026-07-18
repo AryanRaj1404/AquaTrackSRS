@@ -33,4 +33,6 @@ public interface InvoiceRepository
         """)
     List<Object[]> getMonthlyRevenue();
 
+    boolean existsByBillingCycleId(Long billingCycleId);
+
 }

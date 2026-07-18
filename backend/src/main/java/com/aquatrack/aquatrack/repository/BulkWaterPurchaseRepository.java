@@ -19,4 +19,6 @@ public interface BulkWaterPurchaseRepository
         """)
     Double getTotalBulkWaterPurchasedKl();
 
+    boolean existsByBillingCycleId(Long billingCycleId);
+
 }

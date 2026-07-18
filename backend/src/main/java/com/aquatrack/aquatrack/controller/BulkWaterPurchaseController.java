@@ -4,7 +4,14 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseRequest;
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseResponse;
@@ -48,5 +55,13 @@ public class BulkWaterPurchaseController {
 
         return ResponseEntity.ok("Bulk water purchase deleted successfully");
     }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<BulkWaterPurchaseResponse> update(
+            @PathVariable Long id,
+            @Validated @RequestBody BulkWaterPurchaseRequest request) {
 
+        return ResponseEntity.ok(
+                service.update(id, request));
+    }
 }

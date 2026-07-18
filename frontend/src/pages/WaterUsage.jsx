@@ -26,9 +26,11 @@ import {
 } from "../services/usageLogService";
 
 import { getHouseholds } from "../services/householdService";
+import { getBillingCycles } from "../services/billingCycleService";
 
 const emptyForm = {
         householdId: "",
+        billingCycleId: "",
         usageDate: "",
         litersConsumed: "",
         };
@@ -37,6 +39,8 @@ function WaterUsage() {
     
     const [usageLogs, setUsageLogs] = useState([]);
     const [households, setHouseholds] = useState([]);
+    const [billingCycles, setBillingCycles] = useState([]);
+    const [selectedBillingCycle, setSelectedBillingCycle] = useState("");
 
     const [query, setQuery] = useState("");
 
@@ -61,13 +65,18 @@ function WaterUsage() {
     try {
         setIsLoading(true);
 
-        const [usageData, householdData] = await Promise.all([
+        const [usageData,
+            householdData,
+            billingCycleData
+        ] = await Promise.all([
         getUsageLogs(),
         getHouseholds(),
+        getBillingCycles(),
         ]);
 
         setUsageLogs(Array.isArray(usageData) ? usageData : []);
         setHouseholds(Array.isArray(householdData) ? householdData : []);
+        setBillingCycles(Array.isArray(billingCycleData)? billingCycleData : []);
 
     } catch (error) {
         console.error(error);
@@ -104,6 +113,7 @@ function WaterUsage() {
 
     setForm({
         householdId: log.householdId,
+        billingCycleId: log.billingCycleId ?? "",
         usageDate: log.usageDate,
         litersConsumed: log.litersConsumed,
     });
@@ -132,6 +142,11 @@ function WaterUsage() {
         return false;
     }
 
+    if (!form.billingCycleId) {
+        toast.error("Please select a billing cycle.");
+        return false;
+    }
+
     if (!form.usageDate) {
         toast.error("Please select a usage date.");
         return false;
@@ -154,6 +169,7 @@ function WaterUsage() {
 
     const payload = {
         householdId: Number(form.householdId),
+        billingCycleId: Number(form.billingCycleId),
         usageDate: form.usageDate,
         litersConsumed: Number(form.litersConsumed),
     };
@@ -254,13 +270,26 @@ function WaterUsage() {
 
     if (!file) return;
 
+    if (!selectedBillingCycle) {
+
+            toast.error("Select a billing cycle first.");
+
+            return;
+
+        }
+
     const loadingToast = toast.loading(
         "Uploading CSV..."
     );
 
     try {
 
-        await uploadCsv(file);
+        
+
+        await uploadCsv(
+            file,
+            selectedBillingCycle
+        );
 
         toast.success(
         "CSV uploaded successfully.",
@@ -315,9 +344,34 @@ function WaterUsage() {
         : "-";
   return (
     <AdminPageShell
-    searchPlaceholder="Search by household, source..."
+    searchPlaceholder="Search by household and apartment..."
         action={
             <div style={{ display: "flex", gap: "10px" }}>
+                <select
+                    className="mg-select"
+                    value={selectedBillingCycle}
+                    onChange={(e) =>
+                        setSelectedBillingCycle(e.target.value)
+                    }
+                >
+
+                    <option value="">
+                        Billing Cycle
+                    </option>
+
+                    {billingCycles.map((cycle) => (
+
+                        <option
+                            key={cycle.id}
+                            value={cycle.id}
+                        >
+                            {cycle.apartmentName} • {cycle.startDate}
+                        </option>
+
+                    ))}
+
+                </select>
+
                 <button
                 type="button"
                 className="mg-secondary-button"
@@ -531,6 +585,36 @@ function WaterUsage() {
                 <form onSubmit={handleSubmit}>
 
                     <div className="mg-form-grid">
+
+                    <div className="mg-form-group">
+
+                        <label>Billing Cycle</label>
+
+                        <select
+                            name="billingCycleId"
+                            value={form.billingCycleId}
+                            onChange={handleInputChange}
+                            disabled={isSubmitting}
+                        >
+
+                            <option value="">
+                                Select Billing Cycle
+                            </option>
+
+                            {billingCycles.map((cycle) => (
+
+                                <option
+                                    key={cycle.id}
+                                    value={cycle.id}
+                                >
+                                    {cycle.apartmentName} • {cycle.startDate} - {cycle.endDate}
+                                </option>
+
+                            ))}
+
+                        </select>
+
+                    </div>
 
                     <div className="mg-form-group">
 

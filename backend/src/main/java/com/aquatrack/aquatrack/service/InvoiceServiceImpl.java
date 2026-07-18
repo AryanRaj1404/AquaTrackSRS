@@ -167,6 +167,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .toList();
         }
 
+        
         @Override
         @Transactional(readOnly = true)
         public List<InvoiceResponse> getAll() {
@@ -176,6 +177,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(this::toResponse)
                 .toList();
         }
+
+
         @Override
         @Transactional(readOnly = true)
         public InvoiceResponse getById(Long invoiceId) {
@@ -186,6 +189,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return toResponse(invoice);
         }
+
+
         @Override
         @Transactional(readOnly = true)
         public List<InvoiceResponse> getByHousehold(Long householdId) {
@@ -195,6 +200,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(this::toResponse)
                 .toList();
         }
+
 
         @Override
         @Transactional

@@ -14,4 +14,8 @@ public interface BulkWaterPurchaseService {
     BulkWaterPurchaseResponse getById(Long id);
 
     void delete(Long id);
+
+    BulkWaterPurchaseResponse update(
+        Long id,
+        BulkWaterPurchaseRequest request);
 }

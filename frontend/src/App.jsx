@@ -13,6 +13,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import TariffPlans from "./pages/TariffPlans";
 import BillingCycles from "./pages/BillingCycles";
 import Profile from "./pages/Profile";
+import Invoices from "./pages/Invoices";
+import BulkWaterPurchases from "./pages/BulkWaterPurchases";
 
 function App() {
   return (
@@ -36,6 +38,22 @@ function App() {
         element={
           <ProtectedRoute role="ADMIN">
             <WaterUsage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/invoices"
+        element={
+          <ProtectedRoute role="ADMIN">
+            <Invoices />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bulk-water-purchases"
+        element={
+          <ProtectedRoute role="ADMIN">
+            <BulkWaterPurchases />
           </ProtectedRoute>
         }
       />

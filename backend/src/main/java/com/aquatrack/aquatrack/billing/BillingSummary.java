@@ -15,7 +15,5 @@ public class BillingSummary {
 
     private Double totalCollected;
 
-    private Double adjustmentPool;
-
     private Double purchasedRate;
 }

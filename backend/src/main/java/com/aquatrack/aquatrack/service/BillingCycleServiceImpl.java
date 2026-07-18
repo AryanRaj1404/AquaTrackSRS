@@ -6,13 +6,16 @@ import org.springframework.stereotype.Service;
 
 import com.aquatrack.aquatrack.dto.BillingCycleRequest;
 import com.aquatrack.aquatrack.dto.BillingCycleResponse;
-import com.aquatrack.aquatrack.entity.BillingCycle;
 import com.aquatrack.aquatrack.entity.Apartment;
+import com.aquatrack.aquatrack.entity.BillingCycle;
 import com.aquatrack.aquatrack.entity.TariffPlan;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
 import com.aquatrack.aquatrack.repository.BillingCycleRepository;
+import com.aquatrack.aquatrack.repository.BulkWaterPurchaseRepository;
+import com.aquatrack.aquatrack.repository.InvoiceRepository;
 import com.aquatrack.aquatrack.repository.TariffPlanRepository;
+import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
 @Service
 public class BillingCycleServiceImpl implements BillingCycleService {
@@ -20,15 +23,25 @@ public class BillingCycleServiceImpl implements BillingCycleService {
     private final BillingCycleRepository billingCycleRepository;
     private final ApartmentRepository apartmentRepository;
     private final TariffPlanRepository tariffPlanRepository;
+    private final BulkWaterPurchaseRepository bulkWaterPurchaseRepository;
+    private final WaterUsageLogRepository waterUsageLogRepository;
+    private final InvoiceRepository invoiceRepository;
 
     public BillingCycleServiceImpl(
             BillingCycleRepository billingCycleRepository,
             ApartmentRepository apartmentRepository,
-            TariffPlanRepository tariffPlanRepository) {
+            TariffPlanRepository tariffPlanRepository, 
+            BulkWaterPurchaseRepository bulkWaterPurchaseRepository,
+            WaterUsageLogRepository waterUsageLogRepository,
+            InvoiceRepository invoiceRepository
+        ) {
 
         this.billingCycleRepository = billingCycleRepository;
         this.apartmentRepository = apartmentRepository;
         this.tariffPlanRepository = tariffPlanRepository;
+        this.bulkWaterPurchaseRepository = bulkWaterPurchaseRepository;
+        this.waterUsageLogRepository = waterUsageLogRepository;
+        this.invoiceRepository = invoiceRepository;
     }
 
     @Override
@@ -111,9 +124,24 @@ public class BillingCycleServiceImpl implements BillingCycleService {
     public void delete(Long id) {
 
         if (!billingCycleRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Billing cycle not found");
+            throw new ResourceNotFoundException(
+                    "Billing cycle not found");
         }
 
+        if (bulkWaterPurchaseRepository.existsByBillingCycleId(id)) {
+            throw new IllegalStateException(
+                    "Cannot delete billing cycle because bulk water purchases exist.");
+        }
+
+        if (waterUsageLogRepository.existsByBillingCycleId(id)) {
+            throw new IllegalStateException(
+                    "Cannot delete billing cycle because water usage logs exist.");
+        }
+
+        if (invoiceRepository.existsByBillingCycleId(id)) {
+            throw new IllegalStateException(
+                    "Cannot delete billing cycle because invoices have already been generated.");
+        }
         billingCycleRepository.deleteById(id);
     }
 

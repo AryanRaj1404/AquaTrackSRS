@@ -154,6 +154,17 @@ function AdminPageShell({
             <Droplets size={20} />
             <span>Water Usage</span>
           </NavLink>
+
+          <NavLink
+            to="/bulk-water-purchases"
+            onClick={closeSidebar}
+            className={({ isActive }) =>
+              isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
+            }
+          >
+            <Droplets size={20} />
+            <span>Bulk Water Purchase</span>
+          </NavLink>
           
           <NavLink
               to="/billing-cycles"
@@ -166,6 +177,19 @@ function AdminPageShell({
           >
               <ReceiptText size={20} />
               <span>Billing Cycles</span>
+          </NavLink>
+
+          <NavLink
+              to="/invoices"
+              onClick={closeSidebar}
+              className={({ isActive }) =>
+                  isActive
+                      ? "mg-nav-link mg-nav-active"
+                      : "mg-nav-link"
+              }
+          >
+              <ReceiptText size={20} />
+              <span>Invoices</span>
           </NavLink>
         </nav>
 

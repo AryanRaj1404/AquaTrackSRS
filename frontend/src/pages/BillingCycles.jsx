@@ -25,22 +25,22 @@ import {
   deleteBillingCycle,
 } from "../services/billingCycleService";
 
-import { getHouseholds } from "../services/householdService";
+import { getApartments } from "../services/apartmentService";
 import { getTariffPlans } from "../services/tariffPlanService";
 
 const initialForm = {
-  householdId: "",
+  apartmentId: "",
   tariffPlanId: "",
   startDate: "",
   endDate: "",
-  totalAmount: "",
+  totalAmount: 0,
   status: "OPEN",
 };
 
 function BillingCycles(){
     const [billingCycles, setBillingCycles] = useState([]);
 
-    const [households, setHouseholds] = useState([]);
+    const [apartments, setApartments] = useState([]);
 
     const [tariffPlans, setTariffPlans] = useState([]);
 
@@ -68,14 +68,14 @@ function BillingCycles(){
         setIsLoading(true);
 
         const [
-        billingData,
-        householdData,
-        tariffData,
-        ] = await Promise.all([
-        getBillingCycles(),
-        getHouseholds(),
-        getTariffPlans(),
-        ]);
+          billingData,
+          apartmentData,
+          tariffData,
+      ] = await Promise.all([
+          getBillingCycles(),
+          getApartments(),
+          getTariffPlans(),
+      ]);
 
         setBillingCycles(
         Array.isArray(billingData)
@@ -83,9 +83,9 @@ function BillingCycles(){
             : []
         );
 
-        setHouseholds(
-        Array.isArray(householdData)
-            ? householdData
+        setApartments(
+        Array.isArray(apartmentData)
+            ? apartmentData
             : []
         );
 
@@ -122,7 +122,7 @@ function BillingCycles(){
 
         return (
 
-        cycle.flatNumber
+        cycle.apartmentName
             ?.toLowerCase()
             .includes(keyword)
 
@@ -157,8 +157,8 @@ function BillingCycles(){
 
     const validateForm = () => {
 
-    if (!form.householdId) {
-        toast.error("Select a household.");
+    if (!form.apartmentId) {
+        toast.error("Select an Apartment.");
         return false;
     }
 
@@ -177,15 +177,7 @@ function BillingCycles(){
         return false;
     }
 
-    if (!form.totalAmount) {
-        toast.error("Total amount is required.");
-        return false;
-    }
-
-    if (Number(form.totalAmount) < 0) {
-        toast.error("Amount cannot be negative.");
-        return false;
-    }
+    
 
     return true;
     };
@@ -197,13 +189,13 @@ function BillingCycles(){
     }
 
     const billingPayload = {
-        householdId: Number(form.householdId),
+        apartmentId: Number(form.apartmentId),
         tariffPlanId: form.tariffPlanId
         ? Number(form.tariffPlanId)
         : null,
         startDate: form.startDate,
         endDate: form.endDate,
-        totalAmount: Number(form.totalAmount),
+        totalAmount: 0,
         status: form.status,
     };
 
@@ -283,11 +275,11 @@ function BillingCycles(){
     setEditingId(cycle.id);
 
     setForm({
-        householdId: cycle.householdId,
+        apartmentId: cycle.apartmentId,
         tariffPlanId: cycle.tariffPlanId ?? "",
         startDate: cycle.startDate,
         endDate: cycle.endDate,
-        totalAmount: cycle.totalAmount,
+        totalAmount: 0,
         status: cycle.status,
     });
 
@@ -350,11 +342,45 @@ function BillingCycles(){
     setShowForm(false);
 
     };
+
+    const getStatusStyle = (status) => {
+
+      switch (status) {
+
+          case "OPEN":
+              return {
+                  background: "#dbeafe",
+                  color: "#1d4ed8",
+              };
+
+          case "INVOICED":
+              return {
+                  background: "#fef3c7",
+                  color: "#92400e",
+              };
+
+          case "PAID":
+              return {
+                  background: "#dcfce7",
+                  color: "#166534",
+              };
+
+          case "CLOSED":
+              return {
+                  background: "#e5e7eb",
+                  color: "#374151",
+              };
+
+          default:
+              return {};
+      }
+
+  };
     return (
   <>
     <AdminPageShell
       title="Billing Cycle Management"
-      description="Manage household billing cycles and assigned tariff plans."
+      description="Manage Apartment billing cycles and assigned tariff plans."
       searchValue={query}
       onSearchChange={setQuery}
       searchPlaceholder="Search billing cycles..."
@@ -408,7 +434,7 @@ function BillingCycles(){
           title="Latest Cycle"
           value={
             billingCycles.length > 0
-              ? billingCycles[0].flatNumber
+              ? billingCycles[0].apartmentName
               : "-"
           }
           description={
@@ -452,24 +478,24 @@ function BillingCycles(){
             <div className="mg-form-grid">
 
               <div className="mg-form-group">
-                <label>Household</label>
+                <label>Apartment</label>
 
                 <select
-                  name="householdId"
-                  value={form.householdId}
+                  name="apartmentId"
+                  value={form.apartmentId}
                   onChange={handleChange}
                   disabled={isSubmitting}
                 >
                   <option value="">
-                    Select Household
+                    Select Apartment
                   </option>
 
-                  {households.map((household) => (
+                  {apartments.map((apartment) => (
                     <option
-                      key={household.id}
-                      value={household.id}
+                      key={apartment.id}
+                      value={apartment.id}
                     >
-                      {household.flatNumber}
+                      {apartment.name}
                     </option>
                   ))}
                 </select>
@@ -518,19 +544,6 @@ function BillingCycles(){
                   type="date"
                   name="endDate"
                   value={form.endDate}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className="mg-form-group">
-                <label>Total Amount</label>
-
-                <input
-                  type="number"
-                  step="0.01"
-                  name="totalAmount"
-                  value={form.totalAmount}
                   onChange={handleChange}
                   disabled={isSubmitting}
                 />
@@ -612,10 +625,9 @@ function BillingCycles(){
             <table className="mg-table">
                 <thead>
                 <tr>
-                    <th>Flat</th>
+                    <th>Apartment</th>
                     <th>Tariff Plan</th>
                     <th>Period</th>
-                    <th>Amount</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -626,7 +638,7 @@ function BillingCycles(){
                     <tr key={cycle.id}>
                     <td>
                         <span className="mg-table-primary">
-                        {cycle.flatNumber}
+                        {cycle.apartmentName}
                         </span>
                     </td>
 
@@ -655,11 +667,10 @@ function BillingCycles(){
                     </td>
 
                     <td>
-                        ₹ {cycle.totalAmount}
-                    </td>
-
-                    <td>
-                        <span className="mg-status mg-status-active">
+                        <span
+                            className="mg-status"
+                            style={getStatusStyle(cycle.status)}
+                        >
                         {cycle.status}
                         </span>
                     </td>
@@ -699,7 +710,7 @@ function BillingCycles(){
             <EmptyState
             icon={ReceiptText}
             title="No billing cycles found"
-            description="Create your first billing cycle to begin tracking household bills."
+            description="Create your first billing cycle to begin tracking Apartment bills."
             />
         )}
         </section>

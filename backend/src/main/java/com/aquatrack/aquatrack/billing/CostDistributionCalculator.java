@@ -7,44 +7,66 @@ import org.springframework.stereotype.Component;
 @Component
 public class CostDistributionCalculator {
 
-    public void distributeAdjustment(
-            List<HouseholdBill> bills,
-            double adjustmentPool) {
+     public void distributeBulkWaterCost(
 
-        double totalConsumption = bills.stream()
-                .mapToDouble(HouseholdBill::getConsumptionKl)
-                .sum();
+        List<HouseholdBill> bills,
 
-        if (totalConsumption == 0)
-            return;
+        double purchasedCost,
 
-        for (HouseholdBill bill : bills) {
+        double purchasedRate
 
-        double percentage =
-                bill.getConsumptionKl() / totalConsumption;
+) {
 
-        double distributedCost =
-                adjustmentPool * percentage;
+    double totalConsumption =
 
-        bill.setDistributedCost(distributedCost);
+            bills.stream()
 
-        // No manual adjustment yet
-        bill.setAdjustment(0.0);
+                    .mapToDouble(
+                            HouseholdBill::getConsumptionKl)
+
+                    .sum();
+
+    if (totalConsumption == 0) {
+
+        return;
+
+    }
+
+    for (HouseholdBill bill : bills) {
+
+        double bulkShare =
+
+        bill.getConsumptionKl()
+
+        *
+
+        purchasedRate;
+
+        bill.setDistributedCost(
+                bulkShare);
+
+        bill.setPurchasedRate(
+                purchasedRate);
 
         bill.setSharedAreaCharge(0.0);
+
+        bill.setAdjustment(0.0);
 
         bill.setTotalAmount(
 
                 bill.getTariffCharge()
 
-                + bill.getFixedCharge()
+                +
 
-                + distributedCost
+                bill.getFixedCharge()
 
-                + bill.getSharedAreaCharge()
+                +
 
-                + bill.getAdjustment()
+                bulkShare
+
         );
-        }
+
     }
+
+}
 }
