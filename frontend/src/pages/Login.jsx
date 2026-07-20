@@ -38,6 +38,12 @@ function Login() {
         password: password,
       });
 
+      console.log(response.data);
+
+      console.log("Full response:", response);
+      console.log("Response data:", response.data);
+      console.log("Token:", response.data.token);
+
       const token = response.data.token;
 
       localStorage.setItem("token", token);
