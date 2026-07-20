@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 import com.aquatrack.aquatrack.enums.BillingCycleStatus;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -37,9 +37,9 @@ public class BillingCycle {
     @Column(nullable=false)
     private BillingCycleStatus status;
 
-    @ManyToOne(optional=false)
-    @JoinColumn(name = "household_id", nullable=false)
-    private Household household;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "apartment_id")
+    private Apartment apartment;
 
     @ManyToOne
     @JoinColumn(name = "tariff_plan_id")

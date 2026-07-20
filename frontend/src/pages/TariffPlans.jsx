@@ -25,12 +25,31 @@ import {
 } from "../services/tariffPlanService";
 
 const initialForm = {
-  planName: "",
-  ratePerUnit: "",
-  fixedCharge: "",
-  effectiveFrom: "",
-  effectiveTo: "",
-  description: "",
+
+    planName: "",
+
+    fixedCharge: "",
+
+    effectiveFrom: "",
+
+    effectiveTo: "",
+
+    description: "",
+
+    tiers: [
+
+        {
+
+            tierOrder: 1,
+
+            uptoKl: "",
+
+            ratePerKl: ""
+
+        }
+
+    ]
+
 };
 
 function TariffPlans() {
@@ -88,6 +107,104 @@ function TariffPlans() {
     });
   }, [tariffPlans, query]);
 
+    const handleTierChange = (
+
+      index,
+
+      field,
+
+      value
+
+  ) => {
+
+      setForm(previous => {
+
+          const tiers = [...previous.tiers];
+
+          tiers[index] = {
+
+              ...tiers[index],
+
+              [field]: value
+
+          };
+
+          return {
+
+              ...previous,
+
+              tiers
+
+          };
+
+      });
+
+  };
+
+  const addTier = () => {
+
+      setForm(previous => ({
+
+          ...previous,
+
+          tiers: [
+
+              ...previous.tiers,
+
+              {
+
+                  tierOrder:
+
+                      previous.tiers.length + 1,
+
+                  uptoKl: "",
+
+                  ratePerKl: ""
+
+              }
+
+          ]
+
+      }));
+
+  };
+
+  const removeTier = (index) => {
+
+      setForm(previous => {
+
+          const tiers = previous.tiers
+
+              .filter((_, i) =>
+
+                  i !== index
+
+              )
+
+              .map(
+
+                  (tier, index) => ({
+
+                      ...tier,
+
+                      tierOrder: index + 1
+
+                  })
+
+              );
+
+          return {
+
+              ...previous,
+
+              tiers
+
+          };
+
+      });
+
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -103,15 +220,37 @@ function TariffPlans() {
       return false;
     }
 
-    if (!form.ratePerUnit) {
-      toast.error("Rate per unit is required.");
-      return false;
-    }
+    if (form.tiers.length === 0) {
 
-    if (Number(form.ratePerUnit) <= 0) {
-      toast.error("Rate per unit must be greater than zero.");
+      toast.error(
+
+          "Add at least one tariff tier."
+
+      );
+
       return false;
-    }
+
+  }
+
+  for (const tier of form.tiers) {
+
+      if (
+
+          !tier.ratePerKl
+
+      ) {
+
+          toast.error(
+
+              "Each tier must have a rate."
+
+          );
+
+          return false;
+
+      }
+
+  }
 
     if (!form.fixedCharge) {
       toast.error("Fixed charge is required.");
@@ -149,12 +288,61 @@ function TariffPlans() {
   }
 
   const tariffPlanPayload = {
-    planName: form.planName.trim(),
-    ratePerUnit: Number(form.ratePerUnit),
-    fixedCharge: Number(form.fixedCharge),
-    effectiveFrom: form.effectiveFrom,
-    effectiveTo: form.effectiveTo,
-    description: form.description.trim(),
+
+      planName:
+
+          form.planName.trim(),
+
+      fixedCharge:
+
+          Number(form.fixedCharge),
+
+      effectiveFrom:
+
+          form.effectiveFrom,
+
+      effectiveTo:
+
+          form.effectiveTo,
+
+      description:
+
+          form.description.trim(),
+
+      tiers:
+
+          form.tiers.map(
+
+              tier => ({
+
+                  tierOrder:
+
+                      tier.tierOrder,
+
+                  uptoKl:
+
+                      tier.uptoKl === ""
+
+                      ? null
+
+                      : Number(
+
+                          tier.uptoKl
+
+                      ),
+
+                  ratePerKl:
+
+                      Number(
+
+                          tier.ratePerKl
+
+                      )
+
+              })
+
+          )
+
   };
 
   setIsSubmitting(true);
@@ -219,13 +407,40 @@ function TariffPlans() {
     setEditingId(tariffPlan.id);
 
     setForm({
-        planName: tariffPlan.planName,
-        ratePerUnit: tariffPlan.ratePerUnit,
-        fixedCharge: tariffPlan.fixedCharge,
-        effectiveFrom: tariffPlan.effectiveFrom,
-        effectiveTo: tariffPlan.effectiveTo,
-        description: tariffPlan.description ?? "",
-    });
+
+    planName: tariffPlan.planName,
+
+    fixedCharge: tariffPlan.fixedCharge,
+
+    effectiveFrom: tariffPlan.effectiveFrom,
+
+    effectiveTo: tariffPlan.effectiveTo,
+
+    description: tariffPlan.description ?? "",
+
+    tiers:
+
+        tariffPlan.tiers.map(
+
+            tier => ({
+
+                tierOrder:
+
+                    tier.tierOrder,
+
+                uptoKl:
+
+                    tier.uptoKl ?? "",
+
+                ratePerKl:
+
+                    tier.ratePerKl
+
+            })
+
+        )
+
+});
 
     setShowForm(true);
   };
@@ -252,9 +467,14 @@ function TariffPlans() {
   } catch (error) {
     console.error(error);
 
-    toast.error("Failed to delete tariff plan.", {
-      id: loadingToast,
-    });
+    toast.error(
+      error.response?.data?.message ||
+      error.response?.data ||
+      "Failed to delete tariff plan.",
+      {
+          id: loadingToast,
+      }
+    );
 
     setDeleteId(null);
   }
@@ -267,6 +487,56 @@ function TariffPlans() {
 
     setShowForm(false);
   };
+
+  const today =
+    new Date().toISOString().split("T")[0];
+
+const activePlans =
+    tariffPlans.filter(
+
+        plan =>
+
+            plan.effectiveFrom <= today &&
+
+            plan.effectiveTo >= today
+
+    ).length;
+
+const latestPlan =
+    [...tariffPlans]
+
+        .sort(
+
+            (a, b) =>
+
+                new Date(b.effectiveFrom) -
+
+                new Date(a.effectiveFrom)
+
+        )[0];
+
+const highestRate =
+    tariffPlans.length > 0
+
+        ? Math.max(
+
+            ...tariffPlans.flatMap(
+
+                plan =>
+
+                    plan.tiers.map(
+
+                        tier =>
+
+                            tier.ratePerKl
+
+                    )
+
+            )
+
+        )
+
+        : "-";
 
   return (
     <>
@@ -302,7 +572,7 @@ function TariffPlans() {
       <StatCard
         icon={CheckCircle2}
         title="Active Plans"
-        value={tariffPlans.length}
+        value={activePlans}
         description="Currently configured"
       />
 
@@ -310,12 +580,18 @@ function TariffPlans() {
         icon={BadgeDollarSign}
         title="Highest Rate"
         value={
-          tariffPlans.length > 0
-            ? Math.max(
-                ...tariffPlans.map((plan) => plan.ratePerUnit)
-              )
-            : "-"
-        }
+          highestRate === "-"
+
+              ? "-"
+
+              : `₹ ${highestRate.toLocaleString(
+                  "en-IN",
+                  {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                  }
+              )}`
+      }
         description="Rate per unit"
       />
 
@@ -323,14 +599,12 @@ function TariffPlans() {
         icon={BadgeDollarSign}
         title="Latest Plan"
         value={
-          tariffPlans.length > 0
-            ? tariffPlans[0].planName
-            : "-"
+            latestPlan?.planName ?? "-"
         }
+
         description={
-          tariffPlans.length > 0
-            ? tariffPlans[0].effectiveFrom
-            : "No plans yet"
+            latestPlan?.effectiveFrom ??
+            "No plans yet"
         }
       />
     </section>
@@ -379,18 +653,8 @@ function TariffPlans() {
               />
             </div>
 
-            <div className="mg-form-group">
-              <label>Rate Per Unit</label>
+            
 
-              <input
-                type="number"
-                step="0.01"
-                name="ratePerUnit"
-                value={form.ratePerUnit}
-                onChange={handleChange}
-                disabled={isSubmitting}
-              />
-            </div>
 
             <div className="mg-form-group">
               <label>Fixed Charge</label>
@@ -404,6 +668,7 @@ function TariffPlans() {
                 disabled={isSubmitting}
               />
             </div>
+            
 
             <div className="mg-form-group">
               <label>Effective From</label>
@@ -442,7 +707,143 @@ function TariffPlans() {
               />
             </div>
 
-          </div>
+          <div
+              style={{
+                  marginTop: "30px",
+              }}
+          >
+
+    <div
+        style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "15px",
+        }}
+    >
+
+        <h3
+            style={{
+                margin: 0,
+            }}
+        >
+            Tariff Tiers
+        </h3>
+
+        <button
+            type="button"
+            className="mg-secondary-button"
+            onClick={addTier}
+            disabled={isSubmitting}
+        >
+            <Plus size={16} />
+            Add Tier
+        </button>
+
+    </div>
+
+    {form.tiers.map(
+
+        (tier, index) => (
+
+            <div
+                key={index}
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr auto",
+                    gap: "16px",
+                    padding: "16px",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "10px",
+                    marginBottom: "16px",
+                }}
+            >
+
+                <div className="mg-form-group">
+
+                    <label>
+
+                        Up To (KL)
+
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        value={tier.uptoKl}
+                        onChange={(e) =>
+                            handleTierChange(
+                                index,
+                                "uptoKl",
+                                e.target.value
+                            )
+                        }
+                        placeholder="Leave empty for unlimited"
+                        disabled={isSubmitting}
+                    />
+
+                </div>
+
+                <div className="mg-form-group">
+
+                        <label>
+
+                            Rate / KL
+
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={tier.ratePerKl}
+                            onChange={(e) =>
+                                handleTierChange(
+                                    index,
+                                    "ratePerKl",
+                                    e.target.value
+                                )
+                            }
+                            disabled={isSubmitting}
+                        />
+
+                    </div>
+
+                    <div
+                        className="mg-form-group"
+                        style={{
+                            justifyContent: "flex-end",
+                            display: "flex",
+                            alignItems: "end",
+                        }}
+                    >
+
+                        {form.tiers.length > 1 && (
+
+                            <button
+                                type="button"
+                                className="mg-danger-button"
+                                onClick={() =>
+                                    removeTier(index)
+                                }
+                            >
+                                <Trash2 size={16} />
+                                Remove
+                            </button>
+
+                        )}
+
+                    </div>
+
+                </div>
+
+            )
+
+        )}
+        </div>
+
+    </div>
+
+          
 
           <div className="mg-modal-actions">
             <button
@@ -501,7 +902,7 @@ function TariffPlans() {
               <thead>
                 <tr>
                   <th>Plan Name</th>
-                  <th>Rate/Unit</th>
+                  <th>Tariff Slabs</th>
                   <th>Fixed Charge</th>
                   <th>Effective</th>
                   <th>Actions</th>
@@ -518,11 +919,92 @@ function TariffPlans() {
                     </td>
 
                     <td>
-                      ₹ {plan.ratePerUnit}
-                    </td>
+
+    <div
+        style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+        }}
+    >
+
+        {[...plan.tiers]
+            .sort(
+                (a, b) =>
+                    a.tierOrder - b.tierOrder
+            )
+            .map((tier, index) => {
+
+                const previous =
+                    index === 0
+                        ? 0
+                        : plan.tiers[index - 1].uptoKl;
+
+                return (
+
+                    <div
+                        key={tier.id ?? index}
+                        style={{
+                            fontSize: "13px",
+                            lineHeight: "18px",
+                        }}
+                    >
+
+                        <strong>
+
+                            {tier.uptoKl == null
+
+                                ? `${previous}+ KL`
+
+                                : `${previous} - ${tier.uptoKl} KL`
+
+                            }
+
+                        </strong>
+
+                        {" : ₹"}
+
+                        {Number(
+                            tier.ratePerKl
+                        ).toLocaleString(
+                            "en-IN",
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            }
+                        )}{" / KL"}
+
+                    </div>
+
+                );
+
+            })}
+
+    </div>
+
+</td>
 
                     <td>
-                      ₹ {plan.fixedCharge}
+                        ₹ {
+                            Number(
+
+                                plan.fixedCharge
+
+                            ).toLocaleString(
+
+                                "en-IN",
+
+                                {
+
+                                    minimumFractionDigits: 2,
+
+                                    maximumFractionDigits: 2
+
+                                }
+
+                            )
+
+                        }
                     </td>
 
                     <td>

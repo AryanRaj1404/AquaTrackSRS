@@ -6,36 +6,49 @@ import org.springframework.stereotype.Service;
 
 import com.aquatrack.aquatrack.dto.BillingCycleRequest;
 import com.aquatrack.aquatrack.dto.BillingCycleResponse;
+import com.aquatrack.aquatrack.entity.Apartment;
 import com.aquatrack.aquatrack.entity.BillingCycle;
-import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.TariffPlan;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
+import com.aquatrack.aquatrack.repository.ApartmentRepository;
 import com.aquatrack.aquatrack.repository.BillingCycleRepository;
-import com.aquatrack.aquatrack.repository.HouseholdRepository;
+import com.aquatrack.aquatrack.repository.BulkWaterPurchaseRepository;
+import com.aquatrack.aquatrack.repository.InvoiceRepository;
 import com.aquatrack.aquatrack.repository.TariffPlanRepository;
+import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
 @Service
 public class BillingCycleServiceImpl implements BillingCycleService {
 
     private final BillingCycleRepository billingCycleRepository;
-    private final HouseholdRepository householdRepository;
+    private final ApartmentRepository apartmentRepository;
     private final TariffPlanRepository tariffPlanRepository;
+    private final BulkWaterPurchaseRepository bulkWaterPurchaseRepository;
+    private final WaterUsageLogRepository waterUsageLogRepository;
+    private final InvoiceRepository invoiceRepository;
 
     public BillingCycleServiceImpl(
             BillingCycleRepository billingCycleRepository,
-            HouseholdRepository householdRepository,
-            TariffPlanRepository tariffPlanRepository) {
+            ApartmentRepository apartmentRepository,
+            TariffPlanRepository tariffPlanRepository, 
+            BulkWaterPurchaseRepository bulkWaterPurchaseRepository,
+            WaterUsageLogRepository waterUsageLogRepository,
+            InvoiceRepository invoiceRepository
+        ) {
 
         this.billingCycleRepository = billingCycleRepository;
-        this.householdRepository = householdRepository;
+        this.apartmentRepository = apartmentRepository;
         this.tariffPlanRepository = tariffPlanRepository;
+        this.bulkWaterPurchaseRepository = bulkWaterPurchaseRepository;
+        this.waterUsageLogRepository = waterUsageLogRepository;
+        this.invoiceRepository = invoiceRepository;
     }
 
     @Override
     public BillingCycleResponse create(BillingCycleRequest request) {
 
-        Household household = householdRepository.findById(request.getHouseholdId())
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+        Apartment apartment = apartmentRepository.findById(request.getApartmentId())
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
 
         TariffPlan tariffPlan = null;
 
@@ -50,7 +63,7 @@ public class BillingCycleServiceImpl implements BillingCycleService {
         billingCycle.setEndDate(request.getEndDate());
         billingCycle.setTotalAmount(request.getTotalAmount());
         billingCycle.setStatus(request.getStatus());
-        billingCycle.setHousehold(household);
+        billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
         return toResponse(billingCycleRepository.save(billingCycle));
@@ -74,8 +87,8 @@ public class BillingCycleServiceImpl implements BillingCycleService {
     }
 
     @Override
-    public List<BillingCycleResponse> getByHousehold(Long householdId) {
-        return billingCycleRepository.findByHouseholdId(householdId)
+    public List<BillingCycleResponse> getByApartmentId(Long apartmentId) {
+        return billingCycleRepository.findByApartmentId(apartmentId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -87,8 +100,8 @@ public class BillingCycleServiceImpl implements BillingCycleService {
         BillingCycle billingCycle = billingCycleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Billing cycle not found"));
 
-        Household household = householdRepository.findById(request.getHouseholdId())
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+        Apartment apartment = apartmentRepository.findById(request.getApartmentId())
+                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
 
         TariffPlan tariffPlan = null;
 
@@ -101,7 +114,7 @@ public class BillingCycleServiceImpl implements BillingCycleService {
         billingCycle.setEndDate(request.getEndDate());
         billingCycle.setTotalAmount(request.getTotalAmount());
         billingCycle.setStatus(request.getStatus());
-        billingCycle.setHousehold(household);
+        billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
         return toResponse(billingCycleRepository.save(billingCycle));
@@ -111,9 +124,24 @@ public class BillingCycleServiceImpl implements BillingCycleService {
     public void delete(Long id) {
 
         if (!billingCycleRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Billing cycle not found");
+            throw new ResourceNotFoundException(
+                    "Billing cycle not found");
         }
 
+        if (bulkWaterPurchaseRepository.existsByBillingCycleId(id)) {
+            throw new IllegalStateException(
+                    "Cannot delete billing cycle because bulk water purchases exist.");
+        }
+
+        if (waterUsageLogRepository.existsByBillingCycleId(id)) {
+            throw new IllegalStateException(
+                    "Cannot delete billing cycle because water usage logs exist.");
+        }
+
+        if (invoiceRepository.existsByBillingCycleId(id)) {
+            throw new IllegalStateException(
+                    "Cannot delete billing cycle because invoices have already been generated.");
+        }
         billingCycleRepository.deleteById(id);
     }
 
@@ -125,8 +153,8 @@ public class BillingCycleServiceImpl implements BillingCycleService {
                 billingCycle.getEndDate(),
                 billingCycle.getTotalAmount(),
                 billingCycle.getStatus(),
-                billingCycle.getHousehold().getId(),
-                billingCycle.getHousehold().getFlatNumber(),
+                billingCycle.getApartment().getId(),
+                billingCycle.getApartment().getName(),
                 billingCycle.getTariffPlan() != null ? billingCycle.getTariffPlan().getId() : null,
                 billingCycle.getTariffPlan() != null ? billingCycle.getTariffPlan().getPlanName() : null
         );

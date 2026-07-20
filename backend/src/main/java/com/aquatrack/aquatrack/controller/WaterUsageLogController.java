@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aquatrack.aquatrack.dto.UploadCsvResponse;
 import com.aquatrack.aquatrack.dto.WaterUsageLogRequest;
 import com.aquatrack.aquatrack.dto.WaterUsageLogResponse;
 import com.aquatrack.aquatrack.service.WaterUsageLogService;
@@ -61,7 +62,11 @@ public class WaterUsageLogController {
     }
 
     @PostMapping("/upload-csv")
-    public List<WaterUsageLogResponse> uploadCsv(@RequestParam("file") MultipartFile file) {
-        return waterUsageLogService.uploadCsv(file);
+    public UploadCsvResponse uploadCsv(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("billingCycleId") Long billingCycleId
+    )
+    {
+        return waterUsageLogService.uploadCsv(file, billingCycleId);
     }
 }

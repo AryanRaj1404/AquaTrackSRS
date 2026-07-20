@@ -36,7 +36,6 @@ class TariffPlanControllerTest {
         TariffPlan tariffPlan = new TariffPlan();
 
         tariffPlan.setPlanName("Standard Plan");
-        tariffPlan.setRatePerUnit(12.5);
         tariffPlan.setFixedCharge(250.0);
         tariffPlan.setEffectiveFrom(LocalDate.of(2026, 1, 1));
         tariffPlan.setEffectiveTo(LocalDate.of(2026, 12, 31));
@@ -49,15 +48,26 @@ class TariffPlanControllerTest {
     void createTariffPlanSuccessfully() throws Exception {
 
         String request = """
-        {
-            "planName":"Premium Plan",
-            "ratePerUnit":15.5,
-            "fixedCharge":300,
-            "effectiveFrom":"2026-01-01",
-            "effectiveTo":"2026-12-31",
-            "description":"Premium tariff"
-        }
-        """;
+            {
+                "planName":"Premium Plan",
+                "fixedCharge":300,
+                "effectiveFrom":"2026-01-01",
+                "effectiveTo":"2026-12-31",
+                "description":"Premium tariff",
+                "tiers":[
+                    {
+                        "tierOrder":1,
+                        "uptoKl":10,
+                        "ratePerKl":15.5
+                    },
+                    {
+                        "tierOrder":2,
+                        "uptoKl":null,
+                        "ratePerKl":20.0
+                    }
+                ]
+            }
+            """;
 
         mockMvc.perform(post("/tariff-plans")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +75,8 @@ class TariffPlanControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.planName").value("Premium Plan"))
-                .andExpect(jsonPath("$.ratePerUnit").value(15.5))
+                .andExpect(jsonPath("$.tiers[0].ratePerKl").value(15.5))
+                .andExpect(jsonPath("$.tiers[1].ratePerKl").value(20.0))
                 .andExpect(jsonPath("$.fixedCharge").value(300.0));
     }
 
@@ -75,8 +86,8 @@ class TariffPlanControllerTest {
         String request = """
         {
             "planName":"",
-            "ratePerUnit":-10,
-            "fixedCharge":-100
+            "fixedCharge":-100,
+            "tiers":[]
         }
         """;
 
@@ -123,11 +134,22 @@ class TariffPlanControllerTest {
         String request = """
         {
             "planName":"Updated Plan",
-            "ratePerUnit":20.0,
             "fixedCharge":350,
             "effectiveFrom":"2026-02-01",
             "effectiveTo":"2026-12-31",
-            "description":"Updated tariff"
+            "description":"Updated tariff",
+            "tiers":[
+                {
+                    "tierOrder":1,
+                    "uptoKl":10,
+                    "ratePerKl":20.0
+                },
+                {
+                    "tierOrder":2,
+                    "uptoKl":null,
+                    "ratePerKl":25.0
+                }
+            ]
         }
         """;
 
@@ -136,7 +158,8 @@ class TariffPlanControllerTest {
                 .content(request))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.planName").value("Updated Plan"))
-                .andExpect(jsonPath("$.ratePerUnit").value(20.0))
+                .andExpect(jsonPath("$.tiers[0].ratePerKl").value(20.0))
+                .andExpect(jsonPath("$.tiers[1].ratePerKl").value(25.0))
                 .andExpect(jsonPath("$.fixedCharge").value(350.0));
     }
 
@@ -146,11 +169,22 @@ class TariffPlanControllerTest {
         String request = """
         {
             "planName":"Updated Plan",
-            "ratePerUnit":20.0,
             "fixedCharge":350,
             "effectiveFrom":"2026-02-01",
             "effectiveTo":"2026-12-31",
-            "description":"Updated tariff"
+            "description":"Updated tariff",
+            "tiers":[
+                {
+                    "tierOrder":1,
+                    "uptoKl":10,
+                    "ratePerKl":20.0
+                },
+                {
+                    "tierOrder":2,
+                    "uptoKl":null,
+                    "ratePerKl":25.0
+                }
+            ]
         }
         """;
 

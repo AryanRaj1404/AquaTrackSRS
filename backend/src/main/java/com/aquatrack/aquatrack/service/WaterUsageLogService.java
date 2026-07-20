@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aquatrack.aquatrack.dto.UploadCsvResponse;
 import com.aquatrack.aquatrack.dto.WaterUsageLogRequest;
 import com.aquatrack.aquatrack.dto.WaterUsageLogResponse;
 
@@ -14,5 +15,5 @@ public interface WaterUsageLogService {
     List<WaterUsageLogResponse> getByHousehold(Long householdId);
     WaterUsageLogResponse update(Long id, WaterUsageLogRequest request);
     void delete(Long id);
-    List<WaterUsageLogResponse> uploadCsv(MultipartFile file);
+    UploadCsvResponse uploadCsv(MultipartFile file, Long billingCycleId);
 }

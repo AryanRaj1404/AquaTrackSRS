@@ -1,12 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import dashboardService from "../services/dashboardService";
+import api from "../services/api";
 
 import {
+  BadgeCheck,
   Building2,
+  Clock3,
   Droplets,
+  IndianRupee,
   Plus,
+  Receipt,
+  TriangleAlert,
   Users,
+  Wallet,
 } from "lucide-react";
 
 import AdminPageShell from "../components/AdminPageShell";
@@ -18,17 +25,15 @@ function Dashboard() {
 
   const [query, setQuery] = useState("");
 
-  const [apartments, setApartments] = useState([]);
+  const [dashboard, setDashboard] = useState(null);
+
   const [households, setHouseholds] = useState([]);
-  const [meters, setMeters] = useState([]);
+
+  const [apartments, setApartments] = useState([]);
+
   const [recentReadings, setRecentReadings] = useState([]);
 
-  const dashboardStats = useMemo(() => ({
-    totalApartments: apartments.length,
-    totalHouseholds: households.length,
-    totalMeters: meters.length,
-    totalUsageLogs: recentReadings.length,
-  }), [apartments, households, meters, recentReadings]);
+  
 
   const filteredHouseholds = useMemo(() => {
     if (!query.trim()) {
@@ -47,50 +52,74 @@ function Dashboard() {
   const goToAddApartment = () => {
     navigate("/apartments");
   };
-
+  
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const token = localStorage.getItem("token");
 
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+    const fetchDashboard = async () => {
 
-        const [
-          apartmentRes,
-          householdRes,
-          meterRes,
-          usageRes,
-        ] = await Promise.all([
-          axios.get("http://localhost:8080/apartments", config),
-          axios.get("http://localhost:8080/households", config),
-          axios.get("http://localhost:8080/meters", config),
-          axios.get("http://localhost:8080/usage-logs", config),
-        ]);
+        try {
 
-        setApartments(apartmentRes.data);
-        setHouseholds(householdRes.data);
-        setMeters(meterRes.data);
+            const [
 
-        setRecentReadings(
-          usageRes.data
-            .sort(
-              (a, b) =>
-                new Date(b.usageDate) -
-                new Date(a.usageDate)
-            )
-            .slice(0, 5)
-        );
-      } catch (error) {
-        console.error(error);
-      }
+                dashboardData,
+
+                apartmentsData,
+
+                householdsData,
+
+                usageData
+
+            ] = await Promise.all([
+
+                dashboardService.getDashboard(),
+
+                api.get("/apartments"),
+
+                api.get("/households"),
+
+                api.get("/usage-logs")
+
+            ]);
+
+            setDashboard(dashboardData);
+
+            setApartments(apartmentsData.data);
+
+            setHouseholds(householdsData.data);
+
+            setRecentReadings(
+
+                usageData.data
+
+                    .sort(
+
+                        (a, b) =>
+
+                            new Date(b.usageDate)
+
+                            -
+
+                            new Date(a.usageDate)
+
+                    )
+
+                    .slice(0, 5)
+
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
     };
 
-    fetchDashboardData();
-  }, []);
+    fetchDashboard();
+
+}, []);
 
   return (
     <AdminPageShell
@@ -112,31 +141,89 @@ function Dashboard() {
     >
       <section className="mg-summary-grid">
         <StatCard
-          icon={Building2}
-          title="Total Apartments"
-          value={dashboardStats.totalApartments}
-          description="Registered apartments"
+            icon={Building2}
+            title="Apartments"
+            value={dashboard?.totalApartments ?? 0}
+            description="Registered apartments"
         />
 
         <StatCard
-          icon={Users}
-          title="Total Households"
-          value={dashboardStats.totalHouseholds}
-          description="Registered households"
+            icon={Users}
+            title="Households"
+            value={dashboard?.totalHouseholds ?? 0}
+            description="Registered households"
         />
 
         <StatCard
-          icon={Building2}
-          title="Total Meters"
-          value={dashboardStats.totalMeters}
-          description="Installed water meters"
+            icon={Users}
+            title="Users"
+            value={dashboard?.totalUsers ?? 0}
+            description="Registered users"
         />
 
         <StatCard
-          icon={Droplets}
-          title="Water Usage Logs"
-          value={dashboardStats.totalUsageLogs}
-          description="Recorded usage entries"
+            icon={Droplets}
+            title="Water Consumed"
+            value={`${Number(
+                dashboard?.totalWaterConsumedKl ?? 0
+            ).toFixed(2)} KL`}
+            description="Household consumption"
+        />
+        <StatCard
+            icon={Droplets}
+            title="Bulk Water"
+            value={`${Number(dashboard?.totalBulkWaterPurchasedKl ?? 0).toFixed(2)} KL`}
+            description="Purchased water"
+        />
+
+        <StatCard
+            icon={Droplets}
+            title="Water Loss"
+            value={`${Number(dashboard?.waterLossKl ?? 0).toFixed(2)} KL`}
+            description={`${dashboard?.waterLossPercentage ?? 0}% loss`}
+        />
+
+        <StatCard
+            icon={IndianRupee}
+            title="Revenue"
+            value={`₹ ${Number(
+                dashboard?.totalRevenue ?? 0
+            ).toLocaleString("en-IN")}`}
+            description="Invoice value"
+        />
+
+        <StatCard
+            icon={Wallet}
+            title="Collection"
+            value={`${Number(dashboard?.collectionRate ?? 0).toFixed(1)}%`}
+            description="Payment collection"
+        />
+        <StatCard
+            icon={Receipt}
+            title="Generated"
+            value={dashboard?.generatedInvoices ?? 0}
+            description="Generated invoices"
+        />
+
+        <StatCard
+            icon={BadgeCheck}
+            title="Paid"
+            value={dashboard?.paidInvoices ?? 0}
+            description="Paid invoices"
+        />
+
+        <StatCard
+            icon={Clock3}
+            title="Pending"
+            value={dashboard?.pendingInvoices ?? 0}
+            description="Pending invoices"
+        />
+
+        <StatCard
+            icon={TriangleAlert}
+            title="Overdue"
+            value={dashboard?.overdueInvoices ?? 0}
+            description="Overdue invoices"
         />
       </section>
 
@@ -145,8 +232,7 @@ function Dashboard() {
           <div>
             <h2>Registered Households</h2>
             <p>
-              Household information will appear here after backend API
-              integration.
+              View all registered households and their current occupancy.
             </p>
           </div>
         </div>
@@ -203,8 +289,7 @@ function Dashboard() {
           <div>
             <h2>Registered Apartments</h2>
             <p>
-              Apartment data will be displayed here after the Add Apartment
-              feature is connected.
+              All Apartment data is displayed below.
             </p>
           </div>
 

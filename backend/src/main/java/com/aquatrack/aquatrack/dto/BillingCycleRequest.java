@@ -25,7 +25,7 @@ public class BillingCycleRequest {
     private BillingCycleStatus status;
 
     @NotNull
-    private Long householdId;
+    private Long apartmentId;
 
     private Long tariffPlanId;
 }

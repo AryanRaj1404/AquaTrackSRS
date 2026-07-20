@@ -17,8 +17,8 @@ public class BillingCycleResponse {
     private Double totalAmount;
     private BillingCycleStatus status;
 
-    private Long householdId;
-    private String flatNumber;
+    private Long apartmentId;
+    private String apartmentName;
 
     private Long tariffPlanId;
     private String tariffPlanName;

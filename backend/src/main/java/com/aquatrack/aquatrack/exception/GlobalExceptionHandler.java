@@ -38,8 +38,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {
+        ex.printStackTrace();
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Something went wrong.");
+                // .body("Something went wrong.");
+                .body(ex.toString());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalState(
+            IllegalStateException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(ex.getMessage());
     }
 }
