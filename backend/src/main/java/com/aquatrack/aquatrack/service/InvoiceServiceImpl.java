@@ -29,6 +29,7 @@ import com.aquatrack.aquatrack.repository.BillingCycleRepository;
 import com.aquatrack.aquatrack.repository.BulkWaterPurchaseRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.InvoiceRepository;
+import com.aquatrack.aquatrack.repository.MeterRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
@@ -40,6 +41,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final HouseholdRepository householdRepository;
     private final WaterUsageLogRepository waterUsageLogRepository;
     private final BulkWaterPurchaseRepository bulkWaterPurchaseRepository;
+    private final MeterRepository meterRepository;
 
     private final BillingEngineService billingEngineService;
     private final InvoiceGenerator invoiceGenerator;
@@ -56,6 +58,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             HouseholdRepository householdRepository,
             WaterUsageLogRepository waterUsageLogRepository,
             BulkWaterPurchaseRepository bulkWaterPurchaseRepository,
+            MeterRepository meterRepository,
             BillingEngineService billingEngineService,
             InvoiceGenerator invoiceGenerator,
             EmailService emailService,
@@ -68,6 +71,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.householdRepository = householdRepository;
         this.waterUsageLogRepository = waterUsageLogRepository;
         this.bulkWaterPurchaseRepository = bulkWaterPurchaseRepository;
+        this.meterRepository = meterRepository;
         this.billingEngineService = billingEngineService;
         this.invoiceGenerator = invoiceGenerator;
         this.emailService = emailService;
@@ -88,17 +92,14 @@ public class InvoiceServiceImpl implements InvoiceService {
                 "Invoices have already been generated for this billing cycle.");
         }
 
-    // 2. Fetch all households of the apartment
     List<Household> households =
             householdRepository.findByApartmentId(
                     billingCycle.getApartment().getId());
 
-    // 3. Fetch all bulk purchases of this billing cycle
     List<BulkWaterPurchase> purchases =
             bulkWaterPurchaseRepository.findByBillingCycle(
                     billingCycle);
 
-    // Collections that will be used later
     List<HouseholdBill> householdBills = new ArrayList<>();
     List<Invoice> invoices = new ArrayList<>();
 
@@ -111,13 +112,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         double consumption = logs.stream()
                 .mapToDouble(WaterUsageLog::getLitersConsumed)
-                .sum() / 1000.0;   // Convert Liters → KL
+                .sum() / 1000.0;
+
+        boolean hasMeter =
+                meterRepository.existsByHouseholdIdAndActiveTrue(household.getId());
 
         HouseholdBill bill =
                 billingEngineService.calculateHouseholdBill(
                         household.getId(),
                         consumption,
-                        billingCycle.getTariffPlan());
+                        billingCycle.getTariffPlan(),
+                        hasMeter,
+                        household.getFlatSize());
 
         householdBills.add(bill);
     }
@@ -126,12 +132,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         billingEngineService.summarizeBillingCycle(
                 purchases,
                 householdBills);
-
-        for (HouseholdBill bill : householdBills) {
-
-                bill.setPurchasedRate(
-                        summary.getPurchasedRate());
-        }
 
     for (int i = 0; i < households.size(); i++) {
 
@@ -144,10 +144,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoices.add(invoice);
         }
 
-        System.out.println("Invoices in list = " + invoices.size());
-
-        System.out.println("Invoices generated: " + invoices.size());
-
         invoiceRepository.saveAll(invoices);
 
         billingCycle.setStatus(BillingCycleStatus.INVOICED);
@@ -156,7 +152,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
-    
         @Override
         @Transactional(readOnly = true)
         public List<InvoiceResponse> getInvoices(Long billingCycleId) {
@@ -167,7 +162,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .toList();
         }
 
-        
         @Override
         @Transactional(readOnly = true)
         public List<InvoiceResponse> getAll() {
@@ -177,7 +171,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(this::toResponse)
                 .toList();
         }
-
 
         @Override
         @Transactional(readOnly = true)
@@ -190,7 +183,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return toResponse(invoice);
         }
 
-
         @Override
         @Transactional(readOnly = true)
         public List<InvoiceResponse> getByHousehold(Long householdId) {
@@ -200,7 +192,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(this::toResponse)
                 .toList();
         }
-
 
         @Override
         @Transactional
@@ -316,7 +307,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                 failedInvoices);
         }
-
 
         private InvoiceResponse toResponse(Invoice invoice) {
 

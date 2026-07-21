@@ -28,4 +28,8 @@ public class HouseholdBill {
     private Double purchasedRate;
 
     private Double sharedAreaCharge;
+
+    private boolean hasMeter;
+
+    private Double flatSize;
 }
