@@ -1,5 +1,14 @@
 package com.aquatrack.aquatrack.scheduler;
 
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
 import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.UsageAlert;
 import com.aquatrack.aquatrack.entity.WaterUsageLog;
@@ -8,14 +17,6 @@ import com.aquatrack.aquatrack.repository.UsageAlertRepository;
 import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 import com.aquatrack.aquatrack.service.AlertEmailService;
 import com.aquatrack.aquatrack.service.AnomalyDetectionService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class AlertScheduler {
@@ -41,7 +42,8 @@ public class AlertScheduler {
         this.alertEmailService = alertEmailService;
     }
 
-    @Scheduled(cron = "${aquatrack.alerts.cron:0 0 6 * * *}")
+    // @Scheduled(cron = "${aquatrack.alerts.cron:0 0 6 * * *}")
+    @Scheduled(fixedRate = 30000)
     public void runDailyAlertCheck() {
         LocalDate today = LocalDate.now();
         List<Household> households = householdRepository.findAll();

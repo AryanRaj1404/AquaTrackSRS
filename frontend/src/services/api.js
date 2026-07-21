@@ -19,12 +19,20 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle expired or invalid JWT
+// Handle API errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+
+    // Only logout if authentication itself is invalid
+    if (
+      error.response?.status === 401 &&
+      error.config?.url === "/auth/me"
+    ) {
       localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+      localStorage.removeItem("user");
 
       toast.error("Your session has expired. Please login again.");
 
