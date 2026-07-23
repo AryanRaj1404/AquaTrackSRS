@@ -114,15 +114,14 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .mapToDouble(WaterUsageLog::getLitersConsumed)
                 .sum() / 1000.0;
 
-        boolean hasMeter =
-                meterRepository.existsByHouseholdIdAndActiveTrue(household.getId());
+        boolean hasUsageLog = !logs.isEmpty();
 
         HouseholdBill bill =
                 billingEngineService.calculateHouseholdBill(
                         household.getId(),
                         consumption,
                         billingCycle.getTariffPlan(),
-                        hasMeter,
+                        hasUsageLog,
                         household.getFlatSize());
 
         householdBills.add(bill);
