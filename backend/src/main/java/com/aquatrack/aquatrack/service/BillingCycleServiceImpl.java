@@ -153,8 +153,8 @@ public class BillingCycleServiceImpl implements BillingCycleService {
                 billingCycle.getEndDate(),
                 billingCycle.getTotalAmount(),
                 billingCycle.getStatus(),
-                billingCycle.getApartment().getId(),
-                billingCycle.getApartment().getName(),
+                billingCycle.getApartment() != null ? billingCycle.getApartment().getId() : null,
+                billingCycle.getApartment() != null ? billingCycle.getApartment().getName() : null,
                 billingCycle.getTariffPlan() != null ? billingCycle.getTariffPlan().getId() : null,
                 billingCycle.getTariffPlan() != null ? billingCycle.getTariffPlan().getPlanName() : null
         );
