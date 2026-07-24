@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -17,8 +19,14 @@ import Invoices from "./pages/Invoices";
 import BulkWaterPurchases from "./pages/BulkWaterPurchases";
 
 function App() {
+  const location = useLocation();
   return (
-    <Routes>
+    <>
+    <AnimatePresence mode="wait">
+      <Routes
+        location={location}
+        key={location.pathname}
+      >
       <Route path="/" element={<Landing />} />
 
       <Route path="/login" element={<Login />} />
@@ -116,6 +124,8 @@ function App() {
         element={<Navigate to="/" replace />}
       />
     </Routes>
+    </AnimatePresence>
+    </>
   );
 }
 

@@ -280,6 +280,7 @@ const handleRemoveResident = async (household) => {
           title="Total Households"
           value={households.length}
           description="Fetched from backend API"
+          delay={0}
         />
 
         <StatCard
@@ -287,6 +288,7 @@ const handleRemoveResident = async (household) => {
           title="Total Occupancy"
           value={totalOccupancy}
           description="Total residents across all households"
+          delay={0.1}
         />
 
         <StatCard
@@ -294,6 +296,7 @@ const handleRemoveResident = async (household) => {
           title="Status"
           value="API Ready"
           description="No dummy household data"
+          delay={0.2}
         />
 
         <StatCard
@@ -301,6 +304,7 @@ const handleRemoveResident = async (household) => {
           title="Apartment Link"
           value="Required"
           description="Household belongs to apartment"
+          delay={0.2}
         />
       </section>
 

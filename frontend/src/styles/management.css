@@ -1,7 +1,7 @@
 .mg-shell {
   min-height: 100vh;
   color: #17233b;
-  background: rgba(255,255,255, 0.1);
+  background: transparent;
 }
 
 /* Sidebar */
@@ -179,7 +179,9 @@
   justify-content: space-between;
   padding: 14px 30px;
   border-bottom: 1px solid #e3e9ef;
-  background: rgba(255, 255, 255, 0.97);
+  background: rgba(255,255,255,.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .mg-topbar-left,
@@ -326,6 +328,15 @@
   background: linear-gradient(135deg, #0781a5, #075b78);
   font-size: 12px;
   font-weight: 600;
+  justify-content: center;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease;
+}
+.mg-primary-button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px rgba(0,0,0,.15);
 }
 
 .mg-summary-grid {
@@ -661,30 +672,11 @@
     flex-direction: column;
   }
 
-  .mg-primary-button {
-    width: 100%;
-    justify-content: center;
-  }
-
   .mg-summary-grid,
   .mg-form-grid {
     grid-template-columns: 1fr;
   }
 }
-.mg-brand-logo-image {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-}
-.mg-brand-icon {
-  display: grid;
-  width: 50px;
-  height: 50px;
-  place-items: center;
-  border-radius: 15px;
-  background: #ffffff;
-}
-
 .mg-brand-logo-image {
   width: 32px;
   height: 32px;

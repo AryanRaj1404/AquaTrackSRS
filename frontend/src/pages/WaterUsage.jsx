@@ -415,6 +415,7 @@ function WaterUsage() {
                 title="Total Usage"
                 value={`${totalUsage.toFixed(0)} L`}
                 description="Total recorded consumption"
+                delay={0}
             />
 
             <StatCard
@@ -422,6 +423,7 @@ function WaterUsage() {
                 title="Households"
                 value={displayedHouseholds}
                 description="Households in current view"
+                delay={0.1}
             />
 
             <StatCard
@@ -429,6 +431,7 @@ function WaterUsage() {
                 title="Readings"
                 value={totalLogs}
                 description="Usage records"
+                delay={0.2}
             />
 
             <StatCard
@@ -436,6 +439,7 @@ function WaterUsage() {
                 title="Average Consumption"
                 value={`${averageUsage.toFixed(0)} L`}
                 description="Per recorded reading"
+                delay={0.3}
             />
 
         </section>

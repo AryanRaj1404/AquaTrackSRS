@@ -567,6 +567,7 @@ const highestRate =
         title="Total Plans"
         value={tariffPlans.length}
         description="Available tariff plans"
+        delay={0}
       />
 
       <StatCard
@@ -574,6 +575,7 @@ const highestRate =
         title="Active Plans"
         value={activePlans}
         description="Currently configured"
+        delay={0.1}
       />
 
       <StatCard
@@ -593,6 +595,7 @@ const highestRate =
               )}`
       }
         description="Rate per unit"
+        delay={0.2}
       />
 
       <StatCard
@@ -606,6 +609,7 @@ const highestRate =
             latestPlan?.effectiveFrom ??
             "No plans yet"
         }
+        delay={0.3}
       />
     </section>
 

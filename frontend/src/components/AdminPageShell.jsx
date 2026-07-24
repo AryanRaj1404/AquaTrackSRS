@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import WaterBackground from "./WaterBackground";
+import { motion } from "framer-motion";
 
 import {
   CircleUser,
@@ -41,21 +42,70 @@ function AdminPageShell({
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("role");
-    localStorage.removeItem("username");
+    [
+    "token",
+    "user",
+    "role",
+    "username",
+    ].forEach(localStorage.removeItem.bind(localStorage));
 
     toast.success("Logged out successfully.");
-
-    setTimeout(() => {
-      navigate("/login");
-    }, 500);
+    navigate("/login");
   };
 
   const handleProfileClick = () => {
     navigate("/profile");
   };
+
+  const navigationItems = [
+  {
+    to: "/dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    to: "/apartments",
+    label: "Apartments",
+    icon: Building2,
+    adminOnly: true,
+  },
+  {
+    to: "/households",
+    label: "Households",
+    icon: Users,
+    adminOnly: true,
+  },
+  {
+    to: "/tariff-plans",
+    label: "Tariff Plans",
+    icon: BadgeDollarSign,
+    adminOnly: true,
+  },
+  {
+    to: "/water-usage",
+    label: "Water Usage",
+    icon: Droplets,
+    adminOnly: true,
+  },
+  {
+    to: "/bulk-water-purchases",
+    label: "Bulk Water Purchase",
+    icon: Droplets,
+    adminOnly: true,
+  },
+  {
+    to: "/billing-cycles",
+    label: "Billing Cycles",
+    icon: ReceiptText,
+    adminOnly: true,
+  },
+  {
+    to: "/invoices",
+    label: "Invoices",
+    icon: ReceiptText,
+    adminOnly: true,
+  },
+];
 
   return (
     <>
@@ -89,112 +139,28 @@ function AdminPageShell({
         <p className="mg-menu-label">MAIN MENU</p>
 
         <nav className="mg-navigation">
-          <NavLink
-            to="/dashboard"
-            onClick={closeSidebar}
-            className={({ isActive }) =>
-              isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-            }
-          >
-            <LayoutDashboard size={20} />
-            <span>Dashboard</span>
-          </NavLink>
+    {navigationItems
+        .filter(item => !item.adminOnly || role === "ADMIN")
+        .map(item => {
+            const Icon = item.icon;
 
-          {role === "ADMIN" && (
-  <>
-    <NavLink
-      to="/apartments"
-      onClick={closeSidebar}
-      className={({ isActive }) =>
-        isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-      }
-    >
-      <Building2 size={20} />
-      <span>Apartments</span>
-    </NavLink>
-
-    <NavLink
-      to="/households"
-      onClick={closeSidebar}
-      className={({ isActive }) =>
-        isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-      }
-    >
-      <Users size={20} />
-      <span>Households</span>
-    </NavLink>
-  
-  {/* <NavLink
-  to="/meters"
-  onClick={closeSidebar}
-  className={({ isActive }) =>
-    isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-  }
->
-  <Gauge size={20} />
-  <span>Meters</span>
-</NavLink> */}
-</>
-)}
-<NavLink
-  to="/tariff-plans"
-  onClick={closeSidebar}
-  className={({ isActive }) =>
-    isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-  }
->
-  <BadgeDollarSign size={20} />
-  <span>Tariff Plans</span>
-</NavLink>
-
-          <NavLink
-            to="/water-usage"
-            onClick={closeSidebar}
-            className={({ isActive }) =>
-              isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-            }
-          >
-            <Droplets size={20} />
-            <span>Water Usage</span>
-          </NavLink>
-
-          <NavLink
-            to="/bulk-water-purchases"
-            onClick={closeSidebar}
-            className={({ isActive }) =>
-              isActive ? "mg-nav-link mg-nav-active" : "mg-nav-link"
-            }
-          >
-            <Droplets size={20} />
-            <span>Bulk Water Purchase</span>
-          </NavLink>
-          
-          <NavLink
-              to="/billing-cycles"
-              onClick={closeSidebar}
-              className={({ isActive }) =>
-                  isActive
-                      ? "mg-nav-link mg-nav-active"
-                      : "mg-nav-link"
-              }
-          >
-              <ReceiptText size={20} />
-              <span>Billing Cycles</span>
-          </NavLink>
-
-          <NavLink
-              to="/invoices"
-              onClick={closeSidebar}
-              className={({ isActive }) =>
-                  isActive
-                      ? "mg-nav-link mg-nav-active"
-                      : "mg-nav-link"
-              }
-          >
-              <ReceiptText size={20} />
-              <span>Invoices</span>
-          </NavLink>
-        </nav>
+            return (
+                <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={closeSidebar}
+                    className={({ isActive }) =>
+                        isActive
+                            ? "mg-nav-link mg-nav-active"
+                            : "mg-nav-link"
+                    }
+                >
+                    <Icon size={20}/>
+                    <span>{item.label}</span>
+                </NavLink>
+            );
+        })}
+</nav>
 
         <div className="mg-sidebar-bottom">
           <div className="mg-water-tip">
@@ -281,16 +247,10 @@ function AdminPageShell({
             <div className="mg-topbar-divider" />
 
             <div
-              className="mg-profile"
+              className="mg-profile cursor-pointer rounded-xl p-2 transition-all"
               onClick={handleProfileClick}
               role="button"
               tabIndex={0}
-              style={{
-                cursor: "pointer",
-                borderRadius: "14px",
-                padding: "8px 12px",
-                transition: "0.25s",
-              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleProfileClick();
@@ -314,7 +274,25 @@ function AdminPageShell({
           </div>
         </header>
 
-        <main className="mg-content">
+        <motion.main
+          className="mg-content"
+          initial={{
+              opacity: 0,
+              x: 20,
+          }}
+          animate={{
+              opacity: 1,
+              x: 0,
+          }}
+          exit={{
+              opacity: 0,
+              x: -20,
+          }}
+          transition={{
+              duration: 0.28,
+              ease: "easeOut",
+          }}
+      >
           <section className="mg-heading">
             <div>
               <p className="mg-eyebrow">MANAGEMENT</p>
@@ -326,7 +304,7 @@ function AdminPageShell({
           </section>
 
           {children}
-        </main>
+        </motion.main>
       </div>
     </div>
     </>

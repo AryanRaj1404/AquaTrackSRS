@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CountUp } from "react-countup";
 import dashboardService from "../services/dashboardService";
 import api from "../services/api";
+import SkeletonCard from "../components/SkeletonCard";
+import SkeletonTable from "../components/SkeletonTable";
 
 import {
   BadgeCheck,
@@ -121,6 +124,25 @@ function Dashboard() {
 
 }, []);
 
+  if (!dashboard) {
+    return (
+        <AdminPageShell
+            title="Dashboard Overview"
+            description="Loading dashboard..."
+        >
+            <section className="mg-summary-grid">
+                {Array.from({ length: 12 }).map((_, i) => (
+                    <SkeletonCard key={i} />
+                ))}
+            </section>
+
+            <section className="mg-panel">
+                <SkeletonTable />
+            </section>
+        </AdminPageShell>
+    );
+}
+
   return (
     <AdminPageShell
       title="Dashboard Overview"
@@ -144,6 +166,7 @@ function Dashboard() {
             icon={Building2}
             title="Apartments"
             value={dashboard?.totalApartments ?? 0}
+            animatedValue
             description="Registered apartments"
         />
 
@@ -151,6 +174,7 @@ function Dashboard() {
             icon={Users}
             title="Households"
             value={dashboard?.totalHouseholds ?? 0}
+            animatedValue
             description="Registered households"
         />
 
@@ -158,6 +182,7 @@ function Dashboard() {
             icon={Users}
             title="Users"
             value={dashboard?.totalUsers ?? 0}
+            animatedValue
             description="Registered users"
         />
 
@@ -167,12 +192,14 @@ function Dashboard() {
             value={`${Number(
                 dashboard?.totalWaterConsumedKl ?? 0
             ).toFixed(2)} KL`}
+            animatedValue
             description="Household consumption"
         />
         <StatCard
             icon={Droplets}
             title="Bulk Water"
             value={`${Number(dashboard?.totalBulkWaterPurchasedKl ?? 0).toFixed(2)} KL`}
+            animatedValue
             description="Purchased water"
         />
 
@@ -180,6 +207,7 @@ function Dashboard() {
             icon={Droplets}
             title="Remaining Water"
             value={`${Number(dashboard?.waterLossKl ?? 0).toFixed(2)} KL`}
+            animatedValue
             description={`${dashboard?.waterLossPercentage ?? 0}% loss`}
         />
 
@@ -189,6 +217,7 @@ function Dashboard() {
             value={`₹ ${Number(
                 dashboard?.totalRevenue ?? 0
             ).toLocaleString("en-IN")}`}
+            animatedValue
             description="Invoice value"
         />
 
@@ -196,12 +225,14 @@ function Dashboard() {
             icon={Wallet}
             title="Collection"
             value={`${Number(dashboard?.collectionRate ?? 0).toFixed(1)}%`}
+            animatedValue
             description="Payment collection"
         />
         <StatCard
             icon={Receipt}
             title="Generated"
             value={dashboard?.generatedInvoices ?? 0}
+            animatedValue
             description="Generated invoices"
         />
 
@@ -209,6 +240,7 @@ function Dashboard() {
             icon={BadgeCheck}
             title="Paid"
             value={dashboard?.paidInvoices ?? 0}
+            animatedValue
             description="Paid invoices"
         />
 
@@ -216,6 +248,7 @@ function Dashboard() {
             icon={Clock3}
             title="Pending"
             value={dashboard?.pendingInvoices ?? 0}
+            animatedValue
             description="Pending invoices"
         />
 
@@ -223,6 +256,7 @@ function Dashboard() {
             icon={TriangleAlert}
             title="Overdue"
             value={dashboard?.overdueInvoices ?? 0}
+            animatedValue
             description="Overdue invoices"
         />
       </section>
