@@ -534,7 +534,8 @@ const handleRemoveResident = async (household) => {
 
               <tbody>
                 {filteredHouseholds.map((household) => (
-                  <tr key={household.id}>
+                  <tr className="hover:bg-slate-50 transition-colors"
+                  key={household.id}>
 
                     <td>
                       <span className="mg-table-primary">

@@ -13,4 +13,6 @@ public interface HouseholdRepository extends JpaRepository<Household, Long>{
         Long apartmentId,
         String flatNumber,
         Long id);
+
+    long countByApartmentId(Long apartmentId);
 }

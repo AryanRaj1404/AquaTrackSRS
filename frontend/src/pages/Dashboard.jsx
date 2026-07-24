@@ -286,7 +286,8 @@ function Dashboard() {
 
               <tbody>
                 {filteredHouseholds.map((household) => (
-                  <tr key={household.id}>
+                  <tr className="hover:bg-slate-50 transition-colors"
+                  key={household.id}>
                     <td>
                       <span className="mg-table-primary">
                         {household.flatNumber}
@@ -350,7 +351,8 @@ function Dashboard() {
 
                 <tbody>
                   {apartments.map((apartment) => (
-                    <tr key={apartment.id}>
+                    <tr className="hover:bg-slate-50 transition-colors"
+                    key={apartment.id}>
                       <td>
                         <span className="mg-table-primary">
                           {apartment.name}
@@ -402,7 +404,8 @@ function Dashboard() {
 
               <tbody>
                 {recentReadings.map((reading) => (
-                  <tr key={reading.id}>
+                  <tr className="hover:bg-slate-50 transition-colors"
+                  key={reading.id}>
                     <td>{reading.apartmentName}</td>
 
                     <td>

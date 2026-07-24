@@ -915,7 +915,8 @@ const highestRate =
 
               <tbody>
                 {filteredTariffPlans.map((plan) => (
-                  <tr key={plan.id}>
+                  <tr className="hover:bg-slate-50 transition-colors"
+                  key={plan.id}>
                     <td>
                       <span className="mg-table-primary">
                         {plan.planName}
@@ -1034,7 +1035,7 @@ const highestRate =
                     >
                       <button
                         type="button"
-                        className="mg-secondary-button"
+                        className="mg-action-button"
                         onClick={() =>
                           handleEdit(plan)
                         }
@@ -1045,7 +1046,7 @@ const highestRate =
 
                       <button
                         type="button"
-                        className="mg-danger-button"
+                        className="mg-action-button"
                         onClick={() =>
                           setDeleteId(plan.id)
                         }

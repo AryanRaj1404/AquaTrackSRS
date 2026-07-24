@@ -314,7 +314,8 @@ function MeterConfig() {
 
             <tbody>
               {filteredMeters.map((meter) => (
-                <tr key={meter.id}>
+                <tr className="hover:bg-slate-50 transition-colors"
+                key={meter.id}>
                   <td>
                     <span className="mg-table-primary">
                       {meter.meterNumber}

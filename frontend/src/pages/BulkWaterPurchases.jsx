@@ -584,7 +584,8 @@ filteredPurchases.map(purchase => {
     );
 
     return (
-        <tr key={purchase.id}>
+        <tr className="hover:bg-slate-50 transition-colors"
+        key={purchase.id}>
 
 <td>
 

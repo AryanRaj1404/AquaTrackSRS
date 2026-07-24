@@ -347,7 +347,8 @@
 
                 <tbody>
                   {filteredApartments.map((apartment) => (
-                    <tr key={apartment.id || apartment.name}>
+                    <tr className="hover:bg-slate-50 transition-colors"
+                    key={apartment.id || apartment.name}>
                       <td>
                         <span className="mg-table-primary">
                           {apartment.name}
@@ -355,7 +356,7 @@
                       </td>
                       <td>{apartment.address}</td>
                         <td>
-                          <span className="mg-badge">Coming Soon</span>
+                          <span className="mg-badge">{apartment.householdCount}</span>
                         </td>
 
                         <td>
@@ -436,7 +437,7 @@
 
                   {households.length === 0 ? (
 
-                      <tr>
+                      <tr >
 
                           <td colSpan="4">
 
@@ -450,7 +451,8 @@
 
                       households.map((household) => (
 
-                          <tr key={household.id}>
+                          <tr className="hover:bg-slate-50 transition-colors"
+                           key={household.id}>
 
                               <td>{household.flatNumber}</td>
 

@@ -671,7 +671,8 @@ function Invoices() {
 
                                 {filteredInvoices.map((invoice) => (
 
-                                    <tr key={invoice.id}>
+                                    <tr className="hover:bg-slate-50 transition-colors"
+                                    key={invoice.id}>
 
                                         <td>
 

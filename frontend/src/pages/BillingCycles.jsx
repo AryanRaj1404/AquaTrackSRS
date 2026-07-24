@@ -639,7 +639,8 @@ function BillingCycles(){
 
                 <tbody>
                 {filteredBillingCycles.map((cycle) => (
-                    <tr key={cycle.id}>
+                    <tr className="hover:bg-slate-50 transition-colors"
+                    key={cycle.id}>
                     <td>
                         <span className="mg-table-primary">
                         {cycle.apartmentName}
@@ -679,7 +680,7 @@ function BillingCycles(){
                     >
                         <button
                         type="button"
-                        className="mg-secondary-button"
+                        className="mg-action-button"
                         onClick={() => handleEdit(cycle)}
                         >
                         <Pencil size={16} />
@@ -688,7 +689,7 @@ function BillingCycles(){
 
                         <button
                         type="button"
-                        className="mg-danger-button"
+                        className="mg-action-button"
                         onClick={() =>
                             setDeleteId(cycle.id)
                         }
