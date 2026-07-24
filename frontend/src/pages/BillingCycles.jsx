@@ -648,21 +648,13 @@ function BillingCycles(){
 
                     <td>
                         {new Date(cycle.startDate).toLocaleDateString(
-                        "en-GB",
+                        "en-In",
                         {
-                            day: "2-digit",
                             month: "short",
                             year: "numeric",
                         }
-                        )}{" "}
-                        -{" "}
-                        {new Date(cycle.endDate).toLocaleDateString(
-                        "en-GB",
-                        {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                        }
+                        
+                        
                         )}
                     </td>
 

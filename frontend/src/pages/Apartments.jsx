@@ -17,7 +17,7 @@ import {
   createApartment,
   getApartments,
 } from "../services/apartmentService";
-
+import { getHouseholdsByApartment } from "../services/householdService";
 const initialForm = {
   apartmentName: "",
   address: ""
@@ -30,6 +30,9 @@ function Apartments() {
   const [form, setForm] = useState(initialForm);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedApartment, setSelectedApartment] = useState(null);
+  const [households, setHouseholds] = useState([]);
+  const [showHouseholdsModal, setShowHouseholdsModal] = useState(false);
 
   useEffect(() => {
     loadApartments();
@@ -137,6 +140,25 @@ function Apartments() {
   const handleCancel = () => {
     setForm(initialForm);
     setShowForm(false);
+  };
+
+  const handleViewHouseholds = async (apartment) => {
+
+    try {
+
+        const data = await getHouseholdsByApartment(apartment.id);
+
+        setSelectedApartment(apartment);
+        setHouseholds(data);
+
+        setShowHouseholdsModal(true);
+
+    } catch (error) {
+
+        toast.error("Unable to load households.");
+
+        console.error(error);
+    }
   };
 
   return (
@@ -318,7 +340,7 @@ function Apartments() {
                           type="button"
                           className="mg-secondary-button"
                           onClick={() =>
-                            toast("Apartment details coming soon.")
+                            handleViewHouseholds(apartment)
                           }
                         >
                           View
@@ -337,6 +359,109 @@ function Apartments() {
           />
         )}
       </section>
+
+      {showHouseholdsModal && (
+    <div
+        className="mg-modal-overlay"
+        onClick={() => setShowHouseholdsModal(false)}
+    >
+        <div
+            className="mg-modal"
+            onClick={(e) => e.stopPropagation()}
+        >
+
+            <div className="mg-modal-header">
+
+                <h2>
+                    Households
+                </h2>
+
+                <button
+                    className="mg-close-button"
+                    onClick={() => setShowHouseholdsModal(false)}
+                >
+                    ✕
+                </button>
+
+            </div>
+
+            <p className="mg-modal-subtitle">
+
+                {selectedApartment?.name}
+
+            </p>
+
+            <table className="mg-table">
+
+                <thead>
+
+                <tr>
+
+                    <th>Flat</th>
+
+                    <th>Resident</th>
+
+                    <th>Area</th>
+
+                    <th>Occupancy</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                {households.length === 0 ? (
+
+                    <tr>
+
+                        <td colSpan="4">
+
+                            No households found.
+
+                        </td>
+
+                    </tr>
+
+                ) : (
+
+                    households.map((household) => (
+
+                        <tr key={household.id}>
+
+                            <td>{household.flatNumber}</td>
+
+                            <td>
+
+                                {household.residentName ?? "Not Assigned"}
+
+                            </td>
+
+                            <td>
+
+                                {household.flatSize} sq.ft
+
+                            </td>
+
+                            <td>
+
+                                {household.occupancy}
+
+                            </td>
+
+                        </tr>
+
+                    ))
+
+                )}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+)}
     </AdminPageShell>
   );
 }

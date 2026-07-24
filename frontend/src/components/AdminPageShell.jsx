@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import WaterBackground from "./WaterBackground";
 
 import {
   CircleUser,
@@ -57,7 +58,9 @@ function AdminPageShell({
   };
 
   return (
-    <div className="mg-shell">
+    <>
+    <WaterBackground/>
+    <div className="mg-shell relative z-10">
       <aside className={`mg-sidebar ${sidebarOpen ? "mg-sidebar-open" : ""}`}>
         <div className="mg-brand">
           <div className="mg-brand-icon">
@@ -121,7 +124,7 @@ function AdminPageShell({
       <span>Households</span>
     </NavLink>
   
-  <NavLink
+  {/* <NavLink
   to="/meters"
   onClick={closeSidebar}
   className={({ isActive }) =>
@@ -130,7 +133,7 @@ function AdminPageShell({
 >
   <Gauge size={20} />
   <span>Meters</span>
-</NavLink>
+</NavLink> */}
 </>
 )}
 <NavLink
@@ -326,6 +329,7 @@ function AdminPageShell({
         </main>
       </div>
     </div>
+    </>
   );
 }
 

@@ -28,3 +28,12 @@ export async function getUnassignedResidents() {
   const response = await api.get("/households/unassigned-residents");
   return response.data;
 }
+
+export const getHouseholdsByApartment = async (apartmentId) => {
+
+    const response = await api.get(
+        `/households/apartment/${apartmentId}`
+    );
+
+    return response.data;
+};

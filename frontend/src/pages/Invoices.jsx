@@ -503,7 +503,10 @@ function Invoices() {
         value={cycle.id}
     >
 
-    {cycle.startDate} - {cycle.endDate}
+    {cycle.apartmentName ?? "Unknnown Apartment"} | {new Date(cycle.startDate).toLocaleString("en-IN",{
+        month: "long",
+        year: "numeric",
+    })}
 
     </option>
 

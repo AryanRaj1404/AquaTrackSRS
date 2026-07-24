@@ -27,7 +27,9 @@ public class BillingEngineService {
     public HouseholdBill calculateHouseholdBill(
             Long householdId,
             Double consumptionKl,
-            TariffPlan tariffPlan) {
+            TariffPlan tariffPlan,
+            boolean hasMeter,
+            Double flatSize) {
 
         TariffCalculationResult result =
                 tariffCalculator.calculate(
@@ -45,11 +47,9 @@ public class BillingEngineService {
                 .purchasedRate(0.0)
                 .sharedAreaCharge(0.0)
                 .fixedCharge(fixedCharge)
-                .tariffCharge(result.getUsageCharge())
-                .distributedCost(0.0)
-                .purchasedRate(0.0)
-                .sharedAreaCharge(0.0)
                 .adjustment(0.0)
+                .hasMeter(hasMeter)
+                .flatSize(flatSize)
                 .totalAmount(
                         result.getUsageCharge()
                         + fixedCharge)
@@ -66,28 +66,15 @@ public class BillingEngineService {
         double purchasedCost =
                 bulkWaterCostCalculator.calculateTotalCost(purchases);
 
-        System.out.println("Purchases = " + purchases.size());
-
-        System.out.println("Purchased Volume = " + purchasedVolume);
-
-        System.out.println("Purchased Cost = " + purchasedCost);
-
         double purchasedRate = 0;
 
         if (purchasedVolume > 0) {
-
-        purchasedRate =
-                purchasedCost / purchasedVolume;
+            purchasedRate = purchasedCost / purchasedVolume;
         }
 
         double totalConsumption =
                 bills.stream()
                         .mapToDouble(HouseholdBill::getConsumptionKl)
-                        .sum();
-
-        double totalCollected =
-                bills.stream()
-                        .mapToDouble(HouseholdBill::getTotalAmount)
                         .sum();
 
         costDistributionCalculator
@@ -96,6 +83,11 @@ public class BillingEngineService {
                         purchasedCost,
                         purchasedRate
                 );
+
+        double totalCollected =
+                bills.stream()
+                        .mapToDouble(HouseholdBill::getTotalAmount)
+                        .sum();
 
         return BillingSummary.builder()
                 .totalPurchasedVolume(purchasedVolume)
