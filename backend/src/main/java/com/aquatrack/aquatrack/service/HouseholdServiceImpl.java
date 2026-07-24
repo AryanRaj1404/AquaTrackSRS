@@ -99,6 +99,15 @@ public class HouseholdServiceImpl implements HouseholdService {
         return toResponse(saved);
     }
 
+    @Override
+    public List<HouseholdResponse> getByApartment(Long apartmentId) {
+        return householdRepository
+                .findByApartmentId(apartmentId)
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+        }
+
     @Transactional
     @Override
     public void delete(Long id) {

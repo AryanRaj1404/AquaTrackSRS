@@ -68,5 +68,11 @@ public class HouseholdController {
     public HouseholdResponse removeResident(@PathVariable Long householdId,
                                             @PathVariable Long userId) {
         return householdService.removeResident(householdId, userId);
-}
+    }
+    @GetMapping("/apartment/{apartmentId}")
+    public List<HouseholdResponse> getByApartment(
+            @PathVariable Long apartmentId) {
+
+        return householdService.getByApartment(apartmentId);
+    }
 }

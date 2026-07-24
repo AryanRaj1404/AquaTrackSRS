@@ -22,4 +22,6 @@ public interface HouseholdService {
     HouseholdResponse removeResident(Long householdId, Long userId);
 
     List<ResidentResponse> getUnassignedResidents();
+
+    List<HouseholdResponse> getByApartment(Long apartmentId);
 }
