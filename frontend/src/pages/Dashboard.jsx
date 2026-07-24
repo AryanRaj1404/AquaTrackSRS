@@ -178,7 +178,7 @@ function Dashboard() {
 
         <StatCard
             icon={Droplets}
-            title="Water Loss"
+            title="Remaining Water"
             value={`${Number(dashboard?.waterLossKl ?? 0).toFixed(2)} KL`}
             description={`${dashboard?.waterLossPercentage ?? 0}% loss`}
         />

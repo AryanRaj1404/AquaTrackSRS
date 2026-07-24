@@ -1,7 +1,7 @@
 .mg-shell {
   min-height: 100vh;
   color: #17233b;
-  background: #f4f7fb;
+  background: rgba(255,255,255, 0.1);
 }
 
 /* Sidebar */

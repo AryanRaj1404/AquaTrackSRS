@@ -26,6 +26,7 @@ import {
 import AdminPageShell from "../components/AdminPageShell";
 import EmptyState from "../components/EmptyState";
 import StatCard from "../components/StatCard";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 import {
 
@@ -69,6 +70,10 @@ const [isModalOpen, setIsModalOpen] =
 
 const [editingPurchase, setEditingPurchase] =
     useState(null);
+
+const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+const [purchaseToDelete, setPurchaseToDelete] = useState(null);
 
 const [form, setForm] =
     useState({
@@ -266,7 +271,7 @@ const handleSubmit = async (event) => {
 
         resetForm();
 
-        loadData();
+        await loadData();
 
     }
 
@@ -288,52 +293,35 @@ const handleSubmit = async (event) => {
 
 };
 
-const handleDelete = async (id) => {
+const handleDelete = async () => {
 
-    if (
-
-        !window.confirm(
-
-            "Delete this purchase?"
-
-        )
-
-    ) {
-
+    if (!purchaseToDelete) {
         return;
-
     }
 
     try {
 
-        await deletePurchase(id);
+        await deletePurchase(purchaseToDelete.id);
 
-        toast.success(
+        toast.success("Purchase deleted.");
 
-            "Purchase deleted."
+        setShowDeleteDialog(false);
 
-        );
+        setPurchaseToDelete(null);
 
         loadData();
 
     }
-
     catch (error) {
 
         console.error(error);
 
         toast.error(
-
             error.response?.data?.message ||
-
             error.response?.data ||
-
             "Unable to delete purchase."
-
         );
-
     }
-
 };
 
 const filteredPurchases = useMemo(() => {
@@ -426,15 +414,24 @@ const filteredBillingCycles = billingCycles.filter(
 );
 
   return (
+    <>
 
 <AdminPageShell
-
-    searchPlaceholder="Search supplier or source..."
-
+    title="Bulk Water Purchases"
+    description="Record and manage tanker and municipal water purchases."
+    searchPlaceholder="Search supplier, source or apartment..."
     searchValue={query}
-
     onSearchChange={setQuery}
-
+    action={
+        <button
+            type="button"
+            className="mg-primary-button flex items-center gap-2"
+            onClick={openCreateModal}
+        >
+            <Plus size={18} />
+            Add Purchase
+        </button>
+    }
 >
 
 <section className="mg-summary-grid">
@@ -447,7 +444,7 @@ const filteredBillingCycles = billingCycles.filter(
 
         value={totalPurchases}
 
-        description="Recorded purchases"
+        description="Purchases recorded"
 
     />
 
@@ -471,7 +468,7 @@ const filteredBillingCycles = billingCycles.filter(
 
         value={`₹ ${totalCost.toLocaleString("en-IN")}`}
 
-        description="Purchase cost"
+        description="Total Expenditure"
 
     />
 
@@ -489,39 +486,21 @@ const filteredBillingCycles = billingCycles.filter(
 
 </section>
 
-<section className="mg-card">
+<section className="mg-panel">
 
-<div className="mg-card-header">
+<div className="mg-toolbar">
 
-<div>
+    <div>
 
-<h2>
+        <h2 >
+            Bulk Water Purchases
+        </h2>
 
-Bulk Water Purchases
+        <p >
+            Record and manage tanker and municipal water purchases.
+        </p>
 
-</h2>
-
-<p>
-
-Manage tanker and municipal water purchases.
-
-</p>
-
-</div>
-
-<button
-
-className="mg-primary-button"
-
-onClick={openCreateModal}
-
->
-
-<Plus size={18}/>
-
-Add Purchase
-
-</button>
+    </div>
 
 </div>
 
@@ -553,7 +532,7 @@ description="Record your first bulk water purchase."
 />
 
 :
-
+<div className="mg-table-wrapper">
 <table className="mg-table">
 
 <thead>
@@ -576,7 +555,7 @@ description="Record your first bulk water purchase."
 
 <th>Total Cost</th>
 
-<th>Actions</th>
+<th className="text-center">Actions</th>
 
 </tr>
 
@@ -601,7 +580,16 @@ filteredPurchases.map(purchase => {
 
 <td>
 
-{purchase.purchaseDate}
+{new Date(
+    purchase.purchaseDate
+).toLocaleDateString(
+    "en-GB",
+    {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+    }
+)}
 
 </td>
 
@@ -614,22 +602,20 @@ filteredPurchases.map(purchase => {
 <td>
 
 {
-
-cycle
-
-?
-
-`${cycle.startDate} - ${cycle.endDate}`
-
-:
-
-"-"
-
+    cycle
+        ? new Date(cycle.startDate).toLocaleString(
+              "en-US",
+              {
+                  month: "long",
+                  year: "numeric",
+              }
+          )
+        : "-"
 }
 
 </td>
 
-<td>
+<td className="font-medium text-slate-700">
 
 {purchase.supplier}
 
@@ -637,17 +623,44 @@ cycle
 
 <td>
 
-{purchase.source}
+<span
+className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
+${
+purchase.source === "TANKER"
+
+?
+
+"bg-amber-100 text-amber-700"
+
+:
+
+"bg-sky-100 text-sky-700"
+}`}
+>
+
+{
+purchase.source === "TANKER"
+
+?
+
+"Tanker"
+
+:
+
+"Municipal"
+}
+
+</span>
 
 </td>
 
-<td>
+<td className="font-semibold text-slate-900">
 
 {purchase.volumeKl} KL
 
 </td>
 
-<td>
+<td  className="font-semibold text-slate-900">
 
 ₹ {
 
@@ -673,7 +686,7 @@ maximumFractionDigits:2
 
 </td>
 
-<td>
+<td  className="font-semibold text-slate-900">
 
 ₹ {
 
@@ -699,13 +712,13 @@ maximumFractionDigits:2
 
 </td>
 
-<td>
+<td className="text-center">
 
-<div className="mg-table-actions">
+<div className="flex justify-center gap-3">
 
 <button
     title="Edit Purchase"
-    className="mg-icon-button"
+    className="mg-action-button"
     onClick={() => openEditModal(purchase)}
 >
     <Pencil size={16} />
@@ -713,8 +726,11 @@ maximumFractionDigits:2
 
 <button
     title="Delete Purchase"
-    className="mg-icon-button mg-danger"
-    onClick={() => handleDelete(purchase.id)}
+    className="mg-action-button"
+    onClick={() => {
+    setPurchaseToDelete(purchase);
+    setShowDeleteDialog(true);
+}}
 >
     <Trash2 size={16} />
 </button>
@@ -733,6 +749,7 @@ maximumFractionDigits:2
 </tbody>
 
 </table>
+</div>
 
 }
 
@@ -744,31 +761,30 @@ maximumFractionDigits:2
 
 <div className="mg-modal">
 
-<div className="mg-modal-header">
+<div className="mg-toolbar mb-6">
 
-<h2>
+    <div>
+        <h2>
+            {editingPurchase
+                ? "Edit Purchase"
+                : "Add Purchase"}
+        </h2>
 
-{
-editingPurchase
-? "Edit Purchase"
-: "Add Purchase"
-}
+        <p>
+            Record bulk water purchases.
+        </p>
+    </div>
 
-</h2>
-
-<button
-onClick={() => {
-
-setIsModalOpen(false);
-
-resetForm();
-
-}}
->
-
-✕
-
-</button>
+    <button
+        type="button"
+        className="mg-cancel-button"
+        onClick={() => {
+            setIsModalOpen(false);
+            resetForm();
+        }}
+    >
+        Close
+    </button>
 
 </div>
 
@@ -899,26 +915,17 @@ filteredBillingCycles.map(
 cycle => (
 
 <option
-
 key={cycle.id}
-
 value={cycle.id}
-
 >
 
-{
-
-cycle.startDate
-
-}
-
-{" - "}
-
-{
-
-cycle.endDate
-
-}
+{new Date(cycle.startDate).toLocaleString(
+    "en-US",
+    {
+        month: "long",
+        year: "numeric",
+    }
+)}
 
 </option>
 
@@ -1065,7 +1072,7 @@ required
 </div>
 <div className="mg-form-group-full">
 
-<div className="mg-modal-footer">
+<div className="mg-modal-actions">
 
 <button
 
@@ -1122,7 +1129,20 @@ editingPurchase
 
 )}
 </AdminPageShell>
-  );
+<ConfirmDialog
+    open={showDeleteDialog}
+    title="Delete Purchase?"
+    message="This purchase record will be permanently deleted. This action cannot be undone."
+    confirmText="Delete"
+    cancelText="Cancel"
+    onConfirm={handleDelete}
+    onCancel={() => {
+        setShowDeleteDialog(false);
+        setPurchaseToDelete(null);
+    }}
+/>
+</>
+);
 }
 
 export default BulkWaterPurchases;

@@ -10,6 +10,9 @@ import {
   Trash2,
   Upload,
   X,
+  Home,
+  ClipboardList,
+  BarChart3,
 } from "lucide-react";
 
 import AdminPageShell from "../components/AdminPageShell";
@@ -320,88 +323,91 @@ function WaterUsage() {
     }
     };
 
-    const totalUsage = usageLogs.reduce(
-    (sum, log) => sum + Number(log.litersConsumed),
-    0
+    const displayedLogs = filteredUsageLogs;
+
+    const totalUsage = displayedLogs.reduce(
+        (sum, log) => sum + Number(log.litersConsumed),
+        0
     );
 
-    const totalLogs = usageLogs.length;
+    const totalLogs = displayedLogs.length;
 
-    const manualEntries = usageLogs.filter(
-    (log) => log.source === "MANUAL_ENTRY"
-    ).length;
+    const averageUsage =
+        totalLogs === 0
+            ? 0
+            : totalUsage / totalLogs;
 
-    const latestDate =
-    usageLogs.length > 0
-        ? new Date(usageLogs[0].usageDate).toLocaleDateString(
-            "en-GB",
-            {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            }
-        )
-        : "-";
+    const displayedHouseholds = new Set(
+        displayedLogs.map(log => log.householdId)
+    ).size;
+
   return (
     <AdminPageShell
-    searchPlaceholder="Search by household and apartment..."
+        title="Water Usage Management"
+        description="Track and manage household water consumption records."
+        searchPlaceholder="Search by household, apartment or date..."
         action={
-            <div style={{ display: "flex", gap: "10px" }}>
-                <select
-                    className="mg-select"
-                    value={selectedBillingCycle}
-                    onChange={(e) =>
-                        setSelectedBillingCycle(e.target.value)
-                    }
+            <div className="flex flex-wrap items-center gap-3">
+
+        <select
+            className="mg-select min-w-[220px]"
+            value={selectedBillingCycle}
+            onChange={(e) => setSelectedBillingCycle(e.target.value)}
+        >
+            <option value="">
+                All Billing Cycles
+            </option>
+
+            {billingCycles.map((cycle) => (
+                <option
+                    key={cycle.id}
+                    value={cycle.id}
                 >
+                    {cycle.apartmentName} •{" "}
+                    {new Date(cycle.startDate).toLocaleString(
+                        "en-US",
+                        {
+                            month: "long",
+                            year: "numeric",
+                        }
+                    )}
+                </option>
+            ))}
+        </select>
 
-                    <option value="">
-                        Billing Cycle
-                    </option>
+        <button
+            type="button"
+            className="mg-secondary-button flex items-center gap-2"
+            onClick={() =>
+                document.getElementById("csvUpload").click()
+            }
+        >
+            <Upload size={18} />
+            Upload CSV
+        </button>
 
-                    {billingCycles.map((cycle) => (
+        <button
+            type="button"
+            className="mg-primary-button flex items-center gap-2"
+            onClick={openAddModal}
+        >
+            <Plus size={18} />
+            Add Reading
+        </button>
 
-                        <option
-                            key={cycle.id}
-                            value={cycle.id}
-                        >
-                            {cycle.apartmentName} • {cycle.startDate}
-                        </option>
+        <input
+            id="csvUpload"
+            hidden
+            type="file"
+            accept=".csv"
+            onChange={handleCsvUpload}
+        />
 
-                    ))}
+    </div>
 
-                </select>
-
-                <button
-                type="button"
-                className="mg-secondary-button"
-                onClick={() =>
-                    document.getElementById("csvUpload").click()
-                }
-                >
-                <Upload size={18} />
-                Upload CSV
-                </button>
-
-                <button
-                type="button"
-                className="mg-primary-button"
-                onClick={openAddModal}
-                >
-                <Plus size={18} />
-                Add Reading
-                </button>
-
-                <input
-                id="csvUpload"
-                type="file"
-                accept=".csv"
-                style={{ display: "none" }}
-                onChange={handleCsvUpload}
-                />
-            </div>
         }
     >
+
         <section className="mg-summary-grid">
 
             <StatCard
@@ -412,44 +418,46 @@ function WaterUsage() {
             />
 
             <StatCard
-                icon={Droplets}
-                title="Usage Logs"
+                icon={Home}
+                title="Households"
+                value={displayedHouseholds}
+                description="Households in current view"
+            />
+
+            <StatCard
+                icon={ClipboardList}
+                title="Readings"
                 value={totalLogs}
-                description="Recorded entries"
+                description="Usage records"
             />
 
             <StatCard
-                icon={Droplets}
-                title="Manual Entries"
-                value={manualEntries}
-                description="Entered by admin"
-            />
-
-            <StatCard
-                icon={Droplets}
-                title="Latest Reading"
-                value={latestDate}
-                description="Most recent usage log"
+                icon={BarChart3}
+                title="Average Consumption"
+                value={`${averageUsage.toFixed(0)} L`}
+                description="Per recorded reading"
             />
 
         </section>
 
         <section className="mg-panel">
 
-            <div className="mg-toolbar">
+    <div>
 
-                <div>
-                <h2>Water Usage Records</h2>
+        <div className="mg-toolbar">
+            <div>
 
-                <p>
-                    Household water consumption logs.
-                </p>
+    <h2>
+        Water Usage Records
+    </h2>
+    <p>
+        Track, filter and manage household water consumption records.
+    </p>
+    </div>
 
-                </div>
+</div>
 
-            </div>
-        
-
+    </div>
         {isLoading ? (
         <div className="mg-empty-state">
             <Loader2
@@ -470,9 +478,9 @@ function WaterUsage() {
             <thead>
                 <tr>
                 <th>Apartment</th>
-                <th>Flat</th>
-                <th>Usage Date</th>
-                <th>Liters</th>
+                <th>Household</th>
+                <th>Reading Date</th>
+                <th>Consumption</th>
                 <th>Source</th>
                 <th>Action</th>
                 </tr>
@@ -482,7 +490,8 @@ function WaterUsage() {
 
                 {filteredUsageLogs.map((log) => (
 
-                <tr key={log.id}>
+                <tr className="hover:bg-slate-50 transition-colors"
+                key={log.id}>
 
                     <td>{log.apartmentName}</td>
 
@@ -498,23 +507,25 @@ function WaterUsage() {
                         }
                     )}
                     </td>
-
-                    <td>{log.litersConsumed} L</td>
-
+                        <td className="font-semibold text-slate-800"
+                        >{log.litersConsumed} L</td>
                     <td>
-                    <span className="mg-status mg-status-active">
-                        {log.source.replaceAll("_", " ")}
+                    <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium
+                        ${
+                            log.source === "MANUAL_ENTRY"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "bg-sky-100 text-sky-700"
+                        }`}
+                    >
+                        {log.source === "MANUAL_ENTRY"
+                            ? "Manual"
+                            : "CSV"}
                     </span>
                     </td>
 
                     <td>
-                    <div
-                        style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        gap: "8px",
-                        }}
-                    >
+                    <div className="flex justify-center gap-2">
                         <button
                         type="button"
                         className="mg-action-button"
@@ -551,7 +562,7 @@ function WaterUsage() {
         <EmptyState
             icon={Droplets}
             title="No usage logs found"
-            description="Create your first water usage record."
+            description="Start by adding a manual reading or uploading a CSV file."
         />
 
         )}
@@ -607,7 +618,13 @@ function WaterUsage() {
                                     key={cycle.id}
                                     value={cycle.id}
                                 >
-                                    {cycle.apartmentName} • {cycle.startDate} - {cycle.endDate}
+                                    {cycle.apartmentName} • {cycle.apartmentName} • {new Date(cycle.startDate).toLocaleString(
+                                        "en-US",
+                                        {
+                                            month: "long",
+                                            year: "numeric",
+                                        }
+                                    )}
                                 </option>
 
                             ))}
