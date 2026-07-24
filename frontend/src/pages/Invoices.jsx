@@ -558,6 +558,8 @@ function Invoices() {
 
                     description="Generated invoices"
 
+                    delay={0}
+
                 />
 
                 <StatCard
@@ -569,6 +571,8 @@ function Invoices() {
                     value={pendingInvoices}
 
                     description="Awaiting payment"
+
+                    delay={0.1}
 
                 />
 
@@ -582,6 +586,8 @@ function Invoices() {
 
                     description="Completed payments"
 
+                    delay={0.2}
+
                 />
 
                 <StatCard
@@ -593,6 +599,8 @@ function Invoices() {
                     value={`₹ ${totalRevenue.toLocaleString("en-IN")}`}
 
                     description="Invoice amount"
+
+                    delay={0.3}
 
                 />
 
@@ -663,7 +671,8 @@ function Invoices() {
 
                                 {filteredInvoices.map((invoice) => (
 
-                                    <tr key={invoice.id}>
+                                    <tr className="hover:bg-slate-50 transition-colors"
+                                    key={invoice.id}>
 
                                         <td>
 

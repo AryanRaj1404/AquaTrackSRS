@@ -567,6 +567,7 @@ const highestRate =
         title="Total Plans"
         value={tariffPlans.length}
         description="Available tariff plans"
+        delay={0}
       />
 
       <StatCard
@@ -574,6 +575,7 @@ const highestRate =
         title="Active Plans"
         value={activePlans}
         description="Currently configured"
+        delay={0.1}
       />
 
       <StatCard
@@ -593,6 +595,7 @@ const highestRate =
               )}`
       }
         description="Rate per unit"
+        delay={0.2}
       />
 
       <StatCard
@@ -606,6 +609,7 @@ const highestRate =
             latestPlan?.effectiveFrom ??
             "No plans yet"
         }
+        delay={0.3}
       />
     </section>
 
@@ -911,7 +915,8 @@ const highestRate =
 
               <tbody>
                 {filteredTariffPlans.map((plan) => (
-                  <tr key={plan.id}>
+                  <tr className="hover:bg-slate-50 transition-colors"
+                  key={plan.id}>
                     <td>
                       <span className="mg-table-primary">
                         {plan.planName}
@@ -1030,7 +1035,7 @@ const highestRate =
                     >
                       <button
                         type="button"
-                        className="mg-secondary-button"
+                        className="mg-action-button"
                         onClick={() =>
                           handleEdit(plan)
                         }
@@ -1041,7 +1046,7 @@ const highestRate =
 
                       <button
                         type="button"
-                        className="mg-danger-button"
+                        className="mg-action-button"
                         onClick={() =>
                           setDeleteId(plan.id)
                         }

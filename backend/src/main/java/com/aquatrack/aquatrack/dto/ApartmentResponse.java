@@ -13,4 +13,5 @@ public class ApartmentResponse {
     private Long id;
     private String name;
     private String address;
+    private Integer householdCount;
 }

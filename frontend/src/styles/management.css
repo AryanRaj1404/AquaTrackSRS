@@ -1,7 +1,7 @@
 .mg-shell {
   min-height: 100vh;
   color: #17233b;
-  background: rgba(255,255,255, 0.1);
+  background: transparent;
 }
 
 /* Sidebar */
@@ -167,6 +167,9 @@
   width: calc(100% - 270px);
   min-height: 100vh;
   margin-left: 270px;
+
+  position: relative;
+  overflow: hidden;
 }
 
 .mg-topbar {
@@ -179,7 +182,9 @@
   justify-content: space-between;
   padding: 14px 30px;
   border-bottom: 1px solid #e3e9ef;
-  background: rgba(255, 255, 255, 0.97);
+  background: rgba(255,255,255,.75);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 
 .mg-topbar-left,
@@ -326,6 +331,15 @@
   background: linear-gradient(135deg, #0781a5, #075b78);
   font-size: 12px;
   font-weight: 600;
+  justify-content: center;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease;
+}
+.mg-primary-button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px rgba(0,0,0,.15);
 }
 
 .mg-summary-grid {
@@ -344,6 +358,8 @@
   border-radius: 16px;
   background: white;
   box-shadow: 0 8px 23px rgba(15, 23, 42, 0.04);
+  position: relative;
+overflow: hidden;
 }
 
 .mg-summary-icon {
@@ -661,32 +677,117 @@
     flex-direction: column;
   }
 
-  .mg-primary-button {
-    width: 100%;
-    justify-content: center;
-  }
-
   .mg-summary-grid,
   .mg-form-grid {
     grid-template-columns: 1fr;
   }
 }
 .mg-brand-logo-image {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-}
-.mg-brand-icon {
-  display: grid;
-  width: 50px;
-  height: 50px;
-  place-items: center;
-  border-radius: 15px;
-  background: #ffffff;
-}
-
-.mg-brand-logo-image {
   width: 32px;
   height: 32px;
   object-fit: contain;
+}
+
+
+/* ===========================
+   Floating Water Bubbles
+=========================== */
+
+.mg-bubbles {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.mg-bubble {
+    position: absolute;
+    bottom: -120px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 30% 30%,
+            rgba(255,255,255,.95),
+            rgba(170,230,245,.70) 40%,
+            rgba(7,129,165,.45) 100%
+        );
+
+    border: 1.5px solid rgba(7,129,165,.45);
+
+    box-shadow:
+        inset -8px -8px 12px rgba(255,255,255,.45),
+        inset 6px 6px 16px rgba(255,255,255,.75),
+        0 0 28px rgba(7,129,165,.40);
+
+    animation: bubbleFloat linear infinite;
+    will-change: transform;
+}
+
+.mg-bubble:nth-child(3n){
+
+    filter:blur(.6px);
+
+}
+
+.mg-bubble:nth-child(5n){
+
+    filter:blur(1.3px);
+
+}
+
+.mg-bubble:nth-child(7n){
+
+    filter:blur(.3px);
+
+}
+
+@keyframes bubbleFloat {
+
+    0%{
+
+        transform:
+            translate3d(0,0,0)
+            scale(.75);
+
+        opacity:0;
+    }
+
+    10%{
+
+        opacity:.18;
+    }
+
+    30%{
+
+        transform:
+            translate3d(20px,-30vh,0)
+            scale(.9);
+    }
+
+    55%{
+
+        transform:
+            translate3d(-35px,-60vh,0)
+            scale(1);
+    }
+
+    80%{
+
+        transform:
+            translate3d(40px,-95vh,0)
+            scale(1.08);
+
+        opacity:.28;
+    }
+
+    100%{
+
+        transform:
+            translate3d(-20px,-130vh,0)
+            scale(1.18);
+
+        opacity:0;
+    }
 }

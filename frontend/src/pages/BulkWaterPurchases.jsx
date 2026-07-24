@@ -446,6 +446,8 @@ const filteredBillingCycles = billingCycles.filter(
 
         description="Purchases recorded"
 
+        delay={0}
+
     />
 
     <StatCard
@@ -457,6 +459,8 @@ const filteredBillingCycles = billingCycles.filter(
         value={`${totalVolume.toFixed(2)} KL`}
 
         description="Purchased water"
+
+        delay={0.1}
 
     />
 
@@ -470,6 +474,8 @@ const filteredBillingCycles = billingCycles.filter(
 
         description="Total Expenditure"
 
+        delay={0.2}
+
     />
 
     <StatCard
@@ -481,6 +487,8 @@ const filteredBillingCycles = billingCycles.filter(
         value={`₹ ${averageRate.toFixed(2)}/KL`}
 
         description="Average purchase rate"
+
+        delay={0.3}
 
     />
 
@@ -576,7 +584,8 @@ filteredPurchases.map(purchase => {
     );
 
     return (
-        <tr key={purchase.id}>
+        <tr className="hover:bg-slate-50 transition-colors"
+        key={purchase.id}>
 
 <td>
 

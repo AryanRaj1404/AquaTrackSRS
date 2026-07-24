@@ -10,14 +10,17 @@ import com.aquatrack.aquatrack.dto.ApartmentResponse;
 import com.aquatrack.aquatrack.entity.Apartment;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
+import com.aquatrack.aquatrack.repository.HouseholdRepository;
 
 @Service
 public class ApartmentServiceImpl implements ApartmentService {
 
     private final ApartmentRepository apartmentRepository;
+    private final HouseholdRepository householdRepository;
 
-    public ApartmentServiceImpl(ApartmentRepository apartmentRepository) {
+    public ApartmentServiceImpl(ApartmentRepository apartmentRepository, HouseholdRepository householdRepository) {
         this.apartmentRepository = apartmentRepository;
+        this.householdRepository = householdRepository;
     }
 
     @Override
@@ -66,9 +69,13 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     private ApartmentResponse toResponse(Apartment apartment) {
+        int householdCount =
+            (int) householdRepository.countByApartmentId(apartment.getId());
         return new ApartmentResponse(
                 apartment.getId(),
                 apartment.getName(),
-                apartment.getAddress());
+                apartment.getAddress(),
+                householdCount
+            );
     }
 }

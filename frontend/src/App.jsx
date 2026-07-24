@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -15,10 +17,20 @@ import BillingCycles from "./pages/BillingCycles";
 import Profile from "./pages/Profile";
 import Invoices from "./pages/Invoices";
 import BulkWaterPurchases from "./pages/BulkWaterPurchases";
+import WaterBackground from "./components/WaterBackground";
+import WaterRipples from "./components/WaterRipples";
 
 function App() {
+  const location = useLocation();
   return (
-    <Routes>
+    <>
+      <WaterBackground/>
+      <WaterRipples/>
+    <AnimatePresence mode="wait">
+      <Routes
+        location={location}
+        key={location.pathname}
+      >
       <Route path="/" element={<Landing />} />
 
       <Route path="/login" element={<Login />} />
@@ -116,6 +128,8 @@ function App() {
         element={<Navigate to="/" replace />}
       />
     </Routes>
+    </AnimatePresence>
+    </>
   );
 }
 

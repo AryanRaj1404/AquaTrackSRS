@@ -405,6 +405,7 @@ function BillingCycles(){
           title="Billing Cycles"
           value={billingCycles.length}
           description="Total billing records"
+          delay={0}
         />
 
         <StatCard
@@ -416,6 +417,7 @@ function BillingCycles(){
             ).length
           }
           description="Currently active"
+          delay={0.1}
         />
 
         <StatCard
@@ -427,6 +429,7 @@ function BillingCycles(){
             ).length
           }
           description="Completed payments"
+          delay={0.2}
         />
 
         <StatCard
@@ -442,6 +445,7 @@ function BillingCycles(){
               ? billingCycles[0].status
               : "No billing cycles"
           }
+          delay={0.3}
         />
       </section>
 
@@ -635,7 +639,8 @@ function BillingCycles(){
 
                 <tbody>
                 {filteredBillingCycles.map((cycle) => (
-                    <tr key={cycle.id}>
+                    <tr className="hover:bg-slate-50 transition-colors"
+                    key={cycle.id}>
                     <td>
                         <span className="mg-table-primary">
                         {cycle.apartmentName}
@@ -675,7 +680,7 @@ function BillingCycles(){
                     >
                         <button
                         type="button"
-                        className="mg-secondary-button"
+                        className="mg-action-button"
                         onClick={() => handleEdit(cycle)}
                         >
                         <Pencil size={16} />
@@ -684,7 +689,7 @@ function BillingCycles(){
 
                         <button
                         type="button"
-                        className="mg-danger-button"
+                        className="mg-action-button"
                         onClick={() =>
                             setDeleteId(cycle.id)
                         }
