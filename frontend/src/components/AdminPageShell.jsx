@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import WaterBackground from "./WaterBackground";
 import { motion } from "framer-motion";
 
 import {
@@ -109,8 +108,7 @@ function AdminPageShell({
 
   return (
     <>
-    <WaterBackground/>
-    <div className="mg-shell relative z-10">
+    <div className="mg-shell">
       <aside className={`mg-sidebar ${sidebarOpen ? "mg-sidebar-open" : ""}`}>
         <div className="mg-brand">
           <div className="mg-brand-icon">

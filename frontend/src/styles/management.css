@@ -167,6 +167,9 @@
   width: calc(100% - 270px);
   min-height: 100vh;
   margin-left: 270px;
+
+  position: relative;
+  overflow: hidden;
 }
 
 .mg-topbar {
@@ -180,8 +183,8 @@
   padding: 14px 30px;
   border-bottom: 1px solid #e3e9ef;
   background: rgba(255,255,255,.75);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 
 .mg-topbar-left,
@@ -355,6 +358,8 @@
   border-radius: 16px;
   background: white;
   box-shadow: 0 8px 23px rgba(15, 23, 42, 0.04);
+  position: relative;
+overflow: hidden;
 }
 
 .mg-summary-icon {
@@ -681,4 +686,108 @@
   width: 32px;
   height: 32px;
   object-fit: contain;
+}
+
+
+/* ===========================
+   Floating Water Bubbles
+=========================== */
+
+.mg-bubbles {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.mg-bubble {
+    position: absolute;
+    bottom: -120px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 30% 30%,
+            rgba(255,255,255,.95),
+            rgba(170,230,245,.70) 40%,
+            rgba(7,129,165,.45) 100%
+        );
+
+    border: 1.5px solid rgba(7,129,165,.45);
+
+    box-shadow:
+        inset -8px -8px 12px rgba(255,255,255,.45),
+        inset 6px 6px 16px rgba(255,255,255,.75),
+        0 0 28px rgba(7,129,165,.40);
+
+    animation: bubbleFloat linear infinite;
+    will-change: transform;
+}
+
+.mg-bubble:nth-child(3n){
+
+    filter:blur(.6px);
+
+}
+
+.mg-bubble:nth-child(5n){
+
+    filter:blur(1.3px);
+
+}
+
+.mg-bubble:nth-child(7n){
+
+    filter:blur(.3px);
+
+}
+
+@keyframes bubbleFloat {
+
+    0%{
+
+        transform:
+            translate3d(0,0,0)
+            scale(.75);
+
+        opacity:0;
+    }
+
+    10%{
+
+        opacity:.18;
+    }
+
+    30%{
+
+        transform:
+            translate3d(20px,-30vh,0)
+            scale(.9);
+    }
+
+    55%{
+
+        transform:
+            translate3d(-35px,-60vh,0)
+            scale(1);
+    }
+
+    80%{
+
+        transform:
+            translate3d(40px,-95vh,0)
+            scale(1.08);
+
+        opacity:.28;
+    }
+
+    100%{
+
+        transform:
+            translate3d(-20px,-130vh,0)
+            scale(1.18);
+
+        opacity:0;
+    }
 }

@@ -17,11 +17,15 @@ import BillingCycles from "./pages/BillingCycles";
 import Profile from "./pages/Profile";
 import Invoices from "./pages/Invoices";
 import BulkWaterPurchases from "./pages/BulkWaterPurchases";
+import WaterBackground from "./components/WaterBackground";
+import WaterRipples from "./components/WaterRipples";
 
 function App() {
   const location = useLocation();
   return (
     <>
+      <WaterBackground/>
+      <WaterRipples/>
     <AnimatePresence mode="wait">
       <Routes
         location={location}

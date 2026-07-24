@@ -1,7 +1,15 @@
 import { motion } from "framer-motion";
 import AnimatedNumber from "./AnimatedNumber";
+import WaterFill from "./WaterFill";
 
-function StatCard({ icon: Icon, title, value, description, delay = 0, animatedValue = false }) {
+function StatCard({
+  icon: Icon,
+  title,
+  value,
+  description,
+  delay = 0,
+  animatedValue = false,
+}) {
   return (
     <motion.article
       className="mg-summary-card"
@@ -18,20 +26,26 @@ function StatCard({ icon: Icon, title, value, description, delay = 0, animatedVa
         stiffness: 260,
       }}
     >
+      <WaterFill level={40} />
+
       <div className="mg-summary-icon">
         <Icon size={22} />
       </div>
 
       <div>
         <p>{title}</p>
+
         <h2>
-            {animatedValue && typeof value === "number" ? (
-                <AnimatedNumber value={value} />
-            ) : (
-                value
-            )}
+          {animatedValue && typeof value === "number" ? (
+            <AnimatedNumber value={value} />
+          ) : (
+            value
+          )}
         </h2>
-        <span className="mg-table-secondary">{description}</span>
+
+        <span className="mg-table-secondary">
+          {description}
+        </span>
       </div>
     </motion.article>
   );
