@@ -10,13 +10,29 @@ AquaTrack is a full-stack web application that helps apartment communities monit
 
 ### Frontend
 - React (Vite)
-- React Router
+- React Router DOM 
 - Axios
+- Framer Motion
+- React CountUp
 - React Hot Toast
 - Lucide React
+- Tailwind CSS
+
+## 🌟 Key Highlights
+
+- Full-Stack Water Consumption & Billing Management System
+- JWT & Google OAuth Authentication
+- Tiered Billing Engine with Consumption-Based Cost Distribution
+- Bulk Water Purchase Management
+- Automated Invoice Generation with PDF Support
+- Email Notification & Alert Scheduler
+- Leak Detection & Water Consumption Monitoring
+- Interactive Admin Dashboard with Live Statistics
+- Responsive Water-Themed UI with Modern Animations
 
 ### Backend
-- Spring Boot 3
+- Java 24
+- Spring Boot 4
 - Spring Security 6
 - JWT Authentication
 - Spring Data JPA
@@ -106,13 +122,38 @@ AquaTrack is a full-stack web application that helps apartment communities monit
 
 ---
 
+---
+
+## Bulk Water Purchases
+
+- Record Bulk Water Purchases
+- Update Purchase Records
+- Delete Purchase Records
+- Apartment Mapping
+- Purchase History
+
+---
+
+## Invoice Management
+
+- Generate Invoices
+- View Invoices
+- Invoice Status
+- Billing Cycle Mapping
+
+---
+
 ## Dashboard
 
 - Live Statistics
 - Apartment Count
 - Household Count
-- Meter Count
-- Water Usage Count
+- User Count
+- Active Billing Cycles
+- Total Water Consumption
+- Bulk Water Purchase Statistics
+- Invoice Statistics
+- Animated Dashboard Cards
 - Backend Connected
 
 ---
@@ -122,9 +163,13 @@ AquaTrack is a full-stack web application that helps apartment communities monit
 - Toast Notifications
 - Confirmation Dialogs
 - Loading Indicators
-- Empty States
+- Skeleton Loading
 - Responsive Layout
 - Search on Every Module
+- Animated Statistics
+- Water-Themed Dashboard
+- Floating Background Animation
+- Page Transitions
 
 ---
 
@@ -138,15 +183,16 @@ backend/
     entity/
     dto/
     security/
-    exception/
     config/
+    exception/
+    seeder/
     test/
 
 frontend/
     pages/
     components/
     services/
-    layouts/
+    styles/
 ```
 
 ---
@@ -159,7 +205,10 @@ frontend/
 - Meters
 - Water Usage Logs
 - Tariff Plans
+- Tariff Tiers
+- Bulk Water Purchases
 - Billing Cycles
+- Invoices
 
 ---
 
@@ -195,7 +244,9 @@ frontend/
 | Meter Module | ✅ Completed |
 | Water Usage Logs | ✅ Completed |
 | Tariff Plans | ✅ Completed |
+| Bulk Water Purchases | ✅ Completed |
 | Billing Cycles | ✅ Completed |
+| Invoice Module | ✅ Completed |
 | Dashboard | ✅ Completed |
 | Backend Integration | ✅ Completed |
 | Controller Tests | ✅ Completed |
@@ -231,13 +282,19 @@ frontend/
 
 ## Milestone 2
 
-- ⏳ Tiered Billing Engine
-- ⏳ Consumption Distribution
-- ⏳ Invoice Generation
-- ⏳ Alert Scheduler
-- ⏳ Email Notifications
+## Milestone 2
 
-**Progress:** **≈ 10%**
+- ✅ Tiered Billing Engine
+- ✅ Consumption Distribution
+- ✅ Bulk Water Purchase Management
+- ✅ Invoice Generation
+- ✅ Email Notifications
+- ✅ Alert Scheduler
+- ✅ PDF Invoice Generation
+- ✅ Google OAuth Authentication
+- ✅ Leak Detection
+
+**Progress:** **≈ 95%**
 
 ---
 
@@ -270,24 +327,27 @@ frontend/
 | Milestone | Progress |
 |-----------|----------|
 | Milestone 1 | ✅ 100% |
-| Milestone 2 | 🟡 10% |
-| Milestone 3 | ⏳ 0% |
+| Milestone 2 | 🟢 95% |
+| Milestone 3 | 🟡 20% |
 | Milestone 4 | ⏳ 0% |
-
 ---
 
 # 🔮 Future Enhancements
 
-- Email Notifications
-- Leak Detection
-- Tiered Billing Engine
-- Invoice PDF Generation
-- Dashboard Charts
-- Water Saving Recommendations
-- Google OAuth Login
+# 🔮 Future Enhancements
+
+- Interactive Dashboard Charts
+- Resident Dashboard
+- AI Water Consumption Prediction
+- Smart Water Saving Recommendations
+- Performance Optimization
+- Database Pagination & Lazy Loading
 - Docker Deployment
 - Swagger API Documentation
+- Cloud Deployment
 
 ---
+**Current Status:** ✅ Milestone 2 Feature Complete
+
 
 Spring Boot • React • PostgreSQL
