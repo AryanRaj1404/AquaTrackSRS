@@ -14,6 +14,7 @@ import {
 import AdminPageShell from "../components/AdminPageShell";
 import EmptyState from "../components/EmptyState";
 import StatCard from "../components/StatCard";
+import Pagination from "../components/Pagination";
 import {
   createHousehold,
   getHouseholds,
@@ -43,21 +44,26 @@ function Households() {
   const [form, setForm] = useState(initialForm);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [page, setPage] = useState(0);
+  const [pageData, setPageData] = useState(null);
+
+  const PAGE_SIZE = 20;
 
   useEffect(() => {
     loadHouseholds();
-  }, []);
+  }, [page]);
 
   const loadHouseholds = async () => {
   try {
     setIsLoading(true);
 
     const [householdData, apartmentData] = await Promise.all([
-      getHouseholds(),
+      getHouseholds(page, PAGE_SIZE),
       getApartments(),
     ]);
 
-    setHouseholds(Array.isArray(householdData) ? householdData : []);
+    setHouseholds(householdData.content ?? []);
+    setPageData(householdData);
 
     setApartments(Array.isArray(apartmentData) ? apartmentData : []);
   } catch (error) {
@@ -278,16 +284,16 @@ const handleRemoveResident = async (household) => {
         <StatCard
           icon={Home}
           title="Total Households"
-          value={households.length}
+          value={pageData?.totalElements ?? 0}
           description="Fetched from backend API"
           delay={0}
         />
 
         <StatCard
           icon={Users}
-          title="Total Occupancy"
+          title="Page Occupancy"
           value={totalOccupancy}
-          description="Total residents across all households"
+          description="Residents on current page"
           delay={0.1}
         />
 
@@ -521,8 +527,10 @@ const handleRemoveResident = async (household) => {
             <p>Please wait while household data is fetched.</p>
           </div>
         ) : filteredHouseholds.length > 0 ? (
+          <>
           <div className="mg-table-wrapper">
             <table className="mg-table">
+              <thead>
               <tr>
                 <th>Flat Number</th>
                 <th>Apartment</th>
@@ -531,6 +539,7 @@ const handleRemoveResident = async (household) => {
                 <th>Resident</th>
                 <th>Actions</th>
               </tr>
+              </thead>
 
               <tbody>
                 {filteredHouseholds.map((household) => (
@@ -590,6 +599,17 @@ const handleRemoveResident = async (household) => {
               </tbody>
             </table>
           </div>
+          <Pagination
+              page={page}
+              pageData={pageData}
+              pageSize={PAGE_SIZE}
+              currentCount={households.length}
+              onPrevious={() => setPage(page - 1)}
+              onNext={() => setPage(page + 1)}
+              onPageChange={setPage}
+          />
+        </>
+
         ) : (
           <EmptyState
             icon={Home}

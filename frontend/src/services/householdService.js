@@ -1,7 +1,14 @@
 import api from "./api";
 
-export async function getHouseholds() {
-  const response = await api.get("/households");
+export async function getHouseholds(page = 0, size = 20) {
+
+  const response = await api.get("/households", {
+    params: {
+      page,
+      size,
+    },
+  });
+
   return response.data;
 }
 
@@ -31,9 +38,9 @@ export async function getUnassignedResidents() {
 
 export const getHouseholdsByApartment = async (apartmentId) => {
 
-    const response = await api.get(
-        `/households/apartment/${apartmentId}`
-    );
+  const response = await api.get(
+    `/households/apartment/${apartmentId}`
+  );
 
-    return response.data;
+  return response.data;
 };

@@ -3,6 +3,8 @@ package com.aquatrack.aquatrack.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +67,15 @@ public class HouseholdServiceImpl implements HouseholdService {
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<HouseholdResponse> getAll(Pageable pageable) {
+        return householdRepository
+                .findAll(pageable)
+                .map(this::toResponse);
+
+        }
+
 
     @Override
     public HouseholdResponse getById(Long id) {

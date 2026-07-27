@@ -2,6 +2,9 @@ package com.aquatrack.aquatrack.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.aquatrack.aquatrack.dto.HouseholdRequest;
 import com.aquatrack.aquatrack.dto.HouseholdResponse;
 import com.aquatrack.aquatrack.dto.ResidentResponse;
@@ -10,6 +13,8 @@ public interface HouseholdService {
     HouseholdResponse create(HouseholdRequest request);
 
     List<HouseholdResponse> getAll();
+
+    Page<HouseholdResponse> getAll(Pageable pageable);
 
     HouseholdResponse getById(Long id);
 
