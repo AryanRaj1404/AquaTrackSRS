@@ -45,6 +45,7 @@ public class AlertScheduler {
     // @Scheduled(cron = "${aquatrack.alerts.cron:0 0 6 * * *}")
     @Scheduled(fixedRate = 30000)
     public void runDailyAlertCheck() {
+        System.out.println("Alert Scheduler Executed");
         LocalDate today = LocalDate.now();
         List<Household> households = householdRepository.findAll();
 
@@ -89,6 +90,6 @@ public class AlertScheduler {
         alert.setMessage(message);
         usageAlertRepository.save(alert);
 
-        alertEmailService.sendAlertEmail(household, type, message);
+        alertEmailService.sendAlertEmail(household, type, message, date);
     }
 }
