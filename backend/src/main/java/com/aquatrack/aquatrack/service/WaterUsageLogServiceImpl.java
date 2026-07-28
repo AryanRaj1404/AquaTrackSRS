@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.aquatrack.aquatrack.dto.CsvRowError;
 import com.aquatrack.aquatrack.dto.UploadCsvResponse;
@@ -86,12 +88,31 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
     }
 
     @Override
-    public List<WaterUsageLogResponse> getAll() {
-        return waterUsageLogRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+public Page<WaterUsageLogResponse> getAll(
+        String keyword,
+        Pageable pageable) {
+
+    Page<WaterUsageLog> page;
+
+    if (keyword == null || keyword.isBlank()) {
+
+        page = waterUsageLogRepository.findAll(pageable);
+
+    } else {
+
+        page =
+            waterUsageLogRepository
+                .findByHousehold_FlatNumberContainingIgnoreCaseOrHousehold_Apartment_NameContainingIgnoreCase(
+                    keyword,
+                    keyword,
+                    pageable
+                );
+
     }
+
+    return page.map(this::toResponse);
+
+}
 
     @Override
     public WaterUsageLogResponse getById(Long id) {

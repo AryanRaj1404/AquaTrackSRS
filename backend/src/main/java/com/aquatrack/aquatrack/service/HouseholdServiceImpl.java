@@ -119,6 +119,27 @@ public class HouseholdServiceImpl implements HouseholdService {
                 .collect(Collectors.toList());
         }
 
+        @Override
+        public Page<HouseholdResponse> getByApartment(
+                Long apartmentId,
+                Pageable pageable) {
+
+        return householdRepository
+                .findByApartmentId(apartmentId, pageable)
+                .map(this::toResponse);
+
+        }
+
+        @Override
+        public Page<HouseholdResponse> search(
+                String keyword,
+                Pageable pageable) {
+
+        return householdRepository
+                .search(keyword, pageable)
+                .map(this::toResponse);
+        }
+
     @Transactional
     @Override
     public void delete(Long id) {

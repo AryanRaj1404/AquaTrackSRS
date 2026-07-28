@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aquatrack.aquatrack.dto.HouseholdRequest;
@@ -78,5 +79,28 @@ public class HouseholdController {
             @PathVariable Long apartmentId) {
 
         return householdService.getByApartment(apartmentId);
+    }
+
+    @GetMapping("/search")
+    public Page<HouseholdResponse> searchHouseholds(
+            @RequestParam String keyword,
+            Pageable pageable) {
+
+        return householdService.search(
+                keyword,
+                pageable
+        );
+    }
+
+    @GetMapping("/filter")
+    public Page<HouseholdResponse> filterByApartment(
+            @RequestParam Long apartmentId,
+            Pageable pageable) {
+
+        return householdService.getByApartment(
+                apartmentId,
+                pageable
+        );
+
     }
 }

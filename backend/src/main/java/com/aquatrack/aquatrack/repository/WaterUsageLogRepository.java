@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.aquatrack.aquatrack.entity.WaterUsageLog;
 
@@ -53,5 +55,11 @@ public interface WaterUsageLogRepository extends JpaRepository<WaterUsageLog, Lo
     """)
     List<Object[]> getTopHouseholds();
 
+    Page<WaterUsageLog> findAll(Pageable pageable);
 
+    Page<WaterUsageLog> findByHousehold_FlatNumberContainingIgnoreCaseOrHousehold_Apartment_NameContainingIgnoreCase(
+        String flatNumber,
+        String apartmentName,
+        Pageable pageable
+);
 }

@@ -1,5 +1,7 @@
 package com.aquatrack.aquatrack.seeder;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -39,6 +41,70 @@ public class RandomDataGenerator {
     public int getOccupancy() {
 
         return random.nextInt(5) + 1;
+
+    }
+
+    private final List<String> suppliers = List.of(
+
+        "Aqua Tankers",
+
+        "Blue Water Supply",
+
+        "Crystal Water Services",
+
+        "FreshDrop Tankers",
+
+        "City Water Logistics"
+
+    );
+
+    public int getPurchaseCount() {
+
+        return random.nextInt(4) + 2;
+
+    }
+
+    public double getPurchaseVolumeKl() {
+
+        return 80 + random.nextInt(121);
+
+    }   
+
+    public double getUnitCost() {
+
+        return 85 + random.nextInt(21);
+
+    }
+
+    public String getSupplier() {
+
+        return suppliers.get(
+
+                random.nextInt(
+                        suppliers.size()
+                )
+
+        );
+
+    }
+
+    public LocalDate getPurchaseDate(
+        LocalDate start,
+        LocalDate end) {
+
+        int days =
+
+                (int)
+                ChronoUnit.DAYS.between(
+                        start,
+                        end
+                );
+
+        return start.plusDays(
+
+                random.nextInt(days + 1)
+
+        );
 
     }
 
@@ -98,4 +164,57 @@ public class RandomDataGenerator {
         return random.nextInt(101) + 100;
 
     }
+
+    public double getDailyWaterUsage(int occupancy) {
+
+    int minimum;
+    int maximum;
+
+    switch (occupancy) {
+
+        case 1 -> {
+            minimum = 120;
+            maximum = 180;
+        }
+
+        case 2 -> {
+            minimum = 180;
+            maximum = 260;
+        }
+
+        case 3 -> {
+            minimum = 240;
+            maximum = 340;
+        }
+
+        case 4 -> {
+            minimum = 300;
+            maximum = 420;
+        }
+
+        default -> {
+            minimum = 350;
+            maximum = 480;
+        }
+
+    }
+
+    double usage =
+            minimum +
+            random.nextDouble() *
+            (maximum - minimum);
+
+    /*
+        5% chance of abnormal usage
+    */
+
+    if (random.nextInt(100) < 5) {
+
+        usage = 520 + random.nextDouble() * 180;
+
+    }
+
+    return Math.round(usage);
+
+}
 }

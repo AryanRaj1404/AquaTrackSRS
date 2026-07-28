@@ -1,13 +1,34 @@
 import api from "./api";
 
-export const getPurchases = async () => {
+export const getPurchases = async (
+
+    page = 0,
+
+    size = 20
+
+) => {
 
     const response =
         await api.get(
-            "/bulk-water-purchases"
+
+            "/bulk-water-purchases",
+
+            {
+
+                params: {
+
+                    page,
+
+                    size,
+
+                },
+
+            }
+
         );
 
     return response.data;
+
 };
 
 export const getPurchaseById = async (id) => {

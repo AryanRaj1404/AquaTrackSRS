@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.aquatrack.aquatrack.dto.UploadCsvResponse;
 import com.aquatrack.aquatrack.dto.WaterUsageLogRequest;
@@ -36,9 +38,19 @@ public class WaterUsageLogController {
     }
 
     @GetMapping
-    public List<WaterUsageLogResponse> getAll() {
-        return waterUsageLogService.getAll();
-    }
+public Page<WaterUsageLogResponse> getAll(
+
+        @RequestParam(required = false)
+        String keyword,
+
+        Pageable pageable) {
+
+    return waterUsageLogService.getAll(
+            keyword,
+            pageable
+    );
+
+}
 
     @GetMapping("/{id}")
     public WaterUsageLogResponse getById(@PathVariable Long id) {

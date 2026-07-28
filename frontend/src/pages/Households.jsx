@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect,useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import {
@@ -9,18 +9,25 @@ import {
   Save,
   Users,
   X,
+  ChevronDown,
 } from "lucide-react";
 
 import AdminPageShell from "../components/AdminPageShell";
 import EmptyState from "../components/EmptyState";
 import StatCard from "../components/StatCard";
 import Pagination from "../components/Pagination";
+import HouseholdTable from "../components/households/HouseholdTable";
+import AddHouseholdModal from "../components/households/AddHouseholdModal";
+import AssignResidentModal from "../components/households/AssignResidentModal";
+
 import {
   createHousehold,
   getHouseholds,
+  searchHouseholds,
   assignResident,
   removeResident,
   getUnassignedResidents,
+  getHouseholdsByApartmentPage,
 } from "../services/householdService";
 
 import { getApartments } from "../services/apartmentService";
@@ -32,6 +39,8 @@ const initialForm = {
   apartmentId: "",
 };
 
+const PAGE_SIZE = 20;
+
 function Households() {
   const [households, setHouseholds] = useState([]);
   const [apartments, setApartments] = useState([]);
@@ -40,26 +49,71 @@ function Households() {
   const [selectedHousehold, setSelectedHousehold] = useState(null);
   const [selectedResident, setSelectedResident] = useState("");
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(initialForm);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [page, setPage] = useState(0);
   const [pageData, setPageData] = useState(null);
-
-  const PAGE_SIZE = 20;
+  const [selectedApartment, setSelectedApartment] = useState("");
+  const [isAssigning, setIsAssigning] = useState(false);
 
   useEffect(() => {
     loadHouseholds();
-  }, [page]);
+  }, [page, debouncedQuery, selectedApartment]);
+
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+
+        setDebouncedQuery(query);
+
+    }, 400);
+
+    return () => clearTimeout(timer);
+
+}, [query]);
 
   const loadHouseholds = async () => {
   try {
     setIsLoading(true);
 
+    let householdPromise;
+
+    if (selectedApartment) {
+
+        householdPromise =
+            getHouseholdsByApartmentPage(
+                selectedApartment,
+                page,
+                PAGE_SIZE
+            );
+
+    }
+    else if (debouncedQuery.trim()) {
+
+        householdPromise =
+            searchHouseholds(
+                debouncedQuery,
+                page,
+                PAGE_SIZE
+            );
+
+    }
+    else {
+
+        householdPromise =
+            getHouseholds(
+                page,
+                PAGE_SIZE
+            );
+
+    }
+
     const [householdData, apartmentData] = await Promise.all([
-      getHouseholds(page, PAGE_SIZE),
-      getApartments(),
+        householdPromise,
+        getApartments(),
     ]);
 
     setHouseholds(householdData.content ?? []);
@@ -77,25 +131,29 @@ function Households() {
   }
 };
 
-  const filteredHouseholds = useMemo(() => {
-    if (!query.trim()) {
-      return households;
-    }
+  const totalResidents = useMemo(() => {
 
-    const keyword = query.toLowerCase();
+    return households.reduce(
+        (sum, household) =>
+            sum + Number(household.occupancy || 0),
+        0
+    );
 
-    return households.filter((household) => {
-      return (
-        household.flatNumber?.toLowerCase().includes(keyword) ||
-        household.apartmentName?.toLowerCase().includes(keyword) ||
-        household.residentName?.toLowerCase().includes(keyword)
-      );
-    });
-  }, [households, query]);
+  }, [households]);
 
-  const totalOccupancy = households.reduce((total, household) => {
-    return total + Number(household.occupancy || 0);
-  }, 0);
+  const occupiedHouseholds = useMemo(() => {
+
+    return households.filter(
+        household => household.residentId !== null
+    ).length;
+
+}, [households]);
+
+  const vacantHouseholds = useMemo(() => {
+
+    return households.length - occupiedHouseholds;
+
+}, [households, occupiedHouseholds]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -149,16 +207,17 @@ function Households() {
     const loadingToast = toast.loading("Creating household...");
 
     try {
-      const savedHousehold = await createHousehold(householdPayload);
-
-      setHouseholds((previous) => [savedHousehold, ...previous]);
+      await createHousehold(householdPayload);
 
       toast.success("Household created successfully.", {
-        id: loadingToast,
+          id: loadingToast,
       });
 
       setForm(initialForm);
+
       setShowForm(false);
+
+      await loadHouseholds();
     } catch (error) {
       console.error("Household create error:", error);
 
@@ -193,12 +252,12 @@ const openAssignResident = async (household) => {
   setShowAssignModal(true);
 };
 
-const handleAssignResident = async () => {
+const onAssignResident = async () => {
   if (!selectedResident) {
     toast.error("Please select a resident.");
     return;
   }
-
+  setIsAssigning(true);
   try {
     const loadingToast = toast.loading("Assigning resident...");
 
@@ -210,6 +269,10 @@ const handleAssignResident = async () => {
     toast.success("Resident assigned successfully.", {
       id: loadingToast,
     });
+
+    setSelectedResident("");
+
+    setSelectedHousehold(null); 
 
     setShowAssignModal(false);
 
@@ -224,6 +287,9 @@ const handleAssignResident = async () => {
       "Failed to assign resident."
     );
 
+  }
+  finally{
+    setIsAssigning(false);
   }
 };
 
@@ -267,7 +333,10 @@ const handleRemoveResident = async (household) => {
       title="Household Management"
       description="Create and manage households using backend-ready fields."
       searchValue={query}
-      onSearchChange={setQuery}
+      onSearchChange={(value)=>{
+        setPage(0);
+        setQuery(value);
+      }}
       searchPlaceholder="Search households, residents or meters..."
       action={
         <button
@@ -291,231 +360,73 @@ const handleRemoveResident = async (household) => {
 
         <StatCard
           icon={Users}
-          title="Page Occupancy"
-          value={totalOccupancy}
-          description="Residents on current page"
+          title="Occupied"
+          value={occupiedHouseholds}
+          description="Households with Residents on current page."
           delay={0.1}
         />
 
         <StatCard
-          icon={CheckCircle2}
-          title="Status"
-          value="API Ready"
-          description="No dummy household data"
+          icon={Home}
+          title="Vacant"
+          value={vacantHouseholds}
+          description="Awaiting resident Assignment on current page."
           delay={0.2}
         />
 
         <StatCard
-          icon={Home}
-          title="Apartment Link"
-          value="Required"
-          description="Household belongs to apartment"
+          icon={Users}
+          title="Residents"
+          value={totalResidents}
+          description="Residents on current page"
           delay={0.2}
         />
       </section>
 
-      {showForm && (
-        <section className="mg-panel" style={{ marginBottom: "20px" }}>
-          <div className="mg-toolbar">
-            <div>
-              <h2>Add Household</h2>
-              <p>
-                These fields should match Sandhiya&apos;s backend household API.
-              </p>
-            </div>
+      <AddHouseholdModal
 
-            <button
-              type="button"
-              className="mg-cancel-button"
-              onClick={handleCancel}
-              disabled={isSubmitting}
-            >
-              <X size={16} />
-              Close
-            </button>
-          </div>
+        showForm={showForm}
 
-          <form onSubmit={handleSubmit}>
-            <div className="mg-form-grid">
+        handleCancel={handleCancel}
 
-              {/* Flat Number */}
+        handleSubmit={handleSubmit}
 
-              <div className="mg-form-group">
-                <label htmlFor="flatNumber">Flat Number</label>
+        handleChange={handleChange}
 
-                <input
-                  id="flatNumber"
-                  name="flatNumber"
-                  type="text"
-                  value={form.flatNumber}
-                  onChange={handleChange}
-                  placeholder="Example: A-101"
-                  disabled={isSubmitting}
-                />
-              </div>
+        form={form}
 
-              {/* Flat Size */}
+        apartments={apartments}
 
-              <div className="mg-form-group">
-                <label htmlFor="flatSize">Flat Size (sq.ft)</label>
+        isSubmitting={isSubmitting}
 
-                <input
-                  id="flatSize"
-                  name="flatSize"
-                  type="number"
-                  value={form.flatSize}
-                  onChange={handleChange}
-                  placeholder="Example: 1200"
-                  disabled={isSubmitting}
-                />
-              </div>
+    />
 
-              {/* Occupancy */}
+      <AssignResidentModal
 
-              <div className="mg-form-group">
-                <label htmlFor="occupancy">Occupancy</label>
+        showAssignModal={showAssignModal}
 
-                <input
-                  id="occupancy"
-                  name="occupancy"
-                  type="number"
-                  min="1"
-                  value={form.occupancy}
-                  onChange={handleChange}
-                  placeholder="Example: 4"
-                  disabled={isSubmitting}
-                />
-              </div>
+        selectedHousehold={selectedHousehold}
 
-              {/* Apartment */}
+        availableResidents={availableResidents}
 
-              <div className="mg-form-group">
-                <label htmlFor="apartmentId">Apartment</label>
+        selectedResident={selectedResident}
 
-                <select
-                  id="apartmentId"
-                  name="apartmentId"
-                  value={form.apartmentId}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                >
+        onResidentChange={setSelectedResident}
 
-                  <option value="">
-                    Select Apartment
-                  </option>
+        onAssign={onAssignResident}
 
-                  {apartments.map((apartment) => (
+        onClose={() => setShowAssignModal(false)}
 
-                    <option
-                      key={apartment.id}
-                      value={apartment.id}
-                    >
-                      {apartment.name}
-                    </option>
+        isAssigning={isAssigning}
 
-                  ))}
-
-                </select>
-              </div>
-
-            </div>
-            
-
-            <div className="mg-modal-actions">
-              <button
-                type="button"
-                className="mg-cancel-button"
-                onClick={handleCancel}
-                disabled={isSubmitting}
-              >
-                <X size={17} />
-                Cancel
-              </button>
-
-              <button
-                type="submit"
-                className="mg-primary-button"
-                disabled={isSubmitting}
-              >
-                <Save size={17} />
-                {isSubmitting ? "Saving..." : "Create Household"}
-              </button>
-            </div>
-          </form>
-        </section>
-      )}
-
-      {showAssignModal && (
-  <section className="mg-panel" style={{ marginBottom: "20px" }}>
-    <div className="mg-toolbar">
-      <div>
-        <h2>Assign Resident</h2>
-        <p>
-          Assign a resident to Flat {selectedHousehold?.flatNumber}.
-        </p>
-      </div>
-
-      <button
-        type="button"
-        className="mg-cancel-button"
-        onClick={() => setShowAssignModal(false)}
-      >
-        <X size={16} />
-        Close
-      </button>
-    </div>
-
-    <div className="mg-form-grid">
-      <div className="mg-form-group mg-form-group-full">
-        <label>Select Resident</label>
-
-        <select
-          value={selectedResident}
-          onChange={(e) => setSelectedResident(e.target.value)}
-        >
-          <option value="">Choose Resident</option>
-
-          {availableResidents.map((resident) => (
-            <option
-              key={resident.id}
-              value={resident.id}
-            >
-              {resident.fullName} ({resident.username})
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-
-    <div className="mg-modal-actions">
-      <button
-        type="button"
-        className="mg-cancel-button"
-        onClick={() => setShowAssignModal(false)}
-      >
-        <X size={17} />
-        Cancel
-      </button>
-
-      <button
-        type="button"
-        className="mg-primary-button"
-        onClick={handleAssignResident}
-      >
-        <Save size={17} />
-        Assign Resident
-      </button>
-    </div>
-  </section>
-)}
+      />
 
       <section className="mg-panel">
         <div className="mg-toolbar">
           <div>
             <h2>Household Records</h2>
             <p>
-              Household data will appear here after successful backend API
-              connection.
+              All the households are here.
             </p>
           </div>
         </div>
@@ -526,79 +437,21 @@ const handleRemoveResident = async (household) => {
             <h3>Loading households</h3>
             <p>Please wait while household data is fetched.</p>
           </div>
-        ) : filteredHouseholds.length > 0 ? (
+        ) : households.length > 0 ? (
           <>
-          <div className="mg-table-wrapper">
-            <table className="mg-table">
-              <thead>
-              <tr>
-                <th>Flat Number</th>
-                <th>Apartment</th>
-                <th>Flat Size</th>
-                <th>Occupancy</th>
-                <th>Resident</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
+          <HouseholdTable
+                households={households}
 
-              <tbody>
-                {filteredHouseholds.map((household) => (
-                  <tr className="hover:bg-slate-50 transition-colors"
-                  key={household.id}>
+                apartments={apartments}
 
-                    <td>
-                      <span className="mg-table-primary">
-                        {household.flatNumber}
-                      </span>
-                    </td>
+                selectedApartment={selectedApartment}
 
-                    <td>{household.apartmentName}</td>
+                setSelectedApartment={setSelectedApartment}
 
-                    <td>{household.flatSize} sq.ft</td>
+                handleRemoveResident={handleRemoveResident}
 
-                    <td>{household.occupancy}</td>
-
-                    <td>
-                      {household.residentName ? (
-                        household.residentName
-                      ) : (
-                        <span className="mg-badge">
-                          Not Assigned
-                        </span>
-                      )}
-                    </td>
-
-                    <td>
-
-                      {household.residentId ? (
-
-                        <button
-                          className="mg-cancel-button"
-                          type="button"
-                          onClick={() => handleRemoveResident(household)}
-                        >
-                          Remove
-                        </button>
-
-                      ) : (
-
-                        <button
-                          className="mg-primary-button"
-                          type="button"
-                          onClick={() => openAssignResident(household)}
-                        >
-                          Assign
-                        </button>
-
-                      )}
-
-                    </td>
-
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                openAssignResident={openAssignResident}
+          />
           <Pagination
               page={page}
               pageData={pageData}
@@ -614,7 +467,7 @@ const handleRemoveResident = async (household) => {
           <EmptyState
             icon={Home}
             title="No households found"
-            description="No fake records are shown. Add households after confirming backend fields."
+            description="There is no household present."
           />
         )}
       </section>

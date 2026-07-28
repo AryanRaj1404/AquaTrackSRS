@@ -29,4 +29,14 @@ public interface HouseholdService {
     List<ResidentResponse> getUnassignedResidents();
 
     List<HouseholdResponse> getByApartment(Long apartmentId);
+
+    Page<HouseholdResponse> getByApartment(
+        Long apartmentId,
+        Pageable pageable
+);
+
+    Page<HouseholdResponse> search(
+        String keyword,
+        Pageable pageable
+    );
 }

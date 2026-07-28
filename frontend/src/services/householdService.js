@@ -12,6 +12,43 @@ export async function getHouseholds(page = 0, size = 20) {
   return response.data;
 }
 
+export async function getHouseholdsByApartmentPage(
+    apartmentId,
+    page,
+    size
+) {
+
+    const response = await api.get(
+        "/households/filter",
+        {
+            params: {
+                apartmentId,
+                page,
+                size,
+            },
+        }
+    );
+
+    return response.data;
+
+}
+
+export async function searchHouseholds(keyword, page, size) {
+
+    const response = await api.get(
+        "/households/search",
+        {
+            params: {
+                keyword,
+                page,
+                size,
+            },
+        }
+    );
+
+    return response.data;
+}
+
 export async function createHousehold(householdData) {
   const response = await api.post("/households", householdData);
   return response.data;

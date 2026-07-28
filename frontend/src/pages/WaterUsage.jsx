@@ -2,23 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import {
-  Droplets,
-  Plus,
-  Save,
   Loader2,
-  Edit3,
-  Trash2,
-  Upload,
-  X,
-  Home,
-  ClipboardList,
-  BarChart3,
+  Droplets,
 } from "lucide-react";
 
 import AdminPageShell from "../components/AdminPageShell";
 import EmptyState from "../components/EmptyState";
-import StatCard from "../components/StatCard";
 import ConfirmDialog from "../components/ConfirmDialog";
+import WaterUsageStats from "../components/water-usage/WaterUsageStats";
+import WaterUsageTable from "../components/water-usage/WaterUsageTable";
+import WaterUsageFormModal from "../components/water-usage/WaterUsageFormModal";
+import WaterUsageActions from "../components/water-usage/WaterUsageActions";
 
 import {
   getUsageLogs,
@@ -46,6 +40,7 @@ function WaterUsage() {
     const [selectedBillingCycle, setSelectedBillingCycle] = useState("");
 
     const [query, setQuery] = useState("");
+    const [debouncedQuery, setDebouncedQuery] = useState("");
 
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -58,28 +53,71 @@ function WaterUsage() {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [usageToDelete, setUsageToDelete] = useState(null);
 
-    const [csvFile, setCsvFile] = useState(null);
+    const PAGE_SIZE = 20;
+
+    const [page, setPage] = useState(0);
+
+    const [pageData, setPageData] = useState(null);
+
+    useEffect(() => {
+
+    const timer = setTimeout(() => {
+
+        setDebouncedQuery(query.trim());
+
+    }, 300);
+
+    return () => clearTimeout(timer);
+
+}, [query]);
+
+useEffect(() => {
+
+    setPage(0);
+
+}, [query]);
 
     useEffect(() => {
         loadUsageLogs();
-        }, []);
+        }, [page, debouncedQuery]);
 
     const loadUsageLogs = async () => {
     try {
         setIsLoading(true);
 
-        const [usageData,
-            householdData,
-            billingCycleData
-        ] = await Promise.all([
-        getUsageLogs(),
-        getHouseholds(),
-        getBillingCycles(),
-        ]);
+        const [
 
-        setUsageLogs(Array.isArray(usageData) ? usageData : []);
-        setHouseholds(Array.isArray(householdData) ? householdData : []);
-        setBillingCycles(Array.isArray(billingCycleData)? billingCycleData : []);
+    usagePage,
+
+    householdData,
+
+    billingCycleData,
+
+] = await Promise.all([
+
+    getUsageLogs(
+        page,
+        PAGE_SIZE,
+        debouncedQuery
+    ),
+
+    getHouseholds(),
+
+    getBillingCycles(),
+
+]);
+
+setUsageLogs(usagePage.content);
+
+setPageData(usagePage);
+
+setHouseholds(Array.isArray(householdData) ? householdData : []);
+
+setBillingCycles(
+    Array.isArray(billingCycleData)
+        ? billingCycleData
+        : []
+);
 
     } catch (error) {
         console.error(error);
@@ -92,19 +130,7 @@ function WaterUsage() {
         setIsLoading(false);
     }
     };
-
-
-    const filteredUsageLogs = useMemo(() => {
-    const keyword = query.toLowerCase();
-
-    return usageLogs.filter((log) => {
-        return (
-        log.flatNumber?.toLowerCase().includes(keyword) ||
-        log.apartmentName?.toLowerCase().includes(keyword)
-        );
-    });
-    }, [usageLogs, query]);
-
+    
     const openAddModal = () => {
         setEditingId(null);
         setForm(emptyForm);
@@ -323,7 +349,7 @@ function WaterUsage() {
     }
     };
 
-    const displayedLogs = filteredUsageLogs;
+    const displayedLogs = usageLogs;
 
     const totalUsage = displayedLogs.reduce(
         (sum, log) => sum + Number(log.litersConsumed),
@@ -345,104 +371,42 @@ function WaterUsage() {
     <AdminPageShell
         title="Water Usage Management"
         description="Track and manage household water consumption records."
+        searchValue={query}
+        onSearchChange={(value) => {
+            setPage(0);
+            setQuery(value);
+        }}
         searchPlaceholder="Search by household, apartment or date..."
         action={
-            <div className="flex flex-wrap items-center gap-3">
 
-        <select
-            className="mg-select min-w-[220px]"
-            value={selectedBillingCycle}
-            onChange={(e) => setSelectedBillingCycle(e.target.value)}
-        >
-            <option value="">
-                All Billing Cycles
-            </option>
+            <WaterUsageActions
 
-            {billingCycles.map((cycle) => (
-                <option
-                    key={cycle.id}
-                    value={cycle.id}
-                >
-                    {cycle.apartmentName} •{" "}
-                    {new Date(cycle.startDate).toLocaleString(
-                        "en-US",
-                        {
-                            month: "long",
-                            year: "numeric",
-                        }
-                    )}
-                </option>
-            ))}
-        </select>
+                billingCycles={billingCycles}
 
-        <button
-            type="button"
-            className="mg-secondary-button flex items-center gap-2"
-            onClick={() =>
-                document.getElementById("csvUpload").click()
-            }
-        >
-            <Upload size={18} />
-            Upload CSV
-        </button>
+                selectedBillingCycle={selectedBillingCycle}
 
-        <button
-            type="button"
-            className="mg-primary-button flex items-center gap-2"
-            onClick={openAddModal}
-        >
-            <Plus size={18} />
-            Add Reading
-        </button>
+                setSelectedBillingCycle={setSelectedBillingCycle}
 
-        <input
-            id="csvUpload"
-            hidden
-            type="file"
-            accept=".csv"
-            onChange={handleCsvUpload}
-        />
+                handleCsvUpload={handleCsvUpload}
 
-    </div>
+                openAddModal={openAddModal}
+
+            />
 
         }
     >
 
-        <section className="mg-summary-grid">
+        <WaterUsageStats
 
-            <StatCard
-                icon={Droplets}
-                title="Total Usage"
-                value={`${totalUsage.toFixed(0)} L`}
-                description="Total recorded consumption"
-                delay={0}
-            />
+            totalUsage={totalUsage}
 
-            <StatCard
-                icon={Home}
-                title="Households"
-                value={displayedHouseholds}
-                description="Households in current view"
-                delay={0.1}
-            />
+            displayedHouseholds={displayedHouseholds}
 
-            <StatCard
-                icon={ClipboardList}
-                title="Readings"
-                value={totalLogs}
-                description="Usage records"
-                delay={0.2}
-            />
+            totalLogs={totalLogs}
 
-            <StatCard
-                icon={BarChart3}
-                title="Average Consumption"
-                value={`${averageUsage.toFixed(0)} L`}
-                description="Per recorded reading"
-                delay={0.3}
-            />
+            averageUsage={averageUsage}
 
-        </section>
+        />
 
         <section className="mg-panel">
 
@@ -473,93 +437,27 @@ function WaterUsage() {
 
             <p>Please wait while usage logs are fetched.</p>
         </div>
-        ) : filteredUsageLogs.length > 0 ? (
+        ) : displayedLogs.length > 0 ? (
 
-        <div className="mg-table-wrapper">
+        <WaterUsageTable
 
-            <table className="mg-table">
+            displayedLogs={displayedLogs}
 
-            <thead>
-                <tr>
-                <th>Apartment</th>
-                <th>Household</th>
-                <th>Reading Date</th>
-                <th>Consumption</th>
-                <th>Source</th>
-                <th>Action</th>
-                </tr>
-            </thead>
+            page={page}
 
-            <tbody>
+            pageData={pageData}
 
-                {filteredUsageLogs.map((log) => (
+            setPage={setPage}
 
-                <tr className="hover:bg-slate-50 transition-colors"
-                key={log.id}>
+            openEditModal={openEditModal}
 
-                    <td>{log.apartmentName}</td>
+            setUsageToDelete={setUsageToDelete}
 
-                    <td>{log.flatNumber}</td>
+            setShowDeleteDialog={setShowDeleteDialog}
 
-                    <td>
-                    {new Date(log.usageDate).toLocaleDateString(
-                        "en-GB",
-                        {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        }
-                    )}
-                    </td>
-                        <td className="font-semibold text-slate-800"
-                        >{log.litersConsumed} L</td>
-                    <td>
-                    <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium
-                        ${
-                            log.source === "MANUAL_ENTRY"
-                                ? "bg-emerald-100 text-emerald-700"
-                                : "bg-sky-100 text-sky-700"
-                        }`}
-                    >
-                        {log.source === "MANUAL_ENTRY"
-                            ? "Manual"
-                            : "CSV"}
-                    </span>
-                    </td>
+        />
 
-                    <td>
-                    <div className="flex justify-center gap-2">
-                        <button
-                        type="button"
-                        className="mg-action-button"
-                        onClick={() => openEditModal(log)}
-                        >
-                        <Edit3 size={15} />
-                        </button>
-
-                        <button
-                        type="button"
-                        className="mg-action-button"
-                        onClick={() => {
-                            setUsageToDelete(log);
-                            setShowDeleteDialog(true);
-                        }}
-                        >
-                        <Trash2 size={15} />
-                        </button>
-                    </div>
-                    </td>
-
-                </tr>
-
-                ))}
-
-            </tbody>
-
-            </table>
-
-        </div>
+        
 
         ) : (
 
@@ -572,158 +470,27 @@ function WaterUsage() {
         )}
         </section>
 
-        {showModal && (
-            <div className="mg-modal-overlay">
-                <div className="mg-modal">
+        <WaterUsageFormModal
 
-                <div className="mg-toolbar">
-                    <div>
-                    <h2>
-                        {editingId ? "Edit Reading" : "Add Reading"}
-                    </h2>
+            showModal={showModal}
 
-                    <p>
-                        Record household water consumption.
-                    </p>
-                    </div>
+            editingId={editingId}
 
-                    <button
-                    type="button"
-                    className="mg-cancel-button"
-                    onClick={closeModal}
-                    >
-                    <X size={16} />
-                    Close
-                    </button>
-                </div>
+            form={form}
 
-                <form onSubmit={handleSubmit}>
+            billingCycles={billingCycles}
 
-                    <div className="mg-form-grid">
+            households={households}
 
-                    <div className="mg-form-group">
+            handleInputChange={handleInputChange}
 
-                        <label>Billing Cycle</label>
+            handleSubmit={handleSubmit}
 
-                        <select
-                            name="billingCycleId"
-                            value={form.billingCycleId}
-                            onChange={handleInputChange}
-                            disabled={isSubmitting}
-                        >
+            closeModal={closeModal}
 
-                            <option value="">
-                                Select Billing Cycle
-                            </option>
+            isSubmitting={isSubmitting}
 
-                            {billingCycles.map((cycle) => (
-
-                                <option
-                                    key={cycle.id}
-                                    value={cycle.id}
-                                >
-                                    {cycle.apartmentName} • {cycle.apartmentName} • {new Date(cycle.startDate).toLocaleString(
-                                        "en-US",
-                                        {
-                                            month: "long",
-                                            year: "numeric",
-                                        }
-                                    )}
-                                </option>
-
-                            ))}
-
-                        </select>
-
-                    </div>
-
-                    <div className="mg-form-group">
-
-                        <label>Household</label>
-
-                        <select
-                        name="householdId"
-                        value={form.householdId}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        >
-                        <option value="">
-                            Select Household
-                        </option>
-
-                        {households.map((household) => (
-                            <option
-                            key={household.id}
-                            value={household.id}
-                            >
-                            {household.apartmentName} - {household.flatNumber}
-                            </option>
-                        ))}
-                        </select>
-
-                    </div>
-
-                    <div className="mg-form-group">
-
-                        <label>Usage Date</label>
-
-                        <input
-                        type="date"
-                        name="usageDate"
-                        value={form.usageDate}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        />
-
-                    </div>
-
-                    <div className="mg-form-group">
-
-                        <label>Liters Consumed</label>
-
-                        <input
-                        type="number"
-                        name="litersConsumed"
-                        value={form.litersConsumed}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        placeholder="550"
-                        />
-
-                    </div>
-
-                    </div>
-
-                    <div className="mg-modal-actions">
-
-                    <button
-                        type="button"
-                        className="mg-cancel-button"
-                        onClick={closeModal}
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        className="mg-primary-button"
-                        disabled={isSubmitting}
-                    >
-                        <Save size={16} />
-                        {isSubmitting
-                            ? "Saving..."
-                            : editingId
-                            ? "Update Reading"
-                            : "Save Reading"}
-                    </button>
-
-                    </div>
-
-                </form>
-
-                </div>
-            </div>
-            )}
+        />
             <ConfirmDialog
                 open={showDeleteDialog}
                 title="Delete Usage Log"

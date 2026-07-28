@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
 
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseRequest;
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseResponse;
@@ -35,10 +37,29 @@ public class BulkWaterPurchaseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BulkWaterPurchaseResponse>> getAll() {
+public ResponseEntity<Page<BulkWaterPurchaseResponse>> getAll(
 
-        return ResponseEntity.ok(service.getAll());
-    }
+        @RequestParam(defaultValue = "0")
+        int page,
+
+        @RequestParam(defaultValue = "20")
+        int size
+
+) {
+
+    return ResponseEntity.ok(
+
+            service.getAll(
+
+                    page,
+
+                    size
+
+            )
+
+    );
+
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<BulkWaterPurchaseResponse> getById(

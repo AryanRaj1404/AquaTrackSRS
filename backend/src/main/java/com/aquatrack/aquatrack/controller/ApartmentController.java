@@ -1,7 +1,5 @@
 package com.aquatrack.aquatrack.controller;
 
-import java.util.List;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.aquatrack.aquatrack.dto.ApartmentRequest;
 import com.aquatrack.aquatrack.dto.ApartmentResponse;
@@ -31,8 +32,10 @@ public class ApartmentController {
     }
 
     @GetMapping
-    public List<ApartmentResponse> getAll() {
-        return apartmentService.getAll();
+    public Page<ApartmentResponse> getAll(Pageable pageable) {
+
+        return apartmentService.getAll(pageable);
+
     }
 
     @GetMapping("/{id}")
@@ -49,5 +52,18 @@ public class ApartmentController {
     public String delete(@PathVariable Long id) {
         apartmentService.delete(id);
         return "Apartment deleted successfully";
+    }
+
+    @GetMapping("/search")
+    public Page<ApartmentResponse> searchApartments(
+
+            @RequestParam String keyword,
+
+            Pageable pageable) {
+
+        return apartmentService.search(
+                keyword,
+                pageable
+        );
     }
 }

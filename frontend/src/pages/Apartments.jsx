@@ -4,18 +4,20 @@
   import {
     Building2,
     CheckCircle2,
-    Loader2,
     Plus,
-    Save,
-    X,
   } from "lucide-react";
 
   import AdminPageShell from "../components/AdminPageShell";
-  import EmptyState from "../components/EmptyState";
   import StatCard from "../components/StatCard";
+  import Pagination from "../components/Pagination";
+  import AddApartmentModal from "../components/apartments/AddApartmentModal";
+  import ApartmentTable from "../components/apartments/ApartmentTable"; 
+  import ApartmentHouseholdsModal from "../components/apartments/ApartmentHouseholdsModal";
+
   import {
     createApartment,
     getApartments,
+    searchApartments,
   } from "../services/apartmentService";
   import { getHouseholdsByApartment } from "../services/householdService";
   import dashboardService from "../services/dashboardService";
@@ -27,6 +29,7 @@
   function Apartments() {
     const [apartments, setApartments] = useState([]);
     const [query, setQuery] = useState("");
+    const [debouncedQuery, setDebouncedQuery] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState(initialForm);
     const [isLoading, setIsLoading] = useState(true);
@@ -40,18 +43,68 @@
     });
     const [showHouseholdsModal, setShowHouseholdsModal] = useState(false);
 
+    const PAGE_SIZE = 20;
+    const SEARCH_DELAY = 300;
+
+    const [page, setPage] = useState(0);
+
+    const [pageData, setPageData] = useState({
+        totalElements: 0,
+        totalPages: 1,
+        last: true,
+    });
+
     useEffect(() => {
+
       loadApartments();
-      loadDashboardStats();
+
+    }, [page, debouncedQuery]);
+
+    useEffect(() => {
+
+    const timer = setTimeout(() => {
+
+        setDebouncedQuery(query.trim());
+
+    }, SEARCH_DELAY);
+
+    return () => clearTimeout(timer);
+
+}, [query]);
+
+useEffect(() => {
+
+    setPage(0);
+
+}, [query]);
+
+    useEffect(() => {
+
+        loadDashboardStats();
+
     }, []);
 
     const loadApartments = async () => {
       try {
         setIsLoading(true);
+        
+        const apartmentPage = debouncedQuery.trim()
 
-        const data = await getApartments();
+        ? await searchApartments(
+              debouncedQuery,
+              page,
+              PAGE_SIZE
+          )
 
-        setApartments(Array.isArray(data) ? data : []);
+        : await getApartments(
+              page,
+              PAGE_SIZE
+          );
+
+        setApartments(apartmentPage.content);
+
+    setPageData(apartmentPage);
+
       } catch (error) {
         console.error("Apartment fetch error:", error);
 
@@ -68,27 +121,13 @@
     const loadDashboardStats = async () => {
         try {
             const data = await dashboardService.getDashboard();
-            console.log(data);
             setDashboardStats(data);
         } catch (error) {
             console.error("Dashboard stats error:", error);
         }
     };
 
-    const filteredApartments = useMemo(() => {
-      if (!query.trim()) {
-        return apartments;
-      }
-
-      const keyword = query.toLowerCase();
-
-      return apartments.filter((apartment) => {
-        return (
-          apartment.name?.toLowerCase().includes(keyword) ||
-          apartment.address?.toLowerCase().includes(keyword)
-        );
-      });
-    }, [apartments, query]);
+    
 
     const handleChange = (event) => {
       const { name, value } = event.target;
@@ -130,11 +169,12 @@
       const loadingToast = toast.loading("Registering apartment...");
 
       try {
-        const savedApartment = await createApartment(apartmentPayload);
+        await createApartment(apartmentPayload);
 
-        setApartments((previous) => [savedApartment, ...previous]);
-
-        await loadDashboardStats();
+        await Promise.all([
+          loadApartments(),
+          loadDashboardStats(),
+        ])
 
         toast.success("Apartment created successfully.", {
           id: loadingToast,
@@ -225,268 +265,66 @@
 
           <StatCard
             icon={Building2}
-            title="Latest Apartment"
+            title="Households per Apartment"
             value={
-              apartments.length > 0
-                ? apartments[0].name
-                : "-"
-            }
-            description={
-              apartments.length > 0
-                ? apartments[0].address
-                : "No apartments yet"
-            }
+                    dashboardStats.totalApartments > 0            
+                          ? (
+                                dashboardStats.totalHouseholds /
+                                dashboardStats.totalApartments
+                            ).toFixed(1)
+                          : "0"
+                  }
+            description="Average number of households"
             delay={0.3}
           />
         </section>
 
-        {showForm && (
-          <section className="mg-panel" style={{ marginBottom: "20px" }}>
-            <div className="mg-toolbar">
-              <div>
-                <h2>Register Apartment</h2>
-                <p>
-                  Enter the apartment details below.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="mg-cancel-button"
-                onClick={handleCancel}
-                disabled={isSubmitting}
-              >
-                <X size={16} />
-                Close
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              <div className="mg-form-grid">
-                <div className="mg-form-group mg-form-group-full">
-                  <label htmlFor="apartmentName">Apartment Name</label>
-
-                  <input
-                    id="apartmentName"
-                    name="apartmentName"
-                    type="text"
-                    value={form.apartmentName}
-                    onChange={handleChange}
-                    placeholder="Example: Green Valley Apartments"
-                    disabled={isSubmitting}
-                  />
-                </div>
-
-                <div className="mg-form-group">
-                  <label htmlFor="address">Address</label>
-
-                  <input
-                    id="address"
-                    name="address"
-                    type="text"
-                    value={form.address}
-                    onChange={handleChange}
-                    placeholder="Sector-62, Noida"
-                    disabled={isSubmitting}
-                  />
-                </div>
-
-              </div>
-
-              <div className="mg-modal-actions">
-                <button
-                  type="button"
-                  className="mg-cancel-button"
-                  onClick={handleCancel}
-                  disabled={isSubmitting}
-                >
-                  <X size={17} />
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="mg-primary-button"
-                  disabled={isSubmitting}
-                >
-                  <Save size={17} />
-                  {isSubmitting ? "Registering..." : "Register Apartment"}
-                </button>
-              </div>
-            </form>
-          </section>
-        )}
+        <AddApartmentModal
+          showForm={showForm}
+          form={form}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isSubmitting={isSubmitting}
+        />
 
         <section className="mg-panel">
-          <div className="mg-toolbar">
-            <div>
-              <h2>Apartment Records</h2>
-              <p>
-                All registered apartment complexes are listed below.
-              </p>
-            </div>
-          </div>
 
-          {isLoading ? (
-            <div className="mg-empty-state">
-              <Loader2 size={36} className="animate-spin" />
-              <h3>Loading apartments</h3>
-              <p>Please wait while apartment data is fetched.</p>
-            </div>
-          ) : filteredApartments.length > 0 ? (
-            <div className="mg-table-wrapper">
-              <table className="mg-table">
-                <thead>
-                  <tr>
-                    <th>Apartment Name</th>
-                    <th>Address</th>
-                    <th>Households</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
+          <ApartmentTable
+            isLoading={isLoading}
+            apartments={apartments}
+            onViewHouseholds={handleViewHouseholds}
+          />
 
-                <tbody>
-                  {filteredApartments.map((apartment) => (
-                    <tr className="hover:bg-slate-50 transition-colors"
-                    key={apartment.id || apartment.name}>
-                      <td>
-                        <span className="mg-table-primary">
-                          {apartment.name}
-                        </span>
-                      </td>
-                      <td>{apartment.address}</td>
-                        <td>
-                          <span className="mg-badge">{apartment.householdCount}</span>
-                        </td>
+          {!isLoading && apartments.length > 0 && (
 
-                        <td>
-                          <button
-                            type="button"
-                            className="mg-secondary-button"
-                            onClick={() =>
-                              handleViewHouseholds(apartment)
-                            }
-                          >
-                            View
-                          </button>
-                        </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState
-              icon={Building2}
-              title="No apartments found"
-              description="Create your first apartment to begin managing households."
+            <Pagination
+              page={page}
+              pageData={pageData}
+              pageSize={PAGE_SIZE}
+              currentCount={apartments.length}
+              label="apartments"
+              onPrevious={() => setPage(page - 1)}
+              onNext={() => setPage(page + 1)}
+              onPageChange={setPage}
             />
+
           )}
+
         </section>
 
-        {showHouseholdsModal && (
-      <div
-          className="mg-modal-overlay"
-          onClick={() => setShowHouseholdsModal(false)}
-      >
-          <div
-              className="mg-modal"
-              onClick={(e) => e.stopPropagation()}
-          >
+        <ApartmentHouseholdsModal
 
-              <div className="mg-modal-header">
+          showHouseholdsModal={showHouseholdsModal}
 
-                  <h2>
-                      Households
-                  </h2>
+          selectedApartment={selectedApartment}
 
-                  <button
-                      className="mg-close-button"
-                      onClick={() => setShowHouseholdsModal(false)}
-                  >
-                      ✕
-                  </button>
+          households={households}
 
-              </div>
+          onClose={() => setShowHouseholdsModal(false)}
 
-              <p className="mg-modal-subtitle">
-
-                  {selectedApartment?.name}
-
-              </p>
-
-              <table className="mg-table">
-
-                  <thead>
-
-                  <tr>
-
-                      <th>Flat</th>
-
-                      <th>Resident</th>
-
-                      <th>Area</th>
-
-                      <th>Occupancy</th>
-
-                  </tr>
-
-                  </thead>
-
-                  <tbody>
-
-                  {households.length === 0 ? (
-
-                      <tr >
-
-                          <td colSpan="4">
-
-                              No households found.
-
-                          </td>
-
-                      </tr>
-
-                  ) : (
-
-                      households.map((household) => (
-
-                          <tr className="hover:bg-slate-50 transition-colors"
-                           key={household.id}>
-
-                              <td>{household.flatNumber}</td>
-
-                              <td>
-
-                                  {household.residentName ?? "Not Assigned"}
-
-                              </td>
-
-                              <td>
-
-                                  {household.flatSize} sq.ft
-
-                              </td>
-
-                              <td>
-
-                                  {household.occupancy}
-
-                              </td>
-
-                          </tr>
-
-                      ))
-
-                  )}
-
-                  </tbody>
-
-              </table>
-
-          </div>
-      </div>
-  )}
+        />  
+        
       </AdminPageShell>
     );
   }

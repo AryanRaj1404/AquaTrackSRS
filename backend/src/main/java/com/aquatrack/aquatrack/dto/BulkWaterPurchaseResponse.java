@@ -15,6 +15,10 @@ public class BulkWaterPurchaseResponse {
 
     private Long apartmentId;
 
+    private String apartmentName;
+
+    private String billingCycleMonth;
+
     private Long billingCycleId;
 
     private LocalDate purchaseDate;

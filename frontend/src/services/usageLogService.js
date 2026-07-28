@@ -1,8 +1,24 @@
 import api from "./api";
 
-export async function getUsageLogs() {
-  const response = await api.get("/usage-logs");
-  return response.data;
+export async function getUsageLogs(
+    page = 0,
+    size = 20,
+    keyword = ""
+) {
+
+    const response = await api.get(
+        "/usage-logs",
+        {
+            params: {
+                page,
+                size,
+                keyword,
+            },
+        }
+    );
+
+    return response.data;
+
 }
 
 export async function createUsageLog(usageLogData) {

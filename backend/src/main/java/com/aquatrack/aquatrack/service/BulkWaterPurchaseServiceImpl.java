@@ -1,8 +1,12 @@
 package com.aquatrack.aquatrack.service;
 
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseRequest;
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseResponse;
@@ -58,13 +62,31 @@ public class BulkWaterPurchaseServiceImpl implements BulkWaterPurchaseService {
     }
 
     @Override
-    public List<BulkWaterPurchaseResponse> getAll() {
+public Page<BulkWaterPurchaseResponse> getAll(
 
-        return repository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+        int page,
+
+        int size
+
+) {
+
+    return repository
+
+            .findAll(
+
+                    PageRequest.of(
+
+                            page,
+
+                            size
+
+                    )
+
+            )
+
+            .map(this::toResponse);
+
+}
 
     @Override
     public BulkWaterPurchaseResponse getById(Long id) {
@@ -120,6 +142,24 @@ public class BulkWaterPurchaseServiceImpl implements BulkWaterPurchaseService {
 
     private BulkWaterPurchaseResponse toResponse(
             BulkWaterPurchase purchase) {
+                BillingCycle billingCycle =
+            purchase.getBillingCycle();
+
+                String billingCycleMonth =
+
+        billingCycle
+                .getStartDate()
+                .getMonth()
+                .getDisplayName(
+                        TextStyle.FULL,
+                        Locale.ENGLISH
+                )
+
+        + " "
+
+        + billingCycle
+                .getStartDate()
+                .getYear();
 
         return new BulkWaterPurchaseResponse(
 
@@ -127,7 +167,11 @@ public class BulkWaterPurchaseServiceImpl implements BulkWaterPurchaseService {
 
                 purchase.getApartment().getId(),
 
-                purchase.getBillingCycle().getId(),
+                purchase.getApartment().getName(),
+
+                billingCycleMonth,
+
+                billingCycle.getId(),
 
                 purchase.getPurchaseDate(),
 

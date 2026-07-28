@@ -1,14 +1,24 @@
 import { useEffect, useState } from "react";
 
 function Pagination({
+
     page,
+
     pageData,
+
     pageSize,
+
     currentCount,
+
+    label = "records",
+
     onPrevious,
+
     onNext,
+
     onPageChange,
-}) 
+
+})
 {
     const [pageInput, setPageInput] = useState(page + 1);
 
@@ -29,7 +39,7 @@ function Pagination({
                 {page * pageSize + currentCount}
                 {" of "}
                 {pageData.totalElements}
-                {" households"}
+                {` ${label}`}
 
             </p>
 

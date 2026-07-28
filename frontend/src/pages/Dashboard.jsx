@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import dashboardService from "../services/dashboardService";
 import SkeletonCard from "../components/SkeletonCard";
+import WaterTips from "../components/WaterTips";
+import UsageComparisonChart from "../components/UsageComparisonChart"
+import Charts from "../components/Charts";
+import AlertsPanel from "../components/AlertsPanel";
 
 import {
   BadgeCheck,
@@ -171,6 +175,17 @@ function Dashboard() {
             description="Overdue invoices"
         />
       </section>
+      <section className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+            <Charts />
+
+            {/* <UsageComparisonChart /> */}
+
+            <AlertsPanel />
+
+            <WaterTips />
+
+        </section>
 
     </AdminPageShell>
   );

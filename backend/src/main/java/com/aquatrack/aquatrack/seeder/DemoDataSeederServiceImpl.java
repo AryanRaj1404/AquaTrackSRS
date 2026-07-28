@@ -1,30 +1,54 @@
 package com.aquatrack.aquatrack.seeder;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.aquatrack.aquatrack.entity.Apartment;
+import com.aquatrack.aquatrack.entity.BillingCycle;
+import com.aquatrack.aquatrack.entity.BulkWaterPurchase;
 import com.aquatrack.aquatrack.entity.Household;
+import com.aquatrack.aquatrack.entity.WaterUsageLog;
+import com.aquatrack.aquatrack.enums.BillingCycleStatus;
+import com.aquatrack.aquatrack.enums.PurchaseSource;
+import com.aquatrack.aquatrack.enums.UsageSource;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
+import com.aquatrack.aquatrack.repository.BillingCycleRepository;
+import com.aquatrack.aquatrack.repository.BulkWaterPurchaseRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
+import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
 @Service
 public class DemoDataSeederServiceImpl implements DemoDataSeederService{
 
+        private static final int BATCH_SIZE = 10_000;
+
     private final ApartmentRepository apartmentRepository;
     private final RandomDataGenerator randomDataGenerator;
     private final HouseholdRepository householdRepository;
+    private final BillingCycleRepository billingCycleRepository;
+    private final WaterUsageLogRepository waterUsageLogRepository;
+    private final BulkWaterPurchaseRepository bulkWaterPurchaseRepository;
 
     public DemoDataSeederServiceImpl(
             ApartmentRepository apartmentRepository,
             RandomDataGenerator randomDataGenerator,
-            HouseholdRepository householdRepository) {
+            HouseholdRepository householdRepository,
+            BillingCycleRepository billingCycleRepository,
+            WaterUsageLogRepository waterUsageLogRepository,
+            BulkWaterPurchaseRepository bulkWaterPurchaseRepository
+        ) {
 
         this.apartmentRepository = apartmentRepository;
         this.householdRepository = householdRepository;
         this.randomDataGenerator = randomDataGenerator;
+        this.billingCycleRepository = billingCycleRepository;
+        this.waterUsageLogRepository = waterUsageLogRepository;
+        this.bulkWaterPurchaseRepository = bulkWaterPurchaseRepository;
     }
 
     private List<Apartment> generateApartments() {
@@ -89,6 +113,215 @@ public class DemoDataSeederServiceImpl implements DemoDataSeederService{
 
     }
 
+    private List<BillingCycle> generateBillingCycles(
+        List<Apartment> apartments) {
+
+    List<BillingCycle> billingCycles = new ArrayList<>();
+
+    LocalDate startDate = LocalDate.of(2026, 7, 1);
+    LocalDate endDate = LocalDate.of(2026, 7, 31);
+
+    for (Apartment apartment : apartments) {
+
+        BillingCycle billingCycle = new BillingCycle();
+
+        billingCycle.setApartment(apartment);
+
+        billingCycle.setStartDate(startDate);
+
+        billingCycle.setEndDate(endDate);
+
+        billingCycle.setStatus(BillingCycleStatus.OPEN);
+
+        billingCycle.setTotalAmount(0.0);
+
+        billingCycle.setTariffPlan(null);
+
+        billingCycles.add(billingCycle);
+
+    }
+
+        return billingCycleRepository.saveAll(billingCycles);
+
+    }
+
+    private void generateWaterUsageLogs(
+        List<Apartment> apartments) {
+
+    List<Household> households =
+            householdRepository.findAll();
+
+    List<BillingCycle> billingCycles =
+            billingCycleRepository.findAll();
+
+    Map<Long, BillingCycle> billingCycleMap =
+            new HashMap<>();
+
+    for (BillingCycle billingCycle : billingCycles) {
+
+        billingCycleMap.put(
+
+                billingCycle
+                        .getApartment()
+                        .getId(),
+
+                billingCycle
+
+        );
+
+    }
+
+    List<WaterUsageLog> logs = new ArrayList<>();
+
+    for (Household household : households) {
+
+        BillingCycle billingCycle =
+                billingCycleMap.get(
+                        household
+                                .getApartment()
+                                .getId()
+                );
+
+        LocalDate currentDate =
+                billingCycle.getStartDate();
+
+        while (!currentDate.isAfter(
+                billingCycle.getEndDate())) {
+
+            WaterUsageLog log =
+                    new WaterUsageLog();
+
+            log.setHousehold(household);
+
+            log.setBillingCycle(
+                    billingCycle
+            );
+
+            log.setUsageDate(currentDate);
+
+            log.setSource(
+                    UsageSource.MANUAL_ENTRY
+            );
+
+            log.setLitersConsumed(
+
+                    randomDataGenerator
+                            .getDailyWaterUsage(
+
+                                    household
+                                            .getOccupancy()
+
+                            )
+
+            );
+
+            logs.add(log);
+
+            if (logs.size() >= BATCH_SIZE) {
+
+                waterUsageLogRepository.saveAll(logs);
+
+                logs.clear();
+
+        }
+
+            currentDate =
+                    currentDate.plusDays(1);
+
+        }
+
+    }
+
+    if (!logs.isEmpty()) {
+
+        waterUsageLogRepository.saveAll(logs);
+
+        }       
+
+}
+        private void generateBulkWaterPurchases() {
+
+    List<BillingCycle> billingCycles =
+            billingCycleRepository.findAll();
+
+    List<BulkWaterPurchase> purchases =
+            new ArrayList<>();
+
+    for (BillingCycle billingCycle : billingCycles) {
+
+        int purchaseCount =
+                randomDataGenerator
+                        .getPurchaseCount();
+
+        for (int i = 0;
+             i < purchaseCount;
+             i++) {
+
+            BulkWaterPurchase purchase =
+                    new BulkWaterPurchase();
+
+            purchase.setApartment(
+                    billingCycle.getApartment()
+            );
+
+            purchase.setBillingCycle(
+                    billingCycle
+            );
+
+            purchase.setPurchaseDate(
+
+                    randomDataGenerator
+                            .getPurchaseDate(
+
+                                    billingCycle.getStartDate(),
+
+                                    billingCycle.getEndDate()
+
+                            )
+
+            );
+
+            purchase.setSource(
+                    PurchaseSource.MUNICIPAL
+            );
+
+            double volume =
+                    randomDataGenerator
+                            .getPurchaseVolumeKl();
+
+            double unitCost =
+                    randomDataGenerator
+                            .getUnitCost();
+
+            purchase.setVolumeKl(volume);
+
+            purchase.setUnitCost(unitCost);
+
+            purchase.setTotalCost(
+                    volume * unitCost
+            );
+
+            purchase.setSupplier(
+
+                    randomDataGenerator
+                            .getSupplier()
+
+            );
+
+            purchases.add(purchase);
+
+        }
+
+    }
+
+    bulkWaterPurchaseRepository.saveAll(
+            purchases
+    );
+
+}
+
+
+
     @Override
     public String generateDemoData() {
 
@@ -96,9 +329,15 @@ public class DemoDataSeederServiceImpl implements DemoDataSeederService{
 
         generateHouseholds(apartments);
 
+        generateBillingCycles(apartments);
+
+        generateWaterUsageLogs(apartments);
+
+        generateBulkWaterPurchases();
+
         return "Generated "
                 + apartments.size()
-                + " apartments successfully.";
+                + " apartments with billing cycle successfully.";
 
     }
 }

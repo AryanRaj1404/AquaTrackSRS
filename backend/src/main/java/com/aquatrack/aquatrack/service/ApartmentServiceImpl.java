@@ -5,6 +5,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.aquatrack.aquatrack.dto.ApartmentRequest;
 import com.aquatrack.aquatrack.dto.ApartmentResponse;
 import com.aquatrack.aquatrack.entity.Apartment;
@@ -42,10 +45,33 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    public Page<ApartmentResponse> getAll(Pageable pageable) {
+
+        return apartmentRepository
+                .findAll(pageable)
+                .map(this::toResponse);
+
+    }
+
+    @Override
     public ApartmentResponse getById(Long id) {
         Apartment apartment = apartmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
         return toResponse(apartment);
+    }
+
+    @Override
+    public Page<ApartmentResponse> search(
+            String keyword,
+            Pageable pageable) {
+
+        return apartmentRepository
+                .findByNameContainingIgnoreCaseOrAddressContainingIgnoreCase(
+                        keyword,
+                        keyword,
+                        pageable)
+                .map(this::toResponse);
+
     }
 
     @Override

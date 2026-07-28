@@ -1,15 +1,12 @@
 package com.aquatrack.aquatrack.service;
 
-import java.util.List;
-
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseRequest;
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseResponse;
+import org.springframework.data.domain.Page;
 
 public interface BulkWaterPurchaseService {
 
     BulkWaterPurchaseResponse create(BulkWaterPurchaseRequest request);
-
-    List<BulkWaterPurchaseResponse> getAll();
 
     BulkWaterPurchaseResponse getById(Long id);
 
@@ -18,4 +15,12 @@ public interface BulkWaterPurchaseService {
     BulkWaterPurchaseResponse update(
         Long id,
         BulkWaterPurchaseRequest request);
+
+    Page<BulkWaterPurchaseResponse> getAll(
+
+        int page,
+
+        int size
+
+);
 }

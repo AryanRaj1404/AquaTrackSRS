@@ -371,50 +371,84 @@ function Invoices() {
 
     };
 
-    const filteredInvoices = useMemo(() => {
+    const displayedInvoices = useMemo(() => {
 
-        const keyword = query.toLowerCase();
+    let filtered = invoices;
 
-        return invoices.filter((invoice) =>
+    // Filter by selected billing cycle
+    if (selectedBillingCycle) {
 
-            invoice.invoiceNumber
-                ?.toLowerCase()
-                .includes(keyword)
+        filtered = filtered.filter(
 
-            ||
+            invoice =>
 
-            invoice.flatNumber
-                ?.toLowerCase()
-                .includes(keyword)
+                String(invoice.billingCycleId) ===
 
-            ||
-
-            invoice.apartmentName
-                ?.toLowerCase()
-                .includes(keyword)
+                String(selectedBillingCycle)
 
         );
 
-    }, [invoices, query]);
+    }
+
+    // Apply search on filtered invoices
+    if (query.trim()) {
+
+        const keyword = query.toLowerCase();
+
+        filtered = filtered.filter(
+
+            invoice =>
+
+                invoice.invoiceNumber
+                    ?.toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                invoice.flatNumber
+                    ?.toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                invoice.apartmentName
+                    ?.toLowerCase()
+                    .includes(keyword)
+
+        );
+
+    }
+
+    return filtered;
+
+}, [
+
+    invoices,
+
+    selectedBillingCycle,
+
+    query,
+
+]);
 
     const totalInvoices =
-            invoices.length;
+            displayedInvoices.length;
 
     const paidInvoices =
-            invoices.filter(
+            displayedInvoices.filter(
                 invoice =>
                     invoice.status === "PAID"
             ).length;
 
     const pendingInvoices =
-            invoices.filter(
+            displayedInvoices.filter(
                 invoice =>
                     invoice.status !== "PAID" &&
                     invoice.status !== "CANCELLED"
             ).length;
 
     const totalRevenue =
-            invoices.reduce(
+            displayedInvoices.reduce(
 
                 (sum, invoice) =>
 
@@ -639,7 +673,7 @@ function Invoices() {
 
                     </div>
 
-                ) : filteredInvoices.length > 0 ? (
+                ) : displayedInvoices.length > 0 ? (
 
                     <div className="mg-table-wrapper">
 
@@ -669,7 +703,7 @@ function Invoices() {
 
                             <tbody>
 
-                                {filteredInvoices.map((invoice) => (
+                                {displayedInvoices.map((invoice) => (
 
                                     <tr className="hover:bg-slate-50 transition-colors"
                                     key={invoice.id}>
