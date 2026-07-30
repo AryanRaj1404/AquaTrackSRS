@@ -22,6 +22,8 @@ import {
 import AdminPageShell from "../components/AdminPageShell";
 import EmptyState from "../components/EmptyState";
 import StatCard from "../components/StatCard";
+import AdminAlertPanel from "../components/AdminAlertPanel";
+import AdminDashboardCharts from "../components/AdminDashboardCharts";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -259,6 +261,15 @@ function Dashboard() {
             animatedValue
             description="Overdue invoices"
         />
+      </section>
+
+      <section className="mt-6 mb-8 grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="xl:col-span-2">
+          <AdminDashboardCharts />
+        </div>
+        <div className="xl:col-span-1 h-full">
+          <AdminAlertPanel />
+        </div>
       </section>
 
       <section className="mg-panel">
