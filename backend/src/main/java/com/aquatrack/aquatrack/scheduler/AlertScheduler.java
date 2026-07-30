@@ -53,30 +53,74 @@ public class AlertScheduler {
             List<WaterUsageLog> logs = usageLogRepository.findByHouseholdId(household.getId());
             if (logs.isEmpty()) continue;
 
-            logs.sort(Comparator.comparing(WaterUsageLog::getUsageDate).reversed());
-            WaterUsageLog latest = logs.get(0);
-            if (!latest.getUsageDate().equals(today)) continue;
+            logs.sort(Comparator.comparing(WaterUsageLog::getUsageDate));
 
-            double todayLiters = latest.getLitersConsumed();
+LocalDate sevenDaysAgo = today.minusDays(1);
 
-            boolean alreadyBreached = usageAlertRepository.existsByHouseholdIdAndAlertTypeAndTriggeredOn(
-                    household.getId(), UsageAlert.AlertType.THRESHOLD_BREACH, today);
-            if (todayLiters > dailyThresholdLiters && !alreadyBreached) {
-                raiseAlert(household, UsageAlert.AlertType.THRESHOLD_BREACH, today, todayLiters,
-                        dailyThresholdLiters,
-                        String.format("Usage of %.1fL today exceeds the %.1fL daily threshold.", todayLiters, dailyThresholdLiters));
-            }
+List<WaterUsageLog> recentLogs = logs.stream()
+        .filter(log -> !log.getUsageDate().isBefore(sevenDaysAgo))
+        .toList();
 
-            List<Double> history = logs.stream().skip(1).map(WaterUsageLog::getLitersConsumed).collect(Collectors.toList());
-            AnomalyDetectionService.AnomalyResult result = anomalyDetectionService.checkForAnomaly(history, todayLiters);
+for (WaterUsageLog currentLog : recentLogs) {
 
-            boolean alreadyAnomalous = usageAlertRepository.existsByHouseholdIdAndAlertTypeAndTriggeredOn(
-                    household.getId(), UsageAlert.AlertType.ANOMALY_LEAK, today);
-            if (result.anomalous && !alreadyAnomalous) {
-                raiseAlert(household, UsageAlert.AlertType.ANOMALY_LEAK, today, todayLiters, result.mean,
-                        String.format("Usage of %.1fL is over 2 std-dev above the household average of %.1fL — possible leak.", todayLiters, result.mean));
-            }
-        }
+    LocalDate logDate = currentLog.getUsageDate();
+
+    double liters = currentLog.getLitersConsumed();
+
+    List<Double> history = logs.stream()
+            .filter(log -> log.getUsageDate().isBefore(logDate))
+            .map(WaterUsageLog::getLitersConsumed)
+            .collect(Collectors.toList());
+
+    boolean alreadyBreached =
+            usageAlertRepository.existsByHouseholdIdAndAlertTypeAndTriggeredOn(
+                    household.getId(),
+                    UsageAlert.AlertType.THRESHOLD_BREACH,
+                    logDate
+            );
+
+    if (liters > dailyThresholdLiters && !alreadyBreached) {
+
+        raiseAlert(
+                household,
+                UsageAlert.AlertType.THRESHOLD_BREACH,
+                logDate,
+                liters,
+                dailyThresholdLiters,
+                String.format(
+                        "Usage of %.1fL exceeds the %.1fL daily threshold.",
+                        liters,
+                        dailyThresholdLiters
+                )
+        );
+    }
+
+    AnomalyDetectionService.AnomalyResult result =
+            anomalyDetectionService.checkForAnomaly(history, liters);
+
+    boolean alreadyAnomalous =
+            usageAlertRepository.existsByHouseholdIdAndAlertTypeAndTriggeredOn(
+                    household.getId(),
+                    UsageAlert.AlertType.ANOMALY_LEAK,
+                    logDate
+            );
+
+    if (result.anomalous && !alreadyAnomalous) {
+
+        raiseAlert(
+                household,
+                UsageAlert.AlertType.ANOMALY_LEAK,
+                logDate,
+                liters,
+                result.mean,
+                String.format(
+                        "Usage of %.1fL is over 2 std-dev above the household average of %.1fL — possible leak.",
+                        liters,
+                        result.mean
+                )
+        );
+    }
+}}
     }
 
     private void raiseAlert(Household household, UsageAlert.AlertType type, LocalDate date,

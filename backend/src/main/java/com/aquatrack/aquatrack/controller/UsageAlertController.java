@@ -15,7 +15,7 @@ import com.aquatrack.aquatrack.entity.UsageAlert;
 import com.aquatrack.aquatrack.repository.UsageAlertRepository;
 
 @RestController
-@RequestMapping("/households/{householdId}/alerts")
+@RequestMapping("/alerts")
 public class UsageAlertController {
 
     private final UsageAlertRepository usageAlertRepository;
@@ -26,7 +26,26 @@ public class UsageAlertController {
 
     @GetMapping
     public List<UsageAlertResponse> getAlerts(@PathVariable Long householdId) {
-        return usageAlertRepository.findByHouseholdIdOrderByCreatedAtDesc(householdId)
+
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+
+        return usageAlertRepository
+                .findByHouseholdIdAndCreatedAtAfterOrderByCreatedAtDesc(
+                        householdId,
+                        sevenDaysAgo
+                )
+                .stream()
+                .map(UsageAlertResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/recent")
+    public List<UsageAlertResponse> getRecentAlerts() {
+
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+
+        return usageAlertRepository
+                .findByCreatedAtAfterOrderByCreatedAtDesc(sevenDaysAgo)
                 .stream()
                 .map(UsageAlertResponse::from)
                 .collect(Collectors.toList());
@@ -42,6 +61,8 @@ public class UsageAlertController {
     public static class UsageAlertResponse {
         public Long id;
         public Long householdId;
+        public String apartmentName;
+        public String householdName;
         public UsageAlert.AlertType alertType;
         public LocalDate triggeredOn;
         public Double litersConsumed;
@@ -54,6 +75,8 @@ public class UsageAlertController {
             UsageAlertResponse r = new UsageAlertResponse();
             r.id = a.getId();
             r.householdId = a.getHousehold().getId();
+            r.householdName = a.getHousehold().getFlatNumber(); // or getHouseholdNumber()/getFlatNumber()
+            r.apartmentName = a.getHousehold().getApartment().getName();
             r.alertType = a.getAlertType();
             r.triggeredOn = a.getTriggeredOn();
             r.litersConsumed = a.getLitersConsumed();

@@ -291,15 +291,16 @@ function AdminPageShell({
               ease: "easeOut",
           }}
       >
-          <section className="mg-heading">
-            <div>
-              <p className="mg-eyebrow">MANAGEMENT</p>
-              <h1>{title}</h1>
-              <p>{description}</p>
-            </div>
+          {(title || description || action) && (
+            <section className="mg-heading">
+              <div>
+                {title && <h1>{title}</h1>}
+                {description && <p>{description}</p>}
+              </div>
 
-            {action && <div>{action}</div>}
-          </section>
+              {action && <div>{action}</div>}
+            </section>
+          )}
 
           {children}
         </motion.main>
