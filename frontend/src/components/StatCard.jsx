@@ -22,11 +22,11 @@ function StatCard({
         stiffness: 140,
       }}
       className="group relative overflow-hidden rounded-[34px]
-      border border-white/50
+      border border-slate-200/60
       bg-white/70
       backdrop-blur-2xl
       p-6
-      shadow-[0_15px_45px_rgba(15,23,42,.08)]"
+      shadow-[0_12px_35px_rgba(10,77,104,.10)]"
     >
       {/* Moving Glow */}
 
@@ -41,7 +41,7 @@ function StatCard({
         transition={{
           duration: 0.8,
         }}
-        className="absolute -right-24 -top-20 h-56 w-56 rounded-full bg-cyan-300/20 blur-3xl"
+        className="absolute -right-24 -top-20 h-56 w-56 rounded-full bg-[#08445B]/10 blur-3xl"
       />
 
       {/* Reflection */}
@@ -67,20 +67,20 @@ function StatCard({
           <motion.div
             variants={{
               hover: {
-                rotate: -8,
-                scale: 1.08,
+                rotate: -3,
+                scale: 1.04,
               },
             }}
             transition={{
               type: "spring",
               stiffness: 250,
             }}
-            className="flex h-14 w-14 items-center justify-center rounded-3xl
+            className="flex h-15 w-15 items-center justify-center rounded-3xl
             bg-gradient-to-br
-            from-sky-500
-            to-cyan-400
+            from-teal-700
+            to-cyan-600
             text-white
-            shadow-lg"
+            shadow-[0_8px_16px_rgba(8,68,91,0.15)]"
           >
             <Icon size={28} />
           </motion.div>
@@ -95,7 +95,7 @@ function StatCard({
           >
             <ArrowUpRight
               size={20}
-              className="text-slate-300 transition group-hover:text-sky-500"
+              className="text-slate-300 transition group-hover:text-[#08445B]"
             />
           </motion.div>
 
@@ -134,9 +134,9 @@ function StatCard({
 
         <div className="mt-auto pt-5">
 
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-[#0A4D68]/15 to-transparent" />
 
-          <p className="mt-5 text-sm leading-6 text-slate-500">
+          <p className="mt-5 text-sm leading-6 text-slate-600">
             {description}
           </p>
 
@@ -157,7 +157,7 @@ function StatCard({
         }}
         className="pointer-events-none absolute inset-0 rounded-[34px]
         ring-2
-        ring-cyan-300/60"
+        ring-[#0A4D68]/30"
       />
     </motion.article>
   );

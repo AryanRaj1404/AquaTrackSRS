@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import Invoices from "./pages/Invoices";
 import BulkWaterPurchases from "./pages/BulkWaterPurchases";
 import WaterRipples from "./components/WaterRipples";
+import ResidentDashboard from "./pages/ResidentDashboard";
 
 function App() {
   const location = useLocation();
@@ -39,7 +40,11 @@ function App() {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            {localStorage.getItem("role") === "RESIDENT" ? (
+              <ResidentDashboard />
+            ) : (
+              <Dashboard />
+            )}
           </ProtectedRoute>
         }
       />

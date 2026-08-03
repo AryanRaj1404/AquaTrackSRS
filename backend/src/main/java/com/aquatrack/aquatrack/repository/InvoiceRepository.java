@@ -35,4 +35,15 @@ public interface InvoiceRepository
 
     boolean existsByBillingCycleId(Long billingCycleId);
 
+    @Query("""
+        SELECT COALESCE(SUM(i.totalAmount), 0)
+        FROM Invoice i
+        WHERE i.household.id = :householdId
+        AND i.status NOT IN (
+            com.aquatrack.aquatrack.enums.InvoiceStatus.PAID,
+            com.aquatrack.aquatrack.enums.InvoiceStatus.CANCELLED
+        )
+        """)
+    Double getAmountDueByHousehold(Long householdId);
+
 }

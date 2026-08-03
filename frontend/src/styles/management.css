@@ -342,54 +342,6 @@
     box-shadow:0 10px 24px rgba(0,0,0,.15);
 }
 
-.mg-secondary-button {
-  display: flex;
-  min-height: 46px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 17px;
-
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-
-  background: #ffffff;
-  color: #334155;
-
-  font-size: 12px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease,
-    border-color .18s ease,
-    color .18s ease,
-    background-color .18s ease;
-}
-
-.mg-secondary-button:hover {
-  transform: translateY(-2px);
-
-  border-color: #0781a5;
-  color: #0781a5;
-  background: #f0f9ff;
-
-  box-shadow: 0 10px 24px rgba(0,0,0,.10);
-}
-
-.mg-secondary-button:active {
-  transform: translateY(0);
-}
-
-.mg-secondary-button:disabled {
-  opacity: .6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
 .mg-summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -837,5 +789,16 @@ overflow: hidden;
             scale(1.18);
 
         opacity:0;
+    }
+}
+
+/* Resident dashboard responsive grids */
+@media (max-width: 900px) {
+    .mg-responsive-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .mg-responsive-grid-3 {
+        grid-template-columns: 1fr !important;
     }
 }

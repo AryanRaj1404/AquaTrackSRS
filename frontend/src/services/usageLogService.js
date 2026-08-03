@@ -67,3 +67,8 @@ export const uploadCsv = async (
     return response.data;
 
 };
+
+export async function getUsageLogsByHousehold(householdId) {
+  const response = await api.get(`/usage-logs/household/${householdId}`);
+  return response.data;
+}

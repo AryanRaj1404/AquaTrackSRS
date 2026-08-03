@@ -5,6 +5,8 @@ import WaterTips from "../components/WaterTips";
 import Charts from "../components/dashboard/ConsumptionSection";
 import AlertPanel from "../components/dashboard/AlertPanel";
 import DashboardHero from "../components/dashboard/DashboardHero";
+import AdminPageShell from "../components/AdminPageShell";
+import StatCard from "../components/StatCard";
 
 import {
   BadgeCheck,
@@ -16,9 +18,6 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-
-import AdminPageShell from "../components/AdminPageShell";
-import StatCard from "../components/StatCard";
 
 function Dashboard() {
 
