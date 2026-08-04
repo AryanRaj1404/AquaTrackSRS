@@ -27,6 +27,7 @@ import {
     markInvoicePaid,
     emailBillingCycleInvoices,
 } from "../services/invoiceService";
+import ResponsiveTable from "../components/ResponsiveTable";
 
 function Invoices() {
 
@@ -677,6 +678,8 @@ function Invoices() {
 
                     <div className="mg-table-wrapper">
 
+                        <ResponsiveTable>
+
                         <table className="mg-table">
 
                             <thead>
@@ -821,6 +824,8 @@ function Invoices() {
                             </tbody>
 
                         </table>
+
+                        </ResponsiveTable>
 
                     </div>
 

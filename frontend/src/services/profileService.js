@@ -1,15 +1,21 @@
 import api from "./api";
 
-export const getProfile = async () => {
-  const response = await api.get("/auth/me");
-  return response.data;
+const profileService = {
+
+    async getProfile() {
+        const response = await api.get("/auth/me");
+        return response.data;
+    },
+
+    async updateProfile(profile) {
+        const response = await api.put(
+            "/auth/profile",
+            profile
+        );
+
+        return response.data;
+    },
+
 };
 
-export const updateProfile = async (profileData) => {
-  const response = await api.put(
-    "/auth/profile",
-    profileData
-  );
-
-  return response.data;
-};
+export default profileService;

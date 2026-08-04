@@ -1,6 +1,7 @@
 import { Building2, Loader2 } from "lucide-react";
 import EmptyState from "../EmptyState";
 import { memo } from "react";
+import ResponsiveTable from "../ResponsiveTable";
 
 function ApartmentTable({
 
@@ -56,6 +57,8 @@ function ApartmentTable({
             {apartments.length > 0 ? (
 
                 <div className="mg-table-wrapper">
+
+                    <ResponsiveTable>
 
                     <table className="mg-table">
 
@@ -133,6 +136,8 @@ function ApartmentTable({
                         </tbody>
 
                     </table>
+
+                    </ResponsiveTable>
 
                 </div>
 

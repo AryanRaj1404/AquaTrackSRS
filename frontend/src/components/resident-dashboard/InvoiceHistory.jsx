@@ -6,6 +6,7 @@ import {
   getInvoicesByHousehold,
   downloadInvoicePdf,
 } from "../../services/invoiceService";
+import ResponsiveTable from "../ResponsiveTable";
 
 const STATUS_CLASS = {
   PAID: "mg-status mg-status-active",
@@ -98,6 +99,7 @@ function InvoiceHistory({ householdId }) {
 
       {!loading && invoices.length > 0 && (
         <div className="mg-table-wrapper">
+          <ResponsiveTable>
           <table className="mg-table">
             <thead>
               <tr>
@@ -144,6 +146,7 @@ function InvoiceHistory({ householdId }) {
               ))}
             </tbody>
           </table>
+          </ResponsiveTable>
         </div>
       )}
     </motion.div>

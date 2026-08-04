@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ProfileResponse {
+
     private String firstName;
     private String lastName;
     private String email;
@@ -13,4 +14,11 @@ public class ProfileResponse {
     private String username;
     private String role;
     private String provider;
+
+    // Resident only
+    private String apartmentName;
+    private String flatNumber;
+    private Double flatSize;
+    private Integer occupancy;
+
 }

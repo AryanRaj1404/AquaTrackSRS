@@ -49,11 +49,22 @@ public class AdminDashboardService {
     }
 
     public AdminAlertSummaryResponse getAlertSummary() {
-        long critical = usageAlertRepository.countByAlertType(UsageAlert.AlertType.ANOMALY_LEAK);
-        long pending = usageAlertRepository.countByAcknowledgedFalse();
-        long resolved = usageAlertRepository.countByAcknowledgedTrue(); // Proxy for resolvedToday
 
-        return new AdminAlertSummaryResponse(critical, pending, resolved);
+        long critical = usageAlertRepository.countByAlertType(
+                UsageAlert.AlertType.ANOMALY_LEAK);
+
+        long pending = usageAlertRepository.countByAcknowledgedFalse();
+
+        long acknowledged = usageAlertRepository.countByAcknowledgedTrue();
+
+        long total = usageAlertRepository.count();
+
+        return new AdminAlertSummaryResponse(
+                critical,
+                pending,
+                acknowledged,
+                total
+        );
     }
 
     public List<MonthlyConsumptionResponse> getMonthlyConsumption() {

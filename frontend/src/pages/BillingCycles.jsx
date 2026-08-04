@@ -27,6 +27,7 @@ import {
 
 import { getApartments } from "../services/apartmentService";
 import { getTariffPlans } from "../services/tariffPlanService";
+import ResponsiveTable from "../components/ResponsiveTable";
 
 const initialForm = {
   apartmentId: "",
@@ -626,6 +627,7 @@ function BillingCycles(){
             </div>
         ) : filteredBillingCycles.length > 0 ? (
             <div className="mg-table-wrapper">
+              <ResponsiveTable>
             <table className="mg-table">
                 <thead>
                 <tr>
@@ -702,6 +704,7 @@ function BillingCycles(){
                 ))}
                 </tbody>
             </table>
+            </ResponsiveTable>
             </div>
         ) : (
             <EmptyState

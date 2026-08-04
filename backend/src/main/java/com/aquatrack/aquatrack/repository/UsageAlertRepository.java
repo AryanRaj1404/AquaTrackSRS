@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.aquatrack.aquatrack.entity.UsageAlert;
@@ -25,6 +27,20 @@ public interface UsageAlertRepository extends JpaRepository<UsageAlert, Long> {
     long countByAlertType(UsageAlert.AlertType alertType);
     long countByAcknowledgedFalse();
     long countByAcknowledgedTrue();
+
+    Page<UsageAlert> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    Page<UsageAlert> findByAcknowledged(
+            boolean acknowledged,
+            Pageable pageable
+    );
+
+    Page<UsageAlert> findByAlertType(
+            UsageAlert.AlertType alertType,
+            Pageable pageable
+    );
+
+    List<UsageAlert> findTop5ByAcknowledgedFalseOrderByCreatedAtDesc();
 
 
 }

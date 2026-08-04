@@ -902,6 +902,7 @@ const highestRate =
           </div>
         ) : filteredTariffPlans.length > 0 ? (
           <div className="mg-table-wrapper">
+            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
@@ -1059,6 +1060,7 @@ const highestRate =
                 ))}
               </tbody>
             </table>
+            </ResponsiveTable>
           </div>
         ) : (
           <EmptyState

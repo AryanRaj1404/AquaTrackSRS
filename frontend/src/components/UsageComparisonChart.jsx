@@ -26,6 +26,7 @@ import AlertsPanel from "../components/AlertsPanel";
 import Charts from "../components/Charts";
 import UsageComparisonChart from "../components/UsageComparisonChart";
 import WaterTips from "../components/WaterTips";
+import ResponsiveTable from "./ResponsiveTable";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -276,6 +277,7 @@ function Dashboard() {
 
         <div className="mg-table-wrapper">
           {filteredHouseholds.length > 0 ? (
+            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
@@ -312,6 +314,7 @@ function Dashboard() {
                 ))}
               </tbody>
             </table>
+            </ResponsiveTable>
           ) : (
             <EmptyState
               icon={Users}
@@ -343,6 +346,7 @@ function Dashboard() {
 
         <div className="mg-table-wrapper">
           {apartments.length > 0 ? (
+            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
@@ -373,6 +377,7 @@ function Dashboard() {
                   ))}
               </tbody>
             </table>
+            </ResponsiveTable>
           ) : (
             <EmptyState
               icon={Building2}
@@ -394,6 +399,7 @@ function Dashboard() {
 
         <div className="mg-table-wrapper">
           {recentReadings.length > 0 ? (
+            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
@@ -426,6 +432,7 @@ function Dashboard() {
                 ))}
               </tbody>
             </table>
+            </ResponsiveTable>
           ) : (
             <EmptyState
               icon={Droplets}

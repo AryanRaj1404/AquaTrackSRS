@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import GlassPanel from "../ui/GlassPanel";
 
 import {
@@ -15,6 +16,7 @@ import toast from "react-hot-toast";
 export default function AlertPanel() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchAlerts = useCallback(async () => {
     try {
@@ -83,23 +85,32 @@ export default function AlertPanel() {
   };
 
   const handleAcknowledge = async (alertId) => {
-    try {
-      await acknowledgeAlert(alertId);
+  try {
+    await acknowledgeAlert(alertId);
 
+    toast.success("Alert acknowledged");
+
+    // Mark as acknowledged immediately
+    setAlerts((prev) =>
+      prev.map((alert) =>
+        alert.id === alertId
+          ? { ...alert, acknowledged: true }
+          : alert
+      )
+    );
+
+    // Remove after 3 seconds
+    setTimeout(() => {
       setAlerts((prev) =>
-        prev.map((alert) =>
-          alert.id === alertId
-            ? { ...alert, acknowledged: true }
-            : alert
-        )
+        prev.filter((alert) => alert.id !== alertId)
       );
+    }, 3000);
 
-      toast.success("Alert acknowledged");
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to acknowledge alert");
-    }
-  };
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to acknowledge alert");
+  }
+};
 
   return (
     <GlassPanel className="p-8 shadow-2xl">
@@ -114,9 +125,20 @@ export default function AlertPanel() {
           </h2>
         </div>
 
-        <div className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
-          {alerts.filter(a => !a.acknowledged).length} Active
-        </div>
+        <div className="flex items-center gap-4">
+
+          <button
+              className="text-sm font-medium text-teal-700 hover:text-teal-800"
+              onClick={() => navigate("/alerts")}
+          >
+              View All
+          </button>
+
+          <div className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
+              {alerts.filter((a) => !a.acknowledged).length} Active
+          </div>
+
+      </div>
       </div>
 
       {loading && (

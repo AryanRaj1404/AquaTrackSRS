@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import ResponsiveTable from "../ResponsiveTable";
 
 export default function ApartmentHouseholdsModal({
 
@@ -54,6 +55,8 @@ export default function ApartmentHouseholdsModal({
                     {selectedApartment?.name}
 
                 </p>
+
+                <ResponsiveTable>
 
                 <table className="mg-table">
 
@@ -133,6 +136,7 @@ export default function ApartmentHouseholdsModal({
                     </tbody>
 
                 </table>
+                </ResponsiveTable>
 
             </div>
 

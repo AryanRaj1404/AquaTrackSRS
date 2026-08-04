@@ -4,6 +4,7 @@ import {
   ChevronDown,
   Check
  } from "lucide-react";
+import ResponsiveTable from '../ResponsiveTable';
 
 function HouseholdTable(
     {
@@ -53,6 +54,7 @@ function HouseholdTable(
     return (
 
         <div className="mg-table-wrapper">
+          <ResponsiveTable>
             <table className="mg-table">
               <thead>
               <tr>
@@ -243,6 +245,7 @@ function HouseholdTable(
                 ))}
               </tbody>
             </table>
+            </ResponsiveTable>
           </div>
 
     );

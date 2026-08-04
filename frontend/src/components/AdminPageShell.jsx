@@ -47,7 +47,7 @@ function AdminPageShell({
     ].forEach(localStorage.removeItem.bind(localStorage));
 
     toast.success("Logged out successfully.");
-    navigate("/login");
+    navigate("/");
   };
 
   const handleProfileClick = () => {
@@ -110,7 +110,7 @@ function AdminPageShell({
       <aside
         className={`
           fixed left-0 top-0 z-50
-          flex h-screen w-72 flex-col
+          flex h-screen w-[290px] lg:w-72 flex-col
           border-r border-white/10
           bg-gradient-to-b
           from-[#0A4D68]
@@ -264,8 +264,8 @@ function AdminPageShell({
       )}
 
       <div className="min-h-screen lg:ml-72">
-        <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-200/70 bg-white/80 px-8 backdrop-blur-xl">
-          <div className="flex items-center gap-5">
+        <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-200/70 bg-white/80 px-4 md:px-6 lg:px-8 backdrop-blur-xl">
+          <div className="flex flex-1 items-center gap-3 md:gap-5">
             <button
               type="button"
               className="
@@ -289,23 +289,40 @@ function AdminPageShell({
               <Menu size={22} />
             </button>
 
-            <div className="flex h-12 w-[420px] items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-teal-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-teal-100">
+            <div className="
+              flex
+              h-12
+              w-full
+              max-w-[420px]
+              items-center
+              gap-3
+              rounded-2xl
+              border
+              border-slate-200
+              bg-slate-50
+              px-4
+              transition
+              focus-within:border-teal-600
+              focus-within:bg-white
+              focus-within:ring-4
+              focus-within:ring-teal-100
+            ">
               <Search size={19} />
 
               <input
                 className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
                 type="search"
-                placeholder={searchPlaceholder}
+                placeholder={searchPlaceholder || "Search..."}
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <button
               type="button"
-              className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white transition hover:border-teal-500 hover:text-teal-700"
+              className="relative flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white transition hover:border-teal-500 hover:text-teal-700"
               onClick={() =>
                 toast("No new notifications.", {
                   icon: "🔔",
@@ -330,7 +347,7 @@ function AdminPageShell({
             
 
             <div
-              className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent bg-white px-3 py-2 transition hover:border-slate-200 hover:shadow-sm"
+              className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent bg-white px-2 py-2 md:px-3 transition hover:border-slate-200 hover:shadow-sm"
               onClick={handleProfileClick}
               role="button"
               tabIndex={0}
@@ -343,15 +360,14 @@ function AdminPageShell({
               <div
                 className="
                   flex
-                  h-11
-                  w-11
+                  h-10 w-10 md:h-11 md:w-11
                   items-center
                   justify-center
                   rounded-2xl
                   bg-gradient-to-br
                   from-teal-600
                   to-cyan-600
-                  text-sm
+                  text-xs md:text-sm
                   font-bold
                   text-white
                 "
@@ -359,7 +375,7 @@ function AdminPageShell({
                 {username ? username.charAt(0).toUpperCase() : "U"}
               </div>
 
-              <div className="flex flex-col leading-tight">
+              <div className="hidden sm:flex flex-col leading-tight">
                 <strong className="text-sm font-semibold text-slate-800">{username || "User"}</strong>
                 <span className="text-xs text-slate-500">
                   {role === "ADMIN"
@@ -380,8 +396,9 @@ function AdminPageShell({
             from-slate-50
             via-slate-100
             to-slate-50
-            px-10
-            py-8
+            px-4 py-5
+            md:px-6 md:py-6
+            lg:px-10 lg:py-8
             "
           initial={{
               opacity: 0,
@@ -401,24 +418,28 @@ function AdminPageShell({
           }}
       >
           {(title || description || action) && (
-            <section className="flex flex-col justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
+            <section className="flex flex-col justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-5 md:p-6 lg:p-8 shadow-sm lg:flex-row lg:items-center">
               <div>
                 <p className="mb-2 text-xs font-bold uppercase tracking-[0.35em] text-teal-700">
                   MANAGEMENT
                 </p>
 
-                <h1 className="text-4xl font-black tracking-tight text-slate-900">
+                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900">
                   {title}
                 </h1>
 
                 {description && (
-                  <p className="mt-3 max-w-2xl text-base leading-7 text-slate-500">
+                  <p className="mt-3 max-w-2xl text-sm md:text-base leading-7 text-slate-500">
                     {description}
                   </p>
                 )}
               </div>
 
-              {action && <div>{action}</div>}
+              {action && (
+                <div className="w-full sm:w-auto">
+                    {action}
+                </div>
+              )}
             </section>
           )}
 

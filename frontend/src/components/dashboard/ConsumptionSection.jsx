@@ -148,15 +148,27 @@ export default function AdminDashboardCharts() {
 
     </div>
 
-    <div className="flex flex-col items-end gap-2 bg-slate-50 rounded-2xl p-3">
+    <div
+      className="
+          flex
+          w-full
+          flex-col
+          gap-3
+          rounded-2xl
+          bg-slate-50
+          p-3
+          sm:w-auto
+          sm:items-end
+        "
+      >
 
         {/* Daily Monthly */}
 
-        <div className="flex bg-slate-100 rounded-xl p-1">
+        <div className="flex w-full rounded-xl bg-slate-100 p-1 sm:w-auto">
 
             <button
                 onClick={() => setViewMode("daily")}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 sm:flex-none ${
                     viewMode === "daily"
                         ? "bg-teal-700 text-white shadow"
                         : "text-slate-500 hover:text-slate-800"
@@ -167,7 +179,7 @@ export default function AdminDashboardCharts() {
 
             <button
                 onClick={() => setViewMode("monthly")}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 sm:flex-none ${
                     viewMode === "monthly"
                         ? "bg-teal-700 text-white shadow"
                         : "text-slate-500 hover:text-slate-800"
@@ -180,13 +192,13 @@ export default function AdminDashboardCharts() {
 
         {/* Time Buttons */}
 
-        <div className="flex gap-1">
+        <div className="grid grid-cols-4 gap-2 w-full sm:flex sm:w-auto">
 
             {["1M","3M","6M","1Y"].map((range)=>(
                 <button
                     key={range}
                     onClick={()=>setTimeRange(range)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                    className={`w-full rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ${
                         timeRange===range
                         ? "bg-teal-700 text-white"
                         : "text-slate-500 hover:bg-slate-100"
@@ -254,6 +266,9 @@ export default function AdminDashboardCharts() {
         <XAxis
           dataKey="label"
           axisLine={false}
+          tickLine={false}
+          minTickGap={50}
+          tick={{ fontSize: 13, fill: "#64748b" }}
           tickFormatter={(value) => {
             const date = new Date(value);
 
@@ -326,21 +341,37 @@ export default function AdminDashboardCharts() {
             <div className="flex items-center justify-center h-full text-slate-400">No data available</div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dataApartment} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
+              <BarChart 
+              data={dataApartment} 
+              layout="vertical" 
+              barCategoryGap="25%"
+              margin={{ 
+                top: 0, 
+                right: 20, 
+                left: 0, 
+                bottom: 0 
+                }}>
                 <CartesianGrid strokeDasharray="2 6" horizontal={false} stroke={COLORS.gray} />
-                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: COLORS.textGray }} />
-                <YAxis
+                <XAxis
+                  type="number"
                   axisLine={false}
                   tickLine={false}
                   tick={{
                       fontSize: 12,
                       fill: COLORS.textGray,
                   }}
-                  tickFormatter={(value) =>
-                      value >= 1000
-                          ? `${(value / 1000).toFixed(0)}K`
-                          : value
-                  }
+                />
+                <YAxis
+                  type="category"
+                  dataKey="apartmentName"
+                  interval={0}
+                  axisLine={false}
+                  tickLine={false}
+                  width={100}
+                  tick={{
+                      fontSize: 12,
+                      fill: COLORS.textGray,
+                  }}
                 />
                 <Tooltip content={<CustomTooltip unit=" KL" />} cursor={{ fill: COLORS.lightBlue }} />
                 <Bar 
@@ -348,7 +379,7 @@ export default function AdminDashboardCharts() {
                   name="Consumption" 
                   fill={COLORS.teal} 
                   radius={[0, 6, 6, 0]} 
-                  barSize={18}
+                  barSize={12}
                 >
                   {dataApartment.map((entry, index) => (
                     <Cell 
