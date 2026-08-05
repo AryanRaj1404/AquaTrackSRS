@@ -144,29 +144,14 @@ public class UserServiceImpl implements UserService{
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-                return new ProfileResponse(
+        return new ProfileResponse(
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
                 user.getMobileNumber(),
                 user.getUsername(),
                 user.getRole().name(),
-                user.getProvider().name(),
-
-                user.getHousehold() != null
-                        ? user.getHousehold().getApartment().getName()
-                        : null,
-
-                user.getHousehold() != null
-                        ? user.getHousehold().getFlatNumber()
-                        : null,
-                user.getHousehold() != null
-                    ? user.getHousehold().getFlatSize()
-                    : null,
-
-                user.getHousehold() != null
-                    ? user.getHousehold().getOccupancy()
-                    : null
+                user.getProvider().name()
         );
     }
     @Override
@@ -191,28 +176,13 @@ public class UserServiceImpl implements UserService{
         userRepository.save(user);
 
         return new ProfileResponse(
-            user.getFirstName(),
-            user.getLastName(),
-            user.getEmail(),
-            user.getMobileNumber(),
-            user.getUsername(),
-            user.getRole().name(),
-            user.getProvider().name(),
-
-            user.getHousehold() != null
-                    ? user.getHousehold().getApartment().getName()
-                    : null,
-
-            user.getHousehold() != null
-                    ? user.getHousehold().getFlatNumber()
-                    : null,
-            user.getHousehold() != null
-                ? user.getHousehold().getFlatSize()
-                : null,
-
-            user.getHousehold() != null
-                    ? user.getHousehold().getOccupancy()
-                    : null
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getMobileNumber(),
+                user.getUsername(),
+                user.getRole().name(),
+                user.getProvider().name()
         );
     }
 }

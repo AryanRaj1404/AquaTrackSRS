@@ -9,7 +9,7 @@ import com.aquatrack.aquatrack.dto.WaterLossAnalyticsResponse;
 
 public interface DashboardService {
 
-    AdminDashboardResponse getAdminDashboard(Long apartmentId);
+    AdminDashboardResponse getAdminDashboard();
 
     List<MonthlyRevenueResponse> getMonthlyRevenue();
 

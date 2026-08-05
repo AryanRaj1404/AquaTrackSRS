@@ -10,13 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminAlertSummaryResponse {
-
-    private long critical;
-
-    private long pending;
-
-    private long acknowledged;
-
-    private long total;
-
+    private long criticalAlerts;
+    private long pendingAlerts;
+    private long resolvedToday;
 }

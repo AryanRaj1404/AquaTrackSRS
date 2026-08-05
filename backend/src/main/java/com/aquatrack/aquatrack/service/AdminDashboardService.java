@@ -30,7 +30,7 @@ public class AdminDashboardService {
         this.waterUsageLogRepository = waterUsageLogRepository;
     }
 
-    public List<AdminAlertResponse> getAlerts(Long apartmentId) {
+    public List<AdminAlertResponse> getAlerts() {
         return usageAlertRepository.findAll().stream().map(a -> {
             AdminAlertResponse res = new AdminAlertResponse();
             res.setId(a.getId());
@@ -48,26 +48,15 @@ public class AdminDashboardService {
         }).sorted((a, b) -> b.getTime().compareTo(a.getTime())).collect(Collectors.toList());
     }
 
-    public AdminAlertSummaryResponse getAlertSummary(Long apartmentId) {
-
-        long critical = usageAlertRepository.countByAlertType(
-                UsageAlert.AlertType.ANOMALY_LEAK);
-
+    public AdminAlertSummaryResponse getAlertSummary() {
+        long critical = usageAlertRepository.countByAlertType(UsageAlert.AlertType.ANOMALY_LEAK);
         long pending = usageAlertRepository.countByAcknowledgedFalse();
+        long resolved = usageAlertRepository.countByAcknowledgedTrue(); // Proxy for resolvedToday
 
-        long acknowledged = usageAlertRepository.countByAcknowledgedTrue();
-
-        long total = usageAlertRepository.count();
-
-        return new AdminAlertSummaryResponse(
-                critical,
-                pending,
-                acknowledged,
-                total
-        );
+        return new AdminAlertSummaryResponse(critical, pending, resolved);
     }
 
-    public List<MonthlyConsumptionResponse> getMonthlyConsumption(Long apartmentId) {
+    public List<MonthlyConsumptionResponse> getMonthlyConsumption() {
         List<Object[]> raw = waterUsageLogRepository.getMonthlyConsumption();
         List<MonthlyConsumptionResponse> list = new ArrayList<>();
         for (Object[] obj : raw) {
@@ -78,7 +67,7 @@ public class AdminDashboardService {
         return list;
     }
 
-    public List<ApartmentConsumptionResponse> getApartmentConsumption(Long apartmentId) {
+    public List<ApartmentConsumptionResponse> getApartmentConsumption() {
         List<Object[]> raw = waterUsageLogRepository.getTopHouseholds();
         List<ApartmentConsumptionResponse> list = new ArrayList<>();
         for (Object[] obj : raw) {
@@ -108,23 +97,21 @@ public class AdminDashboardService {
     }
 
     public List<ConsumptionTrendResponse> getConsumptionChart(
-        Long apartmentId,
         String mode,
         String range
         ) {
 
             if ("daily".equalsIgnoreCase(mode)) {
 
-                return getDailyConsumption(apartmentId, range);
+                return getDailyConsumption(range);
 
             }
 
-            return getMonthlyConsumption(apartmentId, range);
+            return getMonthlyConsumption(range);
 
         }
         private List<ConsumptionTrendResponse> getMonthlyConsumption(
-            Long apartmentId,
-            String range
+        String range
         ) {
 
             LocalDate startDate = getStartDate(range);
@@ -150,7 +137,6 @@ public class AdminDashboardService {
 
 
         private List<ConsumptionTrendResponse> getDailyConsumption(
-            Long apartmentId,
         String range
         ) {
 
@@ -175,7 +161,7 @@ public class AdminDashboardService {
 
         }
 
-    public List<UsageStatusResponse> getUsageStatus(Long apartmentId) {
+    public List<UsageStatusResponse> getUsageStatus() {
         List<UsageStatusResponse> list = new ArrayList<>();
         long criticalAlerts = usageAlertRepository.countByAlertType(UsageAlert.AlertType.ANOMALY_LEAK);
         long highAlerts = usageAlertRepository.countByAlertType(UsageAlert.AlertType.THRESHOLD_BREACH);

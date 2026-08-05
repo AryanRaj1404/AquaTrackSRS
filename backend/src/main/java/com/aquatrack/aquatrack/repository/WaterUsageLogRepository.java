@@ -34,14 +34,6 @@ public interface WaterUsageLogRepository extends JpaRepository<WaterUsageLog, Lo
         """)
     Double getTotalWaterConsumedLiters();
     @Query("""
-    SELECT COALESCE(SUM(w.litersConsumed),0)
-    FROM WaterUsageLog w
-    WHERE w.household.apartment.id = :apartmentId
-    """)
-    Double getTotalWaterConsumedLiters(
-            Long apartmentId
-    );
-    @Query("""
     SELECT
     FUNCTION('TO_CHAR', w.usageDate, 'YYYY-MM'),
     COALESCE(SUM(w.litersConsumed)/1000.0,0)
@@ -150,49 +142,4 @@ public interface WaterUsageLogRepository extends JpaRepository<WaterUsageLog, Lo
     ORDER BY FUNCTION('TO_CHAR', w.usageDate, 'YYYY-MM')
     """)
     List<Object[]> getMonthlyConsumption(LocalDate startDate);
-
-    @Query("""
-    SELECT
-        w.usageDate,
-        COALESCE(SUM(w.litersConsumed)/1000.0,0)
-    FROM WaterUsageLog w
-    WHERE w.usageDate >= :startDate
-    AND w.household.apartment.id = :apartmentId
-    GROUP BY w.usageDate
-    ORDER BY w.usageDate
-    """)
-    List<Object[]> getDailyConsumption(
-            LocalDate startDate,
-            Long apartmentId
-    );
-
-    @Query("""
-    SELECT
-        FUNCTION('TO_CHAR', w.usageDate, 'YYYY-MM'),
-        COALESCE(SUM(w.litersConsumed)/1000.0,0)
-    FROM WaterUsageLog w
-    WHERE w.usageDate >= :startDate
-    AND w.household.apartment.id = :apartmentId
-    GROUP BY FUNCTION('TO_CHAR', w.usageDate, 'YYYY-MM')
-    ORDER BY FUNCTION('TO_CHAR', w.usageDate, 'YYYY-MM')
-    """)
-    List<Object[]> getMonthlyConsumption(
-            LocalDate startDate,
-            Long apartmentId
-    );
-
-    @Query("""
-    SELECT
-        h.id,
-        h.flatNumber,
-        COALESCE(SUM(w.litersConsumed)/1000.0,0)
-    FROM WaterUsageLog w
-    JOIN w.household h
-    WHERE h.apartment.id = :apartmentId
-    GROUP BY h.id,h.flatNumber
-    ORDER BY SUM(w.litersConsumed) DESC
-    """)
-    List<Object[]> getTopHouseholds(
-            Long apartmentId
-    );
 }

@@ -158,25 +158,13 @@ public class DashboardServiceImpl implements DashboardService {
 
 
     @Override
-    public AdminDashboardResponse getAdminDashboard(Long apartmentId) {
+    public AdminDashboardResponse getAdminDashboard() {
 
-        long apartments =
-                apartmentId == null
-                        ? apartmentRepository.count()
-                        : 1;
+        long apartments = apartmentRepository.count();
 
-        long households =
-                apartmentId == null
+        long households = householdRepository.count();
 
-                        ? householdRepository.count()
-
-                        : householdRepository
-                                .countByApartmentId(apartmentId);
-
-        long users =
-        apartmentId == null
-                ? userRepository.count()
-                : userRepository.countByApartmentId(apartmentId);
+        long users = userRepository.count();
 
         long activeBillingCycles =
                 billingCycleRepository
@@ -184,60 +172,28 @@ public class DashboardServiceImpl implements DashboardService {
                         .size();
 
         double consumedKl =
-        (
-            apartmentId == null
-            ? waterUsageLogRepository
-                    .getTotalWaterConsumedLiters()
-            : waterUsageLogRepository
-                    .getTotalWaterConsumedLiters(apartmentId)
-        ) / 1000.0;
+                waterUsageLogRepository.getTotalWaterConsumedLiters() / 1000.0;
 
         double purchasedKl =
-        apartmentId == null
-        ? bulkWaterPurchaseRepository
-                .getTotalBulkWaterPurchasedKl()
-        : bulkWaterPurchaseRepository
-                .getTotalBulkWaterPurchasedKl(apartmentId);
+                bulkWaterPurchaseRepository.getTotalBulkWaterPurchasedKl();
 
         double revenue =
-        apartmentId == null
-        ? invoiceRepository.getTotalRevenue()
-        : invoiceRepository.getTotalRevenue(apartmentId);
+                invoiceRepository.getTotalRevenue();
 
         long generated =
-        apartmentId == null
-        ? invoiceRepository.countByStatus(InvoiceStatus.GENERATED)
-        : invoiceRepository.countByStatusAndApartmentId(
-                InvoiceStatus.GENERATED,
-                apartmentId);
+        invoiceRepository.countByStatus(InvoiceStatus.GENERATED);
 
         long sent =
-                apartmentId == null
-                ? invoiceRepository.countByStatus(InvoiceStatus.SENT)
-                : invoiceRepository.countByStatusAndApartmentId(
-                        InvoiceStatus.SENT,
-                        apartmentId);
+                invoiceRepository.countByStatus(InvoiceStatus.SENT);
 
         long paid =
-                apartmentId == null
-                ? invoiceRepository.countByStatus(InvoiceStatus.PAID)
-                : invoiceRepository.countByStatusAndApartmentId(
-                        InvoiceStatus.PAID,
-                        apartmentId);
+                invoiceRepository.countByStatus(InvoiceStatus.PAID);
 
         long overdue =
-                apartmentId == null
-                ? invoiceRepository.countByStatus(InvoiceStatus.OVERDUE)
-                : invoiceRepository.countByStatusAndApartmentId(
-                        InvoiceStatus.OVERDUE,
-                        apartmentId);
+                invoiceRepository.countByStatus(InvoiceStatus.OVERDUE);
 
         long cancelled =
-                apartmentId == null
-                ? invoiceRepository.countByStatus(InvoiceStatus.CANCELLED)
-                : invoiceRepository.countByStatusAndApartmentId(
-                        InvoiceStatus.CANCELLED,
-                        apartmentId);
+                invoiceRepository.countByStatus(InvoiceStatus.CANCELLED);
 
         long pending = generated + sent;
 

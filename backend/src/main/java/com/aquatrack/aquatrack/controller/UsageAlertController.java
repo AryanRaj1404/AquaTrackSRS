@@ -5,14 +5,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aquatrack.aquatrack.entity.UsageAlert;
@@ -29,60 +25,30 @@ public class UsageAlertController {
     }
 
     @GetMapping
-    public Page<UsageAlertResponse> getAlerts(
+    public List<UsageAlertResponse> getAlerts(@PathVariable Long householdId) {
 
-            @RequestParam(defaultValue = "0") int page,
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
 
-            @RequestParam(defaultValue = "10") int size,
-
-            @RequestParam(defaultValue = "ALL") String status
-
-    ) {
-
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<UsageAlert> alerts;
-
-        switch (status.toUpperCase()) {
-
-            case "PENDING":
-
-                alerts = usageAlertRepository.findByAcknowledged(
-                        false,
-                        pageable
-                );
-
-                break;
-
-            case "ACKNOWLEDGED":
-
-                alerts = usageAlertRepository.findByAcknowledged(
-                        true,
-                        pageable
-                );
-
-                break;
-
-            default:
-
-                alerts = usageAlertRepository.findAllByOrderByCreatedAtDesc(
-                        pageable
-                );
-
-        }
-
-        return alerts.map(UsageAlertResponse::from);
-
+        return usageAlertRepository
+                .findByHouseholdIdAndCreatedAtAfterOrderByCreatedAtDesc(
+                        householdId,
+                        sevenDaysAgo
+                )
+                .stream()
+                .map(UsageAlertResponse::from)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/recent")
     public List<UsageAlertResponse> getRecentAlerts() {
 
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+
         return usageAlertRepository
-            .findTop5ByAcknowledgedFalseOrderByCreatedAtDesc()
-            .stream()
-            .map(UsageAlertResponse::from)
-            .collect(Collectors.toList());
+                .findByCreatedAtAfterOrderByCreatedAtDesc(sevenDaysAgo)
+                .stream()
+                .map(UsageAlertResponse::from)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/{alertId}/acknowledge")
