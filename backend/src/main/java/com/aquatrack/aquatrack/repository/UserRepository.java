@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.aquatrack.aquatrack.entity.User;
 import com.aquatrack.aquatrack.enums.Role;
@@ -20,4 +21,13 @@ public interface UserRepository extends JpaRepository<User, Long>{
     List<User> findByRoleAndHouseholdIsNull(Role role);
 
     Optional<User> findFirstByHouseholdId(Long householdId);
+
+    @Query("""
+    SELECT COUNT(u)
+    FROM User u
+    WHERE u.household.apartment.id = :apartmentId
+    """)
+    long countByApartmentId(
+            Long apartmentId
+    );
 }

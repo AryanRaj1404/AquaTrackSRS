@@ -46,4 +46,22 @@ public interface InvoiceRepository
         """)
     Double getAmountDueByHousehold(Long householdId);
 
+    @Query("""
+    SELECT COALESCE(SUM(i.totalAmount), 0)
+    FROM Invoice i
+    WHERE i.household.apartment.id = :apartmentId
+    """)
+    Double getTotalRevenue(Long apartmentId);
+
+    @Query("""
+        SELECT COUNT(i)
+        FROM Invoice i
+        WHERE i.status = :status
+        AND i.household.apartment.id = :apartmentId
+        """)
+    long countByStatusAndApartmentId(
+            InvoiceStatus status,
+            Long apartmentId
+    );
+
 }

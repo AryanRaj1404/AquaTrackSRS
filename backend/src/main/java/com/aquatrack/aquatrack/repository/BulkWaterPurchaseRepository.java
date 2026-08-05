@@ -19,6 +19,15 @@ public interface BulkWaterPurchaseRepository
         """)
     Double getTotalBulkWaterPurchasedKl();
 
+    @Query("""
+    SELECT COALESCE(SUM(b.volumeKl),0)
+    FROM BulkWaterPurchase b
+    WHERE b.apartment.id = :apartmentId
+    """)
+    Double getTotalBulkWaterPurchasedKl(
+            Long apartmentId
+    );
+
     boolean existsByBillingCycleId(Long billingCycleId);
 
 }

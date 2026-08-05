@@ -1,108 +1,147 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
 import {
-  CircleUser,
-  Bell,
-  Building2,
-  Droplets,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  ReceiptText,
-  Search,
-  Users,
-  X,
-  Gauge,
-  BadgeDollarSign,
+    BadgeDollarSign,
+    Bell,
+    Building2,
+    CircleUser,
+    Droplets,
+    Gauge,
+    LayoutDashboard,
+    LogOut,
+    Menu,
+    ReceiptText,
+    Search,
+    Users,
+    X,
 } from "lucide-react";
 
+import WorkspaceSelector from "./WorkspaceSelector";
+import { useWorkspace } from "../context/WorkspaceContext";
+
 function AdminPageShell({
-  title,
-  description,
-  searchValue,
-  onSearchChange,
-  searchPlaceholder,
-  action,
-  children,
+    title,
+    description,
+    searchValue,
+    onSearchChange,
+    searchPlaceholder,
+    action,
+    children,
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navigate = useNavigate();
-  const role = localStorage.getItem("role");
-  const username = localStorage.getItem("username");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const closeSidebar = () => {
-    setSidebarOpen(false);
-  };
+    const navigate = useNavigate();
 
-  const handleLogout = () => {
-    [
-    "token",
-    "user",
-    "role",
-    "username",
-    ].forEach(localStorage.removeItem.bind(localStorage));
+    const role = localStorage.getItem("role");
 
-    toast.success("Logged out successfully.");
-    navigate("/");
-  };
+    const username = localStorage.getItem("username");
 
-  const handleProfileClick = () => {
-    navigate("/profile");
-  };
+    const {
+        workspaceName,
+        isGlobalWorkspace,
+    } = useWorkspace();
 
-  const navigationItems = [
-  {
-    to: "/dashboard",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    to: "/apartments",
-    label: "Apartments",
-    icon: Building2,
-    adminOnly: true,
-  },
-  {
-    to: "/households",
-    label: "Households",
-    icon: Users,
-    adminOnly: true,
-  },
-  {
-    to: "/tariff-plans",
-    label: "Tariff Plans",
-    icon: BadgeDollarSign,
-    adminOnly: true,
-  },
-  {
-    to: "/water-usage",
-    label: "Water Usage",
-    icon: Droplets,
-    adminOnly: true,
-  },
-  {
-    to: "/bulk-water-purchases",
-    label: "Bulk Water Purchase",
-    icon: Droplets,
-    adminOnly: true,
-  },
-  {
-    to: "/billing-cycles",
-    label: "Billing Cycles",
-    icon: ReceiptText,
-    adminOnly: true,
-  },
-  {
-    to: "/invoices",
-    label: "Invoices",
-    icon: ReceiptText,
-    adminOnly: true,
-  },
-];
+    const closeSidebar = () => {
+
+        setSidebarOpen(false);
+
+    };
+
+    const handleLogout = () => {
+
+        [
+            "token",
+            "user",
+            "role",
+            "username",
+        ].forEach(
+            localStorage.removeItem.bind(localStorage)
+        );
+
+        toast.success(
+            "Logged out successfully."
+        );
+
+        navigate("/");
+
+    };
+
+    const handleProfileClick = () => {
+
+        navigate("/profile");
+
+    };
+
+    const workspaceSubtitle = useMemo(() => {
+
+        return isGlobalWorkspace
+            ? "Viewing all apartments"
+            : "Current Workspace";
+
+    }, [isGlobalWorkspace]);
+
+    const navigationItems = [
+
+        {
+            to: "/dashboard",
+            label: "Dashboard",
+            icon: LayoutDashboard,
+        },
+
+        {
+            to: "/apartments",
+            label: "Apartments",
+            icon: Building2,
+            adminOnly: true,
+        },
+
+        {
+            to: "/households",
+            label: "Households",
+            icon: Users,
+            adminOnly: true,
+        },
+
+        {
+            to: "/tariff-plans",
+            label: "Tariff Plans",
+            icon: BadgeDollarSign,
+            adminOnly: true,
+        },
+
+        {
+            to: "/water-usage",
+            label: "Water Usage",
+            icon: Droplets,
+            adminOnly: true,
+        },
+
+        {
+            to: "/bulk-water-purchases",
+            label: "Bulk Water Purchase",
+            icon: Droplets,
+            adminOnly: true,
+        },
+
+        {
+            to: "/billing-cycles",
+            label: "Billing Cycles",
+            icon: ReceiptText,
+            adminOnly: true,
+        },
+
+        {
+            to: "/invoices",
+            label: "Invoices",
+            icon: ReceiptText,
+            adminOnly: true,
+        },
+
+    ];
 
   return (
     <>
@@ -264,129 +303,224 @@ function AdminPageShell({
       )}
 
       <div className="min-h-screen lg:ml-72">
-        <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-200/70 bg-white/80 px-4 md:px-6 lg:px-8 backdrop-blur-xl">
-          <div className="flex flex-1 items-center gap-3 md:gap-5">
-            <button
-              type="button"
-              className="
-                flex
-                h-11
-                w-11
-                items-center
-                justify-center
-                rounded-xl
-                border
-                border-slate-200
-                bg-white
-                transition
-                hover:border-teal-500
-                hover:text-teal-700
-                lg:hidden
-              "
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open sidebar"
-            >
-              <Menu size={22} />
-            </button>
+        <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
 
-            <div className="
-              flex
-              h-12
-              w-full
-              max-w-[420px]
-              items-center
-              gap-3
-              rounded-2xl
-              border
-              border-slate-200
-              bg-slate-50
-              px-4
-              transition
-              focus-within:border-teal-600
-              focus-within:bg-white
-              focus-within:ring-4
-              focus-within:ring-teal-100
-            ">
-              <Search size={19} />
+    <div className="flex flex-col gap-4 px-4 py-4 md:px-6 lg:px-8">
 
-              <input
-                className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
-                type="search"
-                placeholder={searchPlaceholder || "Search..."}
-                value={searchValue}
-                onChange={(e) => onSearchChange(e.target.value)}
-              />
-            </div>
-          </div>
+        {/* Top Row */}
 
-          <div className="flex items-center gap-2 md:gap-4">
-            <button
-              type="button"
-              className="relative flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white transition hover:border-teal-500 hover:text-teal-700"
-              onClick={() =>
-                toast("No new notifications.", {
-                  icon: "🔔",
-                })
-              }
-              aria-label="Notifications"
-            >
-              <Bell size={20} />
-              <span
-                className="
-                  absolute
-                  right-3
-                  top-3
-                  h-2
-                  w-2
-                  rounded-full
-                  bg-red-500
-                "
-              />
-            </button>
+        <div className="flex items-center justify-between gap-4">
 
-            
+            {/* Left */}
 
-            <div
-              className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent bg-white px-2 py-2 md:px-3 transition hover:border-slate-200 hover:shadow-sm"
-              onClick={handleProfileClick}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleProfileClick();
-                }
-              }}
-            >
-              <div
-                className="
-                  flex
-                  h-10 w-10 md:h-11 md:w-11
-                  items-center
-                  justify-center
-                  rounded-2xl
-                  bg-gradient-to-br
-                  from-teal-600
-                  to-cyan-600
-                  text-xs md:text-sm
-                  font-bold
-                  text-white
-                "
-              >
-                {username ? username.charAt(0).toUpperCase() : "U"}
-              </div>
+            <div className="flex flex-1 items-center gap-3">
 
-              <div className="hidden sm:flex flex-col leading-tight">
-                <strong className="text-sm font-semibold text-slate-800">{username || "User"}</strong>
-                <span className="text-xs text-slate-500">
-                  {role === "ADMIN"
-                    ? "Apartment Admin"
-                    : "Resident"}
-                </span>
-              </div>
+                <button
+                    type="button"
+                    className="
+                        flex
+                        h-11
+                        w-11
+                        items-center
+                        justify-center
+                        rounded-xl
+                        border
+                        border-slate-200
+                        bg-white
+                        transition
+                        hover:border-teal-500
+                        hover:text-teal-700
+                        lg:hidden
+                    "
+                    onClick={() => setSidebarOpen(true)}
+                >
+                    <Menu size={22}/>
+                </button>
+
+                <div
+                    className="
+                        flex
+                        h-12
+                        w-full
+                        max-w-md
+                        items-center
+                        gap-3
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-slate-50
+                        px-4
+                        transition
+                        focus-within:border-teal-600
+                        focus-within:bg-white
+                        focus-within:ring-4
+                        focus-within:ring-teal-100
+                    "
+                >
+
+                    <Search size={18}/>
+
+                    <input
+                        type="search"
+                        placeholder={searchPlaceholder || "Search..."}
+                        value={searchValue}
+                        onChange={(e)=>onSearchChange(e.target.value)}
+                        className="
+                            flex-1
+                            bg-transparent
+                            text-sm
+                            outline-none
+                            placeholder:text-slate-400
+                        "
+                    />
+
+                </div>
+
             </div>
 
-          </div>
-        </header>
+            {/* Right */}
+
+            <div className="flex items-center gap-3">
+
+                <button
+                    type="button"
+                    className="
+                        relative
+                        flex
+                        h-11
+                        w-11
+                        items-center
+                        justify-center
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-white
+                        transition
+                        hover:border-teal-500
+                        hover:text-teal-700
+                    "
+                    onClick={() =>
+                        toast("No new notifications.", {
+                            icon: "🔔",
+                        })
+                    }
+                >
+
+                    <Bell size={20}/>
+
+                    <span
+                        className="
+                            absolute
+                            right-2.5
+                            top-2.5
+                            h-2
+                            w-2
+                            rounded-full
+                            bg-red-500
+                        "
+                    />
+
+                </button>
+
+                <div
+                    className="
+                        flex
+                        cursor-pointer
+                        items-center
+                        gap-3
+                        rounded-2xl
+                        bg-white
+                        px-2
+                        py-2
+                        transition
+                        hover:shadow-md
+                    "
+                    onClick={handleProfileClick}
+                >
+
+                    <div
+                        className="
+                            flex
+                            h-11
+                            w-11
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            bg-gradient-to-br
+                            from-teal-600
+                            to-cyan-600
+                            font-bold
+                            text-white
+                        "
+                    >
+
+                        {username
+                            ? username.charAt(0).toUpperCase()
+                            : "U"}
+
+                    </div>
+
+                    <div className="hidden sm:flex flex-col">
+
+                        <span className="font-semibold text-slate-800">
+
+                            {username}
+
+                        </span>
+
+                        <span className="text-xs text-slate-500">
+
+                            {role === "ADMIN"
+                                ? "Apartment Admin"
+                                : "Resident"}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {/* Workspace */}
+
+        {role === "ADMIN" && (
+
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+
+                <div>
+
+                    <p className="text-[11px] font-bold uppercase tracking-[0.30em] text-teal-600">
+
+                        Workspace
+
+                    </p>
+
+                    <h2 className="mt-1 text-xl font-bold text-slate-900">
+
+                        {workspaceName}
+
+                    </h2>
+
+                    <p className="mt-1 text-sm text-slate-500">
+
+                        {workspaceSubtitle}
+
+                    </p>
+
+                </div>
+
+                <WorkspaceSelector/>
+
+            </div>
+
+        )}
+
+    </div>
+
+</header>
 
         <motion.main
           className="
@@ -418,30 +552,101 @@ function AdminPageShell({
           }}
       >
           {(title || description || action) && (
-            <section className="flex flex-col justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-5 md:p-6 lg:p-8 shadow-sm lg:flex-row lg:items-center">
-              <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-[0.35em] text-teal-700">
-                  MANAGEMENT
+
+    <section
+        className="
+            flex
+            flex-col
+            gap-8
+            rounded-3xl
+            border
+            border-slate-200
+            bg-white
+            p-5
+            shadow-sm
+            md:p-6
+            lg:flex-row
+            lg:items-center
+            lg:justify-between
+            lg:p-8
+        "
+    >
+
+        {/* Left */}
+
+        <div className="flex-1">
+
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.35em] text-teal-700">
+
+                MANAGEMENT
+
+            </p>
+
+            <h1 className="text-3xl font-black tracking-tight text-slate-900 md:text-4xl">
+
+                {title}
+
+            </h1>
+
+            {description && (
+
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500 md:text-base">
+
+                    {description}
+
                 </p>
 
-                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900">
-                  {title}
-                </h1>
+            )}
 
-                {description && (
-                  <p className="mt-3 max-w-2xl text-sm md:text-base leading-7 text-slate-500">
-                    {description}
-                  </p>
-                )}
-              </div>
+            {/* Workspace Badge */}
 
-              {action && (
-                <div className="w-full sm:w-auto">
-                    {action}
+            {role === "ADMIN" && (
+
+                <div className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-teal-100 bg-gradient-to-r from-teal-50 to-cyan-50 px-4 py-3">
+
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-600 text-white">
+
+                        <Building2 size={20} />
+
+                    </div>
+
+                    <div>
+
+                        <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-teal-700">
+
+                            Current Workspace
+
+                        </p>
+
+                        <p className="mt-1 font-semibold text-slate-800">
+
+                            {workspaceName}
+
+                        </p>
+
+                    </div>
+
                 </div>
-              )}
-            </section>
-          )}
+
+            )}
+
+        </div>
+
+        {/* Action */}
+
+        {action && (
+
+            <div className="w-full lg:w-auto">
+
+                {action}
+
+            </div>
+
+        )}
+
+    </section>
+
+)}
 
           {children}
         </motion.main>

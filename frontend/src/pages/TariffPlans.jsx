@@ -16,6 +16,7 @@ import AdminPageShell from "../components/AdminPageShell";
 import EmptyState from "../components/EmptyState";
 import StatCard from "../components/StatCard";
 import ConfirmDialog from "../components/ConfirmDialog";
+import ResponsiveTable from "../components/ResponsiveTable";
 
 import {
   getTariffPlans,

@@ -7,6 +7,7 @@ import AlertPanel from "../components/dashboard/AlertPanel";
 import DashboardHero from "../components/dashboard/DashboardHero";
 import AdminPageShell from "../components/AdminPageShell";
 import StatCard from "../components/StatCard";
+import { useWorkspace } from "../context/WorkspaceContext";
 
 import {
   BadgeCheck,
@@ -22,22 +23,57 @@ import {
 function Dashboard() {
 
   const [dashboard, setDashboard] = useState(null);
+
+  const { workspaceId } = useWorkspace();
   
-  useEffect(() => {
+  const [loading, setLoading] = useState(true);
+  
+ useEffect(() => {
 
-    const fetchDashboard = async () => {
+    let cancelled = false;
+
+    async function fetchDashboard() {
+
         try {
-          const dashboardData =
-              await dashboardService.getDashboard();
-          setDashboard(dashboardData);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    fetchDashboard();
-  }, []);
 
-  if (!dashboard) {
+            setLoading(true);
+
+            const dashboardData =
+                await dashboardService.getDashboard();
+
+            if (!cancelled) {
+
+                setDashboard(dashboardData);
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        } finally {
+
+            if (!cancelled) {
+
+                setLoading(false);
+
+            }
+
+        }
+
+    }
+
+    fetchDashboard();
+
+    return () => {
+
+        cancelled = true;
+
+    };
+
+}, [workspaceId]);
+
+  if (loading || !dashboard) {
     return (
         <AdminPageShell
             title="Dashboard Overview"

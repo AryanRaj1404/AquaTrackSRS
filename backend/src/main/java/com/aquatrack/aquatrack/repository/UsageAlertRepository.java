@@ -42,5 +42,30 @@ public interface UsageAlertRepository extends JpaRepository<UsageAlert, Long> {
 
     List<UsageAlert> findTop5ByAcknowledgedFalseOrderByCreatedAtDesc();
 
+    List<UsageAlert> findByHousehold_Apartment_IdOrderByCreatedAtDesc(
+        Long apartmentId
+);
+
+List<UsageAlert> findTop5ByHousehold_Apartment_IdAndAcknowledgedFalseOrderByCreatedAtDesc(
+        Long apartmentId
+);
+
+long countByHousehold_Apartment_IdAndAlertType(
+        Long apartmentId,
+        UsageAlert.AlertType alertType
+);
+
+long countByHousehold_Apartment_IdAndAcknowledgedFalse(
+        Long apartmentId
+);
+
+long countByHousehold_Apartment_IdAndAcknowledgedTrue(
+        Long apartmentId
+);
+
+long countByHousehold_Apartment_Id(
+        Long apartmentId
+);
+
 
 }
