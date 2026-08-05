@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { Download, Receipt } from "lucide-react";
 import {
   getInvoicesByHousehold,
   downloadInvoicePdf,
 } from "../../services/invoiceService";
-import ResponsiveTable from "../ResponsiveTable";
 
 const STATUS_CLASS = {
   PAID: "mg-status mg-status-active",
@@ -21,6 +21,7 @@ const STATUS_CLASS = {
  * download any invoice as a PDF.
  */
 function InvoiceHistory({ householdId }) {
+  const { t } = useTranslation();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [downloadingId, setDownloadingId] = useState(null);
@@ -43,7 +44,7 @@ function InvoiceHistory({ householdId }) {
           );
         }
       } catch {
-        if (!ignore) toast.error("Could not load invoice history");
+        if (!ignore) toast.error(t("residentDashboard.invoiceHistory.couldNotLoad"));
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -68,7 +69,7 @@ function InvoiceHistory({ householdId }) {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch {
-      toast.error("Could not download invoice");
+      toast.error(t("residentDashboard.invoiceHistory.couldNotDownload"));
     } finally {
       setDownloadingId(null);
     }
@@ -83,31 +84,30 @@ function InvoiceHistory({ householdId }) {
     >
       <div className="mg-toolbar">
         <div>
-          <h2>Invoice History</h2>
-          <p>All invoices generated for your household</p>
+          <h2>{t("residentDashboard.invoiceHistory.title")}</h2>
+          <p>{t("residentDashboard.invoiceHistory.subtitle")}</p>
         </div>
       </div>
 
-      {loading && <div className="mg-empty-state">Loading invoices...</div>}
+      {loading && <div className="mg-empty-state">{t("residentDashboard.invoiceHistory.loading")}</div>}
 
       {!loading && invoices.length === 0 && (
         <div className="mg-empty-state">
           <Receipt size={28} style={{ marginBottom: 8 }} />
-          <p>No invoices yet</p>
+          <p>{t("residentDashboard.invoiceHistory.noInvoices")}</p>
         </div>
       )}
 
       {!loading && invoices.length > 0 && (
         <div className="mg-table-wrapper">
-          <ResponsiveTable>
           <table className="mg-table">
             <thead>
               <tr>
-                <th>Invoice #</th>
-                <th>Date</th>
-                <th>Consumption</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th>{t("residentDashboard.invoiceHistory.colInvoiceNumber")}</th>
+                <th>{t("residentDashboard.invoiceHistory.colDate")}</th>
+                <th>{t("residentDashboard.invoiceHistory.colConsumption")}</th>
+                <th>{t("residentDashboard.invoiceHistory.colAmount")}</th>
+                <th>{t("residentDashboard.invoiceHistory.colStatus")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -128,7 +128,9 @@ function InvoiceHistory({ householdId }) {
                         STATUS_CLASS[invoice.status] || "mg-status"
                       }
                     >
-                      {invoice.status}
+                      {t(`residentDashboard.invoiceHistory.status.${invoice.status}`, {
+                        defaultValue: invoice.status,
+                      })}
                     </span>
                   </td>
                   <td>
@@ -139,14 +141,13 @@ function InvoiceHistory({ householdId }) {
                       disabled={downloadingId === invoice.id}
                     >
                       <Download size={14} />
-                      {downloadingId === invoice.id ? "..." : "PDF"}
+                      {downloadingId === invoice.id ? t("residentDashboard.invoiceHistory.downloading") : t("residentDashboard.invoiceHistory.pdf")}
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          </ResponsiveTable>
         </div>
       )}
     </motion.div>

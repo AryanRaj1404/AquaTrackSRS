@@ -16,7 +16,6 @@ import AdminPageShell from "../components/AdminPageShell";
 import EmptyState from "../components/EmptyState";
 import StatCard from "../components/StatCard";
 import ConfirmDialog from "../components/ConfirmDialog";
-import ResponsiveTable from "../components/ResponsiveTable";
 
 import {
   getTariffPlans,
@@ -903,7 +902,6 @@ const highestRate =
           </div>
         ) : filteredTariffPlans.length > 0 ? (
           <div className="mg-table-wrapper">
-            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
@@ -1061,7 +1059,6 @@ const highestRate =
                 ))}
               </tbody>
             </table>
-            </ResponsiveTable>
           </div>
         ) : (
           <EmptyState

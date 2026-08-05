@@ -4,7 +4,6 @@ import {
 } from "lucide-react";
 
 import Pagination from "../Pagination";
-import ResponsiveTable from "../ResponsiveTable";
 
 function BulkWaterTable({
 
@@ -27,8 +26,6 @@ function BulkWaterTable({
     return (
 
         <div className="mg-table-wrapper">
-
-            <ResponsiveTable>
 
             <table className="mg-table">
 
@@ -209,8 +206,6 @@ function BulkWaterTable({
                 </tbody>
 
             </table>
-
-            </ResponsiveTable>
 
             <Pagination
                 page={page}

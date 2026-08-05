@@ -1,5 +1,6 @@
 import { useEffect,useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import {
   CheckCircle2,
@@ -42,6 +43,7 @@ const initialForm = {
 const PAGE_SIZE = 20;
 
 function Households() {
+  const { t } = useTranslation();
   const [households, setHouseholds] = useState([]);
   const [apartments, setApartments] = useState([]);
   const [availableResidents, setAvailableResidents] = useState([]);
@@ -125,7 +127,7 @@ function Households() {
 
     setHouseholds([]);
 
-    toast.error("Unable to load households.");
+    toast.error(t("households.toasts.loadError"));
   } finally {
     setIsLoading(false);
   }
@@ -166,22 +168,22 @@ function Households() {
 
   const validateForm = () => {
     if (!form.flatNumber.trim()) {
-      toast.error("Flat number is required.");
+      toast.error(t("households.toasts.flatNumberRequired"));
       return false;
     }
 
     if (!form.flatSize) {
-      toast.error("Flat size is required.");
+      toast.error(t("households.toasts.flatSizeRequired"));
       return false;
     }
 
     if (!form.occupancy) {
-      toast.error("Occupancy is required.");
+      toast.error(t("households.toasts.occupancyRequired"));
       return false;
     }
 
     if (!form.apartmentId) {
-      toast.error("Apartment is required.");
+      toast.error(t("households.toasts.apartmentRequired"));
       return false;
     }
 
@@ -204,12 +206,12 @@ function Households() {
 
     setIsSubmitting(true);
 
-    const loadingToast = toast.loading("Creating household...");
+    const loadingToast = toast.loading(t("households.toasts.creating"));
 
     try {
       await createHousehold(householdPayload);
 
-      toast.success("Household created successfully.", {
+      toast.success(t("households.toasts.createSuccess"), {
           id: loadingToast,
       });
 
@@ -222,7 +224,7 @@ function Households() {
       console.error("Household create error:", error);
 
       toast.error(
-        "Household creation failed. Please confirm backend endpoint and field names.",
+        t("households.toasts.createError"),
         {
           id: loadingToast,
         }
@@ -239,7 +241,7 @@ function Households() {
     setAvailableResidents(Array.isArray(data) ? data : []);
   } catch (error) {
     console.error(error);
-    toast.error("Unable to load residents.");
+    toast.error(t("households.toasts.residentsLoadError"));
   }
 };
 
@@ -254,19 +256,19 @@ const openAssignResident = async (household) => {
 
 const onAssignResident = async () => {
   if (!selectedResident) {
-    toast.error("Please select a resident.");
+    toast.error(t("households.toasts.selectResident"));
     return;
   }
   setIsAssigning(true);
   try {
-    const loadingToast = toast.loading("Assigning resident...");
+    const loadingToast = toast.loading(t("households.toasts.assigning"));
 
     await assignResident(
       selectedHousehold.id,
       selectedResident
     );
 
-    toast.success("Resident assigned successfully.", {
+    toast.success(t("households.toasts.assignSuccess"), {
       id: loadingToast,
     });
 
@@ -284,7 +286,7 @@ const onAssignResident = async () => {
 
     toast.error(
       error.response?.data?.message ||
-      "Failed to assign resident."
+      t("households.toasts.assignError")
     );
 
   }
@@ -297,14 +299,14 @@ const handleRemoveResident = async (household) => {
 
   try {
 
-    const loadingToast = toast.loading("Removing resident...");
+    const loadingToast = toast.loading(t("households.toasts.removing"));
 
     await removeResident(
       household.id,
       household.residentId
     );
 
-    toast.success("Resident removed.", {
+    toast.success(t("households.toasts.removeSuccess"), {
       id: loadingToast,
     });
 
@@ -316,7 +318,7 @@ const handleRemoveResident = async (household) => {
 
     toast.error(
       error.response?.data?.message ||
-      "Failed to remove resident."
+      t("households.toasts.removeError")
     );
 
   }
@@ -330,14 +332,14 @@ const handleRemoveResident = async (household) => {
 
   return (
     <AdminPageShell
-      title="Household Management"
-      description="Create and manage households using backend-ready fields."
+      title={t("households.pageTitle")}
+      description={t("households.pageDesc")}
       searchValue={query}
       onSearchChange={(value)=>{
         setPage(0);
         setQuery(value);
       }}
-      searchPlaceholder="Search households, residents or meters..."
+      searchPlaceholder={t("households.searchPlaceholder")}
       action={
         <button
           type="button"
@@ -345,40 +347,40 @@ const handleRemoveResident = async (household) => {
           onClick={() => setShowForm(true)}
         >
           <Plus size={18} />
-          Add Household
+          {t("households.addHousehold")}
         </button>
       }
     >
       <section className="mg-summary-grid">
         <StatCard
           icon={Home}
-          title="Total Households"
+          title={t("households.stats.totalTitle")}
           value={pageData?.totalElements ?? 0}
-          description="Fetched from backend API"
+          description={t("households.stats.totalDesc")}
           delay={0}
         />
 
         <StatCard
           icon={Users}
-          title="Occupied"
+          title={t("households.stats.occupiedTitle")}
           value={occupiedHouseholds}
-          description="Households with Residents on current page."
+          description={t("households.stats.occupiedDesc")}
           delay={0.1}
         />
 
         <StatCard
           icon={Home}
-          title="Vacant"
+          title={t("households.stats.vacantTitle")}
           value={vacantHouseholds}
-          description="Awaiting resident Assignment on current page."
+          description={t("households.stats.vacantDesc")}
           delay={0.2}
         />
 
         <StatCard
           icon={Users}
-          title="Residents"
+          title={t("households.stats.residentsTitle")}
           value={totalResidents}
-          description="Residents on current page"
+          description={t("households.stats.residentsDesc")}
           delay={0.2}
         />
       </section>
@@ -424,9 +426,9 @@ const handleRemoveResident = async (household) => {
       <section className="mg-panel">
         <div className="mg-toolbar">
           <div>
-            <h2>Household Records</h2>
+            <h2>{t("households.recordsTitle")}</h2>
             <p>
-              All the households are here.
+              {t("households.recordsSubtitle")}
             </p>
           </div>
         </div>
@@ -434,8 +436,8 @@ const handleRemoveResident = async (household) => {
         {isLoading ? (
           <div className="mg-empty-state">
             <Loader2 size={36} className="animate-spin" />
-            <h3>Loading households</h3>
-            <p>Please wait while household data is fetched.</p>
+            <h3>{t("households.loading")}</h3>
+            <p>{t("households.pleaseWait")}</p>
           </div>
         ) : households.length > 0 ? (
           <>
@@ -466,8 +468,8 @@ const handleRemoveResident = async (household) => {
         ) : (
           <EmptyState
             icon={Home}
-            title="No households found"
-            description="There is no household present."
+            title={t("households.noHouseholdsFound")}
+            description={t("households.noHouseholdsDesc")}
           />
         )}
       </section>

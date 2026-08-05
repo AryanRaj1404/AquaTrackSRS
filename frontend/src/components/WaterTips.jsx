@@ -1,29 +1,29 @@
 import { motion } from "framer-motion";
 import { Droplets, Sparkles, ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-const DEFAULT_TIPS = [
-  {
-    title: "Fix Leaking Taps",
-    description:
-      "A single dripping tap can waste over 3,000 litres of water every year.",
-    saving: "Save up to 3,000 L/year",
-  },
-  {
-    title: "Use a Bucket",
-    description:
-      "Use a bucket instead of a hose when washing your vehicle.",
-    saving: "Reduce unnecessary water usage",
-  },
-  {
-    title: "Reuse RO Water",
-    description:
-      "Reuse RO reject water for mopping, gardening or cleaning.",
-    saving: "Reuse instead of wasting",
-  },
-];
+function WaterTips({ tips }) {
+  const { t } = useTranslation();
 
-function WaterTips({ tips = DEFAULT_TIPS }) {
-  const tip = tips[0];
+  const defaultTips = [
+    {
+      title: t("waterTips.tips.leakingTaps.title"),
+      description: t("waterTips.tips.leakingTaps.description"),
+      saving: t("waterTips.tips.leakingTaps.saving"),
+    },
+    {
+      title: t("waterTips.tips.useBucket.title"),
+      description: t("waterTips.tips.useBucket.description"),
+      saving: t("waterTips.tips.useBucket.saving"),
+    },
+    {
+      title: t("waterTips.tips.reuseRO.title"),
+      description: t("waterTips.tips.reuseRO.description"),
+      saving: t("waterTips.tips.reuseRO.saving"),
+    },
+  ];
+
+  const tip = (tips || defaultTips)[0];
 
   return (
     <motion.div
@@ -49,11 +49,11 @@ function WaterTips({ tips = DEFAULT_TIPS }) {
           <div>
 
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-sky-600">
-              Today's Tip
+              {t("waterTips.todaysTip")}
             </p>
 
             <h2 className="text-2xl font-bold text-slate-900">
-              Water Conservation
+              {t("waterTips.heading")}
             </h2>
 
           </div>
@@ -90,7 +90,7 @@ function WaterTips({ tips = DEFAULT_TIPS }) {
           <button
               className="mt-5 w-full rounded-xl bg-sky-500 py-3 text-sm font-semibold text-white transition hover:bg-sky-600"
           >
-              Learn More
+              {t("waterTips.learnMore")}
           </button>
 
       </div>

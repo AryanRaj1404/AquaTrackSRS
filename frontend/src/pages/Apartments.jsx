@@ -1,5 +1,6 @@
   import { useEffect, useMemo, useState } from "react";
   import toast from "react-hot-toast";
+  import { useTranslation } from "react-i18next";
 
   import {
     Building2,
@@ -27,6 +28,7 @@
   };
 
   function Apartments() {
+    const { t } = useTranslation();
     const [apartments, setApartments] = useState([]);
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -111,7 +113,7 @@ useEffect(() => {
         setApartments([]);
 
         toast.error(
-          "Unable to load apartments."
+          t("apartments.toasts.loadError")
         );
       } finally {
         setIsLoading(false);
@@ -140,12 +142,12 @@ useEffect(() => {
 
     const validateForm = () => {
       if (!form.apartmentName.trim()) {
-        toast.error("Apartment name is required.");
+        toast.error(t("apartments.toasts.nameRequired"));
         return false;
       }
 
       if (!form.address.trim()) {
-        toast.error("Address is required.");
+        toast.error(t("apartments.toasts.addressRequired"));
         return false;
       }
 
@@ -166,7 +168,7 @@ useEffect(() => {
 
       setIsSubmitting(true);
 
-      const loadingToast = toast.loading("Registering apartment...");
+      const loadingToast = toast.loading(t("apartments.toasts.registering"));
 
       try {
         await createApartment(apartmentPayload);
@@ -176,7 +178,7 @@ useEffect(() => {
           loadDashboardStats(),
         ])
 
-        toast.success("Apartment created successfully.", {
+        toast.success(t("apartments.toasts.createSuccess"), {
           id: loadingToast,
         });
 
@@ -186,7 +188,7 @@ useEffect(() => {
         console.error("Apartment create error:", error);
 
         toast.error(
-          "Failed to register apartment.Please try again.",
+          t("apartments.toasts.createError"),
           {
             id: loadingToast,
           }
@@ -214,7 +216,7 @@ useEffect(() => {
 
       } catch (error) {
 
-          toast.error("Unable to load households.");
+          toast.error(t("apartments.toasts.householdsLoadError"));
 
           console.error(error);
       }
@@ -222,11 +224,11 @@ useEffect(() => {
 
     return (
       <AdminPageShell
-        title="Apartment Management"
-        description="Manage apartment complexes and organize households."
+        title={t("apartments.pageTitle")}
+        description={t("apartments.pageDesc")}
         searchValue={query}
         onSearchChange={setQuery}
-        searchPlaceholder="Search apartments..."
+        searchPlaceholder={t("apartments.searchApartments")}
         action={
           <button
             type="button"
@@ -234,38 +236,38 @@ useEffect(() => {
             onClick={() => setShowForm(true)}
           >
             <Plus size={18} />
-            Register Apartment
+            {t("apartments.registerApartment")}
           </button>
         }
       >
         <section className="mg-summary-grid">
           <StatCard
             icon={Building2}
-            title="Total Apartments"
+            title={t("apartments.totalApartments")}
             value={dashboardStats.totalApartments}
-            description="Registered apartment complexes"
+            description={t("apartments.registeredComplexes")}
             delay={0}
           />
 
           <StatCard
             icon={Building2}
-            title="Total Households"
+            title={t("apartments.totalHouseholds")}
             value={dashboardStats.totalHouseholds}
-            description="Registered households"
+            description={t("apartments.totalHouseholds")}
             delay={0.1}
           />
 
           <StatCard
             icon={CheckCircle2}
-            title="Residents"
+            title={t("apartments.residents")}
             value={dashboardStats.totalUsers}
-            description="Registered residents"
+            description={t("apartments.registeredResidents")}
             delay={0.2}
           />
 
           <StatCard
             icon={Building2}
-            title="Households per Apartment"
+            title={t("apartments.householdsPerApartment")}
             value={
                     dashboardStats.totalApartments > 0            
                           ? (
@@ -274,7 +276,7 @@ useEffect(() => {
                             ).toFixed(1)
                           : "0"
                   }
-            description="Average number of households"
+            description={t("apartments.averageHouseholds")}
             delay={0.3}
           />
         </section>
@@ -303,7 +305,7 @@ useEffect(() => {
               pageData={pageData}
               pageSize={PAGE_SIZE}
               currentCount={apartments.length}
-              label="apartments"
+              label={t("apartments.recordsLabel")}
               onPrevious={() => setPage(page - 1)}
               onNext={() => setPage(page + 1)}
               onPageChange={setPage}

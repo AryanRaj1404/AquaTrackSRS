@@ -15,6 +15,7 @@ import {
   Legend
 } from "recharts";
 import { Activity, Building2, PieChart as PieChartIcon, RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import adminDashboardService from "../../services/adminDashboardService";
 
 const COLORS = {
@@ -36,7 +37,7 @@ const CustomTooltip = ({ active, payload, label, unit = "" }) => {
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }}></div>
-            <span className="text-slate-600 capitalize">Consumption:</span>
+            <span className="text-slate-600 capitalize">{t("adminCharts.consumptionLabel")}</span>
             <span className="font-bold text-[#06334b]">
               {Number(entry.value).toLocaleString()}{unit}
             </span>
@@ -49,6 +50,7 @@ const CustomTooltip = ({ active, payload, label, unit = "" }) => {
 };
 
 export default function AdminDashboardCharts() {
+  const { t } = useTranslation();
   const [chartData, setChartData] = useState([]);
   const [dataApartment, setDataApartment] = useState([]);
   const [dataUsage, setDataUsage] = useState([]);
@@ -77,7 +79,7 @@ export default function AdminDashboardCharts() {
       setDataUsage(usage);
       setLastUpdated(new Date());
     } catch (err) {
-      setError("Failed to fetch chart data.");
+      setError(t("adminCharts.loadError"));
     } finally {
       setLoading(false);
     }
@@ -96,7 +98,7 @@ export default function AdminDashboardCharts() {
     return (
       <div className="flex flex-col items-center justify-center h-96 w-full bg-white rounded-[30px] shadow-[0_4px_20px_-4px_rgba(6,51,75,0.05)] border border-slate-100">
         <RefreshCw size={32} className="animate-spin text-teal-700 mb-4" />
-        <p className="text-[#075d78] font-medium">Loading analytics...</p>
+        <p className="text-[#075d78] font-medium">{t("adminCharts.loadingAnalytics")}</p>
       </div>
     );
   }
@@ -109,7 +111,7 @@ export default function AdminDashboardCharts() {
           onClick={fetchChartsData}
           className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
         >
-          Retry
+          {t("adminCharts.retry")}
         </button>
       </div>
     );
@@ -133,72 +135,60 @@ export default function AdminDashboardCharts() {
         <div>
 
             <p className="text-[10px] font-bold uppercase tracking-[0.30em] text-teal-600 mb-1">
-                Analytics
+                {t("adminCharts.analytics")}
             </p>
 
             <h3 className="text-xl font-bold text-[#06334b]">
-                Consumption Trends
+                {t("adminCharts.consumptionTrends")}
             </h3>
 
             <p className="text-sm text-[#075d78]">
-                Analyze historical water consumption
+                {t("adminCharts.consumptionTrendsSubtitle")}
             </p>
 
         </div>
 
     </div>
 
-    <div
-      className="
-          flex
-          w-full
-          flex-col
-          gap-3
-          rounded-2xl
-          bg-slate-50
-          p-3
-          sm:w-auto
-          sm:items-end
-        "
-      >
+    <div className="flex flex-col items-end gap-2 bg-slate-50 rounded-2xl p-3">
 
         {/* Daily Monthly */}
 
-        <div className="flex w-full rounded-xl bg-slate-100 p-1 sm:w-auto">
+        <div className="flex bg-slate-100 rounded-xl p-1">
 
             <button
                 onClick={() => setViewMode("daily")}
-                className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 sm:flex-none ${
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     viewMode === "daily"
                         ? "bg-teal-700 text-white shadow"
                         : "text-slate-500 hover:text-slate-800"
                 }`}
             >
-                Daily
+                {t("adminCharts.daily")}
             </button>
 
             <button
                 onClick={() => setViewMode("monthly")}
-                className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 sm:flex-none ${
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     viewMode === "monthly"
                         ? "bg-teal-700 text-white shadow"
                         : "text-slate-500 hover:text-slate-800"
                 }`}
             >
-                Monthly
+                {t("adminCharts.monthly")}
             </button>
 
         </div>
 
         {/* Time Buttons */}
 
-        <div className="grid grid-cols-4 gap-2 w-full sm:flex sm:w-auto">
+        <div className="flex gap-1">
 
             {["1M","3M","6M","1Y"].map((range)=>(
                 <button
                     key={range}
                     onClick={()=>setTimeRange(range)}
-                    className={`w-full rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                         timeRange===range
                         ? "bg-teal-700 text-white"
                         : "text-slate-500 hover:bg-slate-100"
@@ -218,7 +208,7 @@ export default function AdminDashboardCharts() {
   {chartData.length === 0 ? (
 
     <div className="flex items-center justify-center h-full text-slate-400">
-      No data available
+      {t("adminCharts.noDataAvailable")}
     </div>
 
   ) : (
@@ -266,9 +256,6 @@ export default function AdminDashboardCharts() {
         <XAxis
           dataKey="label"
           axisLine={false}
-          tickLine={false}
-          minTickGap={50}
-          tick={{ fontSize: 13, fill: "#64748b" }}
           tickFormatter={(value) => {
             const date = new Date(value);
 
@@ -330,56 +317,40 @@ export default function AdminDashboardCharts() {
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-teal-600 mb-1">
-                Analytics
+                {t("adminCharts.analytics")}
             </p>
-            <h3 className="font-semibold text-[#06334b]">Apartment-wise Consumption</h3>
-            <p className="text-xs text-[#075d78]">Compares water consumption between apartments/blocks</p>
+            <h3 className="font-semibold text-[#06334b]">{t("adminCharts.apartmentWiseConsumption")}</h3>
+            <p className="text-xs text-[#075d78]">{t("adminCharts.apartmentWiseSubtitle")}</p>
           </div>
         </div>
         <div className="h-64 w-full">
           {dataApartment.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-slate-400">No data available</div>
+            <div className="flex items-center justify-center h-full text-slate-400">{t("adminCharts.noDataAvailable")}</div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart 
-              data={dataApartment} 
-              layout="vertical" 
-              barCategoryGap="25%"
-              margin={{ 
-                top: 0, 
-                right: 20, 
-                left: 0, 
-                bottom: 0 
-                }}>
+              <BarChart data={dataApartment} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="2 6" horizontal={false} stroke={COLORS.gray} />
-                <XAxis
-                  type="number"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                      fontSize: 12,
-                      fill: COLORS.textGray,
-                  }}
-                />
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: COLORS.textGray }} />
                 <YAxis
-                  type="category"
-                  dataKey="apartmentName"
-                  interval={0}
                   axisLine={false}
                   tickLine={false}
-                  width={100}
                   tick={{
                       fontSize: 12,
                       fill: COLORS.textGray,
                   }}
+                  tickFormatter={(value) =>
+                      value >= 1000
+                          ? `${(value / 1000).toFixed(0)}K`
+                          : value
+                  }
                 />
                 <Tooltip content={<CustomTooltip unit=" KL" />} cursor={{ fill: COLORS.lightBlue }} />
                 <Bar 
                   dataKey="totalConsumption" 
-                  name="Consumption" 
+                  name={t("adminCharts.consumption")} 
                   fill={COLORS.teal} 
                   radius={[0, 6, 6, 0]} 
-                  barSize={12}
+                  barSize={18}
                 >
                   {dataApartment.map((entry, index) => (
                     <Cell 
@@ -402,15 +373,15 @@ export default function AdminDashboardCharts() {
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-teal-600 mb-1">
-                Analytics
+                {t("adminCharts.analytics")}
             </p>
-            <h3 className="font-semibold text-[#06334b]">Usage Status Summary</h3>
-            <p className="text-xs text-[#075d78]">Normal, High, and Critical usage distribution</p>
+            <h3 className="font-semibold text-[#06334b]">{t("adminCharts.usageStatusSummary")}</h3>
+            <p className="text-xs text-[#075d78]">{t("adminCharts.usageStatusSubtitle")}</p>
           </div>
         </div>
         <div className="h-64 w-full flex items-center justify-center relative">
           {dataUsage.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-slate-400">No data available</div>
+            <div className="flex items-center justify-center h-full text-slate-400">{t("adminCharts.noDataAvailable")}</div>
           ) : (
             <>
               <ResponsiveContainer width="100%" height="100%">
@@ -450,7 +421,7 @@ export default function AdminDashboardCharts() {
                 <span className="text-2xl font-bold text-[#06334b]">
                   {dataUsage.reduce((acc, curr) => acc + curr.count, 0)}
                 </span>
-                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Usage Records</span>
+                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{t("adminCharts.usageRecords")}</span>
               </div>
             </>
           )}

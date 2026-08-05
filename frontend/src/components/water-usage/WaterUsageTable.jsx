@@ -4,7 +4,6 @@ import {
 } from "lucide-react";
 
 import Pagination from "../Pagination";
-import ResponsiveTable from "../ResponsiveTable";
 
 function WaterUsageTable({
 
@@ -27,8 +26,6 @@ function WaterUsageTable({
     return (
 
         <div className="mg-table-wrapper">
-
-            <ResponsiveTable>
 
             <table className="mg-table">
 
@@ -147,8 +144,6 @@ function WaterUsageTable({
                 </tbody>
 
             </table>
-
-            </ResponsiveTable>
 
             <Pagination
                 page={page}

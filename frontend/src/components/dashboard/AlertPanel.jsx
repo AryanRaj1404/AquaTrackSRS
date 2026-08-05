@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import GlassPanel from "../ui/GlassPanel";
 
 import {
@@ -14,20 +14,20 @@ import { getRecentAlerts, acknowledgeAlert } from "../../services/alertService";
 import toast from "react-hot-toast";
 
 export default function AlertPanel() {
+  const { t } = useTranslation();
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const fetchAlerts = useCallback(async () => {
     try {
       const data = await getRecentAlerts();
       setAlerts(data);
     } catch {
-      toast.error("Could not load alerts");
+      toast.error(t("alertPanel.toasts.loadError"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchAlerts();
@@ -38,40 +38,43 @@ export default function AlertPanel() {
       (Date.now() - new Date(date)) / 60000
     );
 
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes} min ago`;
+    if (minutes < 1) return t("alertPanel.justNow");
+    if (minutes < 60) return t("alertPanel.minAgo", { count: minutes });
 
     const hours = Math.floor(minutes / 60);
 
-    if (hours < 24) return `${hours} hr${hours > 1 ? "s" : ""} ago`;
+    if (hours < 24) return hours > 1 ? t("alertPanel.hoursAgo", { count: hours }) : t("alertPanel.hourAgo", { count: hours });
 
     const days = Math.floor(hours / 24);
 
-    return `${days} day${days > 1 ? "s" : ""} ago`;
+    return days > 1 ? t("alertPanel.daysAgo", { count: days }) : t("alertPanel.dayAgo", { count: days });
   };
 
   const getAlertMeta = (alert) => {
     switch (alert.alertType) {
       case "ANOMALY_LEAK":
         return {
-          title: "Possible Water Leak",
+          title: t("alertPanel.possibleLeak"),
           severity: "High",
+          severityLabel: t("alertPanel.severity.high"),
           icon: AlertTriangle,
           color: "text-red-500 bg-red-100",
         };
 
       case "THRESHOLD_BREACH":
         return {
-          title: "High Consumption",
+          title: t("alertPanel.highConsumption"),
           severity: "Medium",
+          severityLabel: t("alertPanel.severity.medium"),
           icon: Droplets,
           color: "text-amber-500 bg-amber-100",
         };
 
       default:
         return {
-          title: "Notification",
+          title: t("alertPanel.notification"),
           severity: "Info",
+          severityLabel: t("alertPanel.severity.info"),
           icon: Mail,
           color: "text-blue-500 bg-blue-100",
         };
@@ -85,71 +88,51 @@ export default function AlertPanel() {
   };
 
   const handleAcknowledge = async (alertId) => {
-  try {
-    await acknowledgeAlert(alertId);
+    try {
+      await acknowledgeAlert(alertId);
 
-    toast.success("Alert acknowledged");
-
-    // Mark as acknowledged immediately
-    setAlerts((prev) =>
-      prev.map((alert) =>
-        alert.id === alertId
-          ? { ...alert, acknowledged: true }
-          : alert
-      )
-    );
-
-    // Remove after 3 seconds
-    setTimeout(() => {
       setAlerts((prev) =>
-        prev.filter((alert) => alert.id !== alertId)
+        prev.map((alert) =>
+          alert.id === alertId
+            ? { ...alert, acknowledged: true }
+            : alert
+        )
       );
-    }, 3000);
 
-  } catch (error) {
-    console.error(error);
-    toast.error("Failed to acknowledge alert");
-  }
-};
+      toast.success(t("alertPanel.toasts.acknowledgedSuccess"));
+    } catch (error) {
+      console.error(error);
+      toast.error(t("alertPanel.toasts.acknowledgeFailed"));
+    }
+  };
 
   return (
     <GlassPanel className="p-8 shadow-2xl">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-            System Alerts
+            {t("alertPanel.systemAlerts")}
           </p>
 
           <h2 className="mt-1 text-2xl font-bold text-slate-900">
-            Recent Alerts
+            {t("alertPanel.recentAlerts")}
           </h2>
         </div>
 
-        <div className="flex items-center gap-4">
-
-          <button
-              className="text-sm font-medium text-teal-700 hover:text-teal-800"
-              onClick={() => navigate("/alerts")}
-          >
-              View All
-          </button>
-
-          <div className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
-              {alerts.filter((a) => !a.acknowledged).length} Active
-          </div>
-
-      </div>
+        <div className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
+          {alerts.filter(a => !a.acknowledged).length} {t("alertPanel.active")}
+        </div>
       </div>
 
       {loading && (
         <div className="py-12 text-center text-slate-500">
-          Loading alerts...
+          {t("alertPanel.loadingAlerts")}
         </div>
       )}
 
       {!loading && alerts.length === 0 && (
         <div className="py-12 text-center text-slate-500">
-          No alerts from the last 7 days 🎉
+          {t("alertPanel.noAlerts")}
         </div>
       )}
 
@@ -187,7 +170,7 @@ export default function AlertPanel() {
                     </div>
 
                     <p className="mt-0.5 text-xs text-slate-500">
-                      {alert.apartmentName} • Flat {alert.householdName}
+                      {alert.apartmentName} • {t("alertPanel.flatLabel", { name: alert.householdName })}
                     </p>
 
                     <p className="mt-1 truncate text-sm text-slate-600">
@@ -201,27 +184,27 @@ export default function AlertPanel() {
                           severityStyles[meta.severity]
                         }`}
                       >
-                        {meta.severity}
+                        {meta.severityLabel}
                       </span>
 
                       {alert.acknowledged ? (
                         <div className="flex items-center gap-1 text-xs text-green-600">
                           <CircleCheck className="h-3.5 w-3.5" />
-                          Acknowledged
+                          {t("alertPanel.acknowledged")}
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
 
                           <span className="flex items-center gap-1 text-xs text-orange-600">
                               <Clock3 className="h-3.5 w-3.5"/>
-                              Pending
+                              {t("alertPanel.acknowledgePending")}
                           </span>
 
                           <button
                               onClick={() => handleAcknowledge(alert.id)}
                               className="rounded-md bg-sky-600 px-2 py-1 text-[10px] font-semibold text-white transition hover:bg-sky-700"
                           >
-                              Acknowledge
+                              {t("alertPanel.acknowledgeButton")}
                           </button>
 
                         </div>

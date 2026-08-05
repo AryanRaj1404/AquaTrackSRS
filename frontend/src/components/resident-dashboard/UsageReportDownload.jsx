@@ -1,33 +1,40 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { FileDown } from "lucide-react";
 import { getUsageLogsByHousehold } from "../../services/usageLogService";
-
-function toCsv(rows) {
-  const header = ["Date", "Liters Consumed", "Source", "Billing Cycle ID"];
-
-  const lines = rows.map((row) =>
-    [
-      row.usageDate,
-      row.litersConsumed,
-      row.source,
-      row.billingCycleId ?? "",
-    ].join(",")
-  );
-
-  return [header.join(","), ...lines].join("\n");
-}
 
 /**
  * Lets the resident download their own usage history as a CSV file.
  */
 function UsageReportDownload({ householdId }) {
+  const { t } = useTranslation();
   const [downloading, setDownloading] = useState(false);
+
+  const toCsv = (rows) => {
+    const header = [
+      t("residentDashboard.usageReport.csvHeaders.0"),
+      t("residentDashboard.usageReport.csvHeaders.1"),
+      t("residentDashboard.usageReport.csvHeaders.2"),
+      t("residentDashboard.usageReport.csvHeaders.3"),
+    ];
+
+    const lines = rows.map((row) =>
+      [
+        row.usageDate,
+        row.litersConsumed,
+        row.source,
+        row.billingCycleId ?? "",
+      ].join(",")
+    );
+
+    return [header.join(","), ...lines].join("\n");
+  };
 
   const handleDownload = async () => {
     if (!householdId) {
-      toast.error("No household linked to this account");
+      toast.error(t("residentDashboard.usageReport.noHousehold"));
       return;
     }
 
@@ -36,7 +43,7 @@ function UsageReportDownload({ householdId }) {
       const logs = await getUsageLogsByHousehold(householdId);
 
       if (!logs || logs.length === 0) {
-        toast.error("No usage data to export yet");
+        toast.error(t("residentDashboard.usageReport.noData"));
         return;
       }
 
@@ -55,9 +62,9 @@ function UsageReportDownload({ householdId }) {
       link.remove();
       window.URL.revokeObjectURL(url);
 
-      toast.success("Usage report downloaded");
+      toast.success(t("residentDashboard.usageReport.downloaded"));
     } catch {
-      toast.error("Could not generate usage report");
+      toast.error(t("residentDashboard.usageReport.couldNotGenerate"));
     } finally {
       setDownloading(false);
     }
@@ -72,8 +79,8 @@ function UsageReportDownload({ householdId }) {
     >
       <div className="mg-toolbar">
         <div>
-          <h2>Usage Report</h2>
-          <p>Download your complete water usage history as a CSV</p>
+          <h2>{t("residentDashboard.usageReport.title")}</h2>
+          <p>{t("residentDashboard.usageReport.subtitle")}</p>
         </div>
       </div>
 
@@ -84,7 +91,7 @@ function UsageReportDownload({ householdId }) {
         disabled={downloading}
       >
         <FileDown size={16} />
-        {downloading ? "Preparing..." : "Download CSV"}
+        {downloading ? t("residentDashboard.usageReport.preparing") : t("residentDashboard.usageReport.downloadCsv")}
       </button>
     </motion.div>
   );

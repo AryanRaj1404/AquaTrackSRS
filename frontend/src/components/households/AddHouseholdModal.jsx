@@ -1,4 +1,5 @@
 import { Save, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function AddHouseholdModal({
 
@@ -17,20 +18,22 @@ function AddHouseholdModal({
     isSubmitting,
 
 }){
+    const { t } = useTranslation();
+
     if (!showForm) {
     return null;
 }
 
 
     return(
-        
+
             
         <section className="mg-panel" style={{ marginBottom: "20px" }}>
           <div className="mg-toolbar">
             <div>
-              <h2>Add Household</h2>
+              <h2>{t("households.addModal.title")}</h2>
               <p>
-                These fields should match Sandhiya&apos;s backend household API.
+                {t("households.addModal.subtitle")}
               </p>
             </div>
 
@@ -41,7 +44,7 @@ function AddHouseholdModal({
               disabled={isSubmitting}
             >
               <X size={16} />
-              Close
+              {t("households.addModal.close")}
             </button>
           </div>
 
@@ -51,7 +54,7 @@ function AddHouseholdModal({
               {/* Flat Number */}
 
               <div className="mg-form-group">
-                <label htmlFor="flatNumber">Flat Number</label>
+                <label htmlFor="flatNumber">{t("households.addModal.flatNumberLabel")}</label>
 
                 <input
                   id="flatNumber"
@@ -59,7 +62,7 @@ function AddHouseholdModal({
                   type="text"
                   value={form.flatNumber}
                   onChange={handleChange}
-                  placeholder="Example: A-101"
+                  placeholder={t("households.addModal.flatNumberPlaceholder")}
                   disabled={isSubmitting}
                 />
               </div>
@@ -67,7 +70,7 @@ function AddHouseholdModal({
               {/* Flat Size */}
 
               <div className="mg-form-group">
-                <label htmlFor="flatSize">Flat Size (sq.ft)</label>
+                <label htmlFor="flatSize">{t("households.addModal.flatSizeLabel")}</label>
 
                 <input
                   id="flatSize"
@@ -75,7 +78,7 @@ function AddHouseholdModal({
                   type="number"
                   value={form.flatSize}
                   onChange={handleChange}
-                  placeholder="Example: 1200"
+                  placeholder={t("households.addModal.flatSizePlaceholder")}
                   disabled={isSubmitting}
                 />
               </div>
@@ -83,7 +86,7 @@ function AddHouseholdModal({
               {/* Occupancy */}
 
               <div className="mg-form-group">
-                <label htmlFor="occupancy">Occupancy</label>
+                <label htmlFor="occupancy">{t("households.addModal.occupancyLabel")}</label>
 
                 <input
                   id="occupancy"
@@ -92,7 +95,7 @@ function AddHouseholdModal({
                   min="1"
                   value={form.occupancy}
                   onChange={handleChange}
-                  placeholder="Example: 4"
+                  placeholder={t("households.addModal.occupancyPlaceholder")}
                   disabled={isSubmitting}
                 />
               </div>
@@ -100,7 +103,7 @@ function AddHouseholdModal({
               {/* Apartment */}
 
               <div className="mg-form-group">
-                <label htmlFor="apartmentId">Apartment</label>
+                <label htmlFor="apartmentId">{t("households.addModal.apartmentLabel")}</label>
 
                 <select
                   id="apartmentId"
@@ -111,7 +114,7 @@ function AddHouseholdModal({
                 >
 
                   <option value="">
-                    Select Apartment
+                    {t("households.addModal.selectApartment")}
                   </option>
                   {apartments.map((apartment) => (
 
@@ -138,7 +141,7 @@ function AddHouseholdModal({
                 disabled={isSubmitting}
               >
                 <X size={17} />
-                Cancel
+                {t("households.addModal.cancel")}
               </button>
 
               <button
@@ -147,7 +150,7 @@ function AddHouseholdModal({
                 disabled={isSubmitting}
               >
                 <Save size={17} />
-                {isSubmitting ? "Saving..." : "Create Household"}
+                {isSubmitting ? t("households.addModal.saving") : t("households.addModal.createHousehold")}
               </button>
             </div>
           </form>

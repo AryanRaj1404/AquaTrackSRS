@@ -1,90 +1,46 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const api = axios.create({
-    baseURL: "http://localhost:8080",
+  baseURL: "http://localhost:8080",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-api.interceptors.request.use(
+// Attach JWT to every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
 
-    (config) => {
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-        const token =
-            localStorage.getItem("token");
+  return config;
+});
 
-        if (token) {
-
-            config.headers.Authorization =
-                `Bearer ${token}`;
-
-        }
-
-        try {
-
-            const workspace =
-                JSON.parse(
-                    localStorage.getItem(
-                        "aquatrack-workspace"
-                    )
-                );
-
-            /*
-             * Workspace Header
-             *
-             * Sprint 1:
-             * Header is sent automatically.
-             *
-             * Sprint 2:
-             * Backend will start reading it.
-             */
-
-            if (
-                workspace &&
-                workspace.id !== null &&
-                workspace.id !== undefined
-            ) {
-
-                config.headers[
-                    "X-Workspace-Id"
-                ] = workspace.id;
-
-            }
-
-        } catch {
-
-            // Ignore malformed localStorage
-
-        }
-
-        return config;
-
-    },
-
-    (error) => Promise.reject(error)
-
-);
-
+// Handle API errors
 api.interceptors.response.use(
+  (response) => response,
+  (error) => {
 
-    (response) => response,
+    // Only logout if authentication itself is invalid
+    if (
+      error.response?.status === 401 &&
+      error.config?.url === "/auth/me"
+    ) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+      localStorage.removeItem("user");
 
-    (error) => {
+      toast.error("Your session has expired. Please login again.");
 
-        if (error.response?.status === 401) {
-
-            localStorage.removeItem("token");
-
-            localStorage.removeItem(
-                "aquatrack-workspace"
-            );
-
-            window.location.href = "/login";
-
-        }
-
-        return Promise.reject(error);
-
+      window.location.href = "/login";
     }
 
+    return Promise.reject(error);
+  }
 );
 
 export default api;

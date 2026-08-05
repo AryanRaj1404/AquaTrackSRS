@@ -1,4 +1,5 @@
 import { Save, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function AddApartmentModal({
 
@@ -16,6 +17,8 @@ export default function AddApartmentModal({
 
 }) {
 
+    const { t } = useTranslation();
+
     if (!showForm) {
         return null;
     }
@@ -31,10 +34,10 @@ export default function AddApartmentModal({
 
                 <div>
 
-                    <h2>Register Apartment</h2>
+                    <h2>{t("apartments.registerApartment")}</h2>
 
                     <p>
-                        Enter the apartment details below.
+                        {t("apartments.enterDetails")}
                     </p>
 
                 </div>
@@ -48,7 +51,7 @@ export default function AddApartmentModal({
 
                     <X size={16} />
 
-                    Close
+                    {t("apartments.close")}
 
                 </button>
 
@@ -62,7 +65,7 @@ export default function AddApartmentModal({
 
                         <label htmlFor="apartmentName">
 
-                            Apartment Name
+                            {t("apartments.apartmentName")}
 
                         </label>
 
@@ -72,7 +75,7 @@ export default function AddApartmentModal({
                             type="text"
                             value={form.apartmentName}
                             onChange={onChange}
-                            placeholder="Example: Green Valley Apartments"
+                            placeholder={t("apartments.apartmentNamePlaceholder")}
                             disabled={isSubmitting}
                         />
 
@@ -82,7 +85,7 @@ export default function AddApartmentModal({
 
                         <label htmlFor="address">
 
-                            Address
+                            {t("apartments.address")}
 
                         </label>
 
@@ -92,7 +95,7 @@ export default function AddApartmentModal({
                             type="text"
                             value={form.address}
                             onChange={onChange}
-                            placeholder="Sector-62, Noida"
+                            placeholder={t("apartments.addressPlaceholder")}
                             disabled={isSubmitting}
                         />
 
@@ -111,7 +114,7 @@ export default function AddApartmentModal({
 
                         <X size={17} />
 
-                        Cancel
+                        {t("apartments.cancel")}
 
                     </button>
 
@@ -124,8 +127,8 @@ export default function AddApartmentModal({
                         <Save size={17} />
 
                         {isSubmitting
-                            ? "Registering..."
-                            : "Register Apartment"}
+                            ? t("apartments.registering")
+                            : t("apartments.registerApartment")}
 
                     </button>
 

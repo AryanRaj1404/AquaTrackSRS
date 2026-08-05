@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import ResponsiveTable from "../ResponsiveTable";
+import { useTranslation } from "react-i18next";
 
 export default function ApartmentHouseholdsModal({
 
@@ -12,6 +12,8 @@ export default function ApartmentHouseholdsModal({
     onClose,
 
 }) {
+
+    const { t } = useTranslation();
 
     if (!showHouseholdsModal) {
 
@@ -35,7 +37,7 @@ export default function ApartmentHouseholdsModal({
 
                     <h2>
 
-                        Households
+                        {t("apartments.householdsModalTitle")}
 
                     </h2>
 
@@ -56,21 +58,19 @@ export default function ApartmentHouseholdsModal({
 
                 </p>
 
-                <ResponsiveTable>
-
                 <table className="mg-table">
 
                     <thead>
 
                         <tr>
 
-                            <th>Flat</th>
+                            <th>{t("apartments.colFlat")}</th>
 
-                            <th>Resident</th>
+                            <th>{t("apartments.colResident")}</th>
 
-                            <th>Area</th>
+                            <th>{t("apartments.colArea")}</th>
 
-                            <th>Occupancy</th>
+                            <th>{t("apartments.colOccupancy")}</th>
 
                         </tr>
 
@@ -87,7 +87,7 @@ export default function ApartmentHouseholdsModal({
                                     className="text-center py-8"
                                 >
 
-                                    No households found.
+                                    {t("apartments.noHouseholdsFound")}
 
                                 </td>
 
@@ -111,7 +111,7 @@ export default function ApartmentHouseholdsModal({
                                     <td>
 
                                         {household.residentName ??
-                                            "Not Assigned"}
+                                            t("apartments.notAssigned")}
 
                                     </td>
 
@@ -136,7 +136,6 @@ export default function ApartmentHouseholdsModal({
                     </tbody>
 
                 </table>
-                </ResponsiveTable>
 
             </div>
 

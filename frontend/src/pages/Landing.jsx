@@ -3,7 +3,6 @@ import HeroSection from "../components/HeroSection";
 import FeaturesSection from "../components/FeaturesSection";
 import Footer from "../components/Footer";
 import WaterBackground from "../components/WaterBackground";
-import DashboardShowcase from "../components/DashboardShowcase";
 
 function Landing() {
   return (
@@ -13,7 +12,6 @@ function Landing() {
       <Navbar />
       <HeroSection />
       <FeaturesSection />
-      <DashboardShowcase />
       <Footer />
       </div>
     </>

@@ -8,55 +8,13 @@ const getAuthConfig = () => ({
   },
 });
 
-/* ===========================
-   Dashboard (Top 5 Alerts)
-=========================== */
-
 export const getRecentAlerts = async () => {
   const response = await axios.get(
     `${API_URL}/alerts/recent`,
     getAuthConfig()
   );
-
   return response.data;
 };
-
-/* ===========================
-   Alert Management Page
-=========================== */
-
-export const getAllAlerts = async (
-  page = 0,
-  size = 10,
-  status = "ALL"
-) => {
-  const response = await axios.get(
-    `${API_URL}/alerts`,
-    {
-      ...getAuthConfig(),
-      params: {
-        page,
-        size,
-        status,
-      },
-    }
-  );
-
-  return response.data;
-};
-
-export const getAlertSummary = async () => {
-  const response = await axios.get(
-    `${API_URL}/api/admin/dashboard/alerts/summary`,
-    getAuthConfig()
-  );
-
-  return response.data;
-};
-
-/* ===========================
-   Acknowledge Alert
-=========================== */
 
 export const acknowledgeAlert = async (alertId) => {
   const response = await axios.post(

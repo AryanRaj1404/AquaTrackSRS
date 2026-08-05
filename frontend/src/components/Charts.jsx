@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import dashboardService from "../services/dashboardService";
 import toast from "react-hot-toast";
 
-function Charts({ title = "Monthly Consumption" }) {
+function Charts({ title }) {
+  const { t } = useTranslation();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,7 +21,7 @@ function Charts({ title = "Monthly Consumption" }) {
           );
         }
       } catch {
-        if (!ignore) toast.error("Could not load consumption trend");
+        if (!ignore) toast.error(t("charts.loadError"));
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -29,7 +31,7 @@ function Charts({ title = "Monthly Consumption" }) {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [t]);
 
   const width = 600;
   const height = 220;
@@ -55,15 +57,15 @@ function Charts({ title = "Monthly Consumption" }) {
     >
       <div className="mg-toolbar">
         <div>
-          <h2>{title}</h2>
-          <p>Household water consumption over time (KL)</p>
+          <h2>{title || t("charts.monthlyConsumption")}</h2>
+          <p>{t("charts.subtitle")}</p>
         </div>
       </div>
 
-      {loading && <div className="mg-empty-state">Loading trend...</div>}
+      {loading && <div className="mg-empty-state">{t("charts.loadingTrend")}</div>}
 
       {!loading && data.length === 0 && (
-        <div className="mg-empty-state">No usage data available</div>
+        <div className="mg-empty-state">{t("charts.noData")}</div>
       )}
 
       {!loading && data.length > 0 && (

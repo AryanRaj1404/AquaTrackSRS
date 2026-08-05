@@ -21,16 +21,28 @@ function StatCard({
         type: "spring",
         stiffness: 140,
       }}
-      className="group relative overflow-hidden rounded-[28px]
+      className="group relative overflow-hidden rounded-[34px]
       border border-slate-200/60
       bg-white/70
       backdrop-blur-2xl
       p-6
-      shadow-[0_8px_24px_rgba(15,23,42,.06)]"
+      shadow-[0_12px_35px_rgba(10,77,104,.10)]"
     >
       {/* Moving Glow */}
 
-      
+      <motion.div
+        variants={{
+          hover: {
+            x: 80,
+            y: -40,
+            scale: 1.15,
+          },
+        }}
+        transition={{
+          duration: 0.8,
+        }}
+        className="absolute -right-24 -top-20 h-56 w-56 rounded-full bg-[#08445B]/10 blur-3xl"
+      />
 
       {/* Reflection */}
 
@@ -63,14 +75,14 @@ function StatCard({
               type: "spring",
               stiffness: 250,
             }}
-            className="flex h-12 w-12 items-center justify-center rounded-3xl
+            className="flex h-15 w-15 items-center justify-center rounded-3xl
             bg-gradient-to-br
             from-teal-700
             to-cyan-600
             text-white
             shadow-[0_8px_16px_rgba(8,68,91,0.15)]"
           >
-            <Icon size={22} />
+            <Icon size={28} />
           </motion.div>
 
           <motion.div
@@ -91,7 +103,7 @@ function StatCard({
 
         {/* Title */}
 
-        <p className="mt-3 text-xs font-bold uppercase tracking-[0.3em] text-slate-400">
+        <p className="mt-5 text-xs font-bold uppercase tracking-[0.3em] text-slate-400">
           {title}
         </p>
 
@@ -107,7 +119,7 @@ function StatCard({
             type: "spring",
             stiffness: 300,
           }}
-          className="mt-4"
+          className="mt-3"
         >
           <h2 className="text-4xl font-black tracking-tight text-slate-900">
 
@@ -124,7 +136,7 @@ function StatCard({
 
           <div className="h-px w-full bg-gradient-to-r from-transparent via-[#0A4D68]/15 to-transparent" />
 
-          <p className="mt-3 text-sm leading-6 text-slate-600">
+          <p className="mt-5 text-sm leading-6 text-slate-600">
             {description}
           </p>
 
@@ -143,7 +155,7 @@ function StatCard({
         initial={{
           opacity: 0,
         }}
-        className="pointer-events-none absolute inset-0 rounded-[28px]
+        className="pointer-events-none absolute inset-0 rounded-[34px]
         ring-2
         ring-[#0A4D68]/30"
       />

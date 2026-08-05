@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import AdminPageShell from "../components/AdminPageShell";
 import residentDashboardService from "../services/residentDashboardService";
@@ -16,6 +17,7 @@ import UsageReportDownload from "../components/resident-dashboard/UsageReportDow
 import "../styles/management.css";
 
 function ResidentDashboard() {
+  const { t } = useTranslation();
   const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [highUsage, setHighUsage] = useState(false);
@@ -28,7 +30,7 @@ function ResidentDashboard() {
         const data = await residentDashboardService.getOverview();
         if (!ignore) setOverview(data);
       } catch {
-        if (!ignore) toast.error("Could not load your dashboard");
+        if (!ignore) toast.error(t("residentDashboard.couldNotLoadDashboard"));
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -42,8 +44,8 @@ function ResidentDashboard() {
 
   return (
     <AdminPageShell
-      title="My Dashboard"
-      description="Track your household's water usage, bills and alerts."
+      title={t("residentDashboard.myDashboard")}
+      description={t("residentDashboard.trackSubtitle")}
     >
       {/* Quick stats */}
       <QuickStatsRow overview={overview} loading={loading} />

@@ -1,4 +1,5 @@
 import { Save, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function AssignResidentModal({
 
@@ -19,6 +20,8 @@ export default function AssignResidentModal({
     isAssigning
 
 }) {
+    const { t } = useTranslation();
+
     if (!showAssignModal) {
 
     return null;
@@ -28,9 +31,9 @@ export default function AssignResidentModal({
   <section className="mg-panel" style={{ marginBottom: "20px" }}>
     <div className="mg-toolbar">
       <div>
-        <h2>Assign Resident</h2>
+        <h2>{t("households.assignModal.title")}</h2>
         <p>
-          Assign a resident to Flat {selectedHousehold?.flatNumber}.
+          {t("households.assignModal.subtitle", { flat: selectedHousehold?.flatNumber })}
         </p>
       </div>
 
@@ -40,13 +43,13 @@ export default function AssignResidentModal({
         onClick={ onClose }
       >
         <X size={16} />
-        Close
+        {t("households.assignModal.close")}
       </button>
     </div>
 
     <div className="mg-form-grid">
       <div className="mg-form-group mg-form-group-full">
-        <label>Select Resident</label>
+        <label>{t("households.assignModal.selectResidentLabel")}</label>
 
         <select
             value={selectedResident}
@@ -56,14 +59,14 @@ export default function AssignResidentModal({
             {availableResidents.length === 0 ? (
 
                 <option value="">
-                    No unassigned residents available
+                    {t("households.assignModal.noUnassigned")}
                 </option>
 
             ) : (
 
                 <>
                     <option value="">
-                        Choose Resident
+                        {t("households.assignModal.chooseResident")}
                     </option>
 
                     {availableResidents.map((resident) => (
@@ -92,7 +95,7 @@ export default function AssignResidentModal({
         onClick={ onClose }
       >
         <X size={17} />
-        Cancel
+        {t("households.assignModal.cancel")}
       </button>
 
       <button
@@ -102,7 +105,7 @@ export default function AssignResidentModal({
         disabled={!selectedResident || isAssigning}
       >
         <Save size={17} />
-        {isAssigning ? "Assigning..." : "Assign Resident"}
+        {isAssigning ? t("households.assignModal.assigning") : t("households.assignModal.assignResidentBtn")}
       </button>
     </div>
   </section>
