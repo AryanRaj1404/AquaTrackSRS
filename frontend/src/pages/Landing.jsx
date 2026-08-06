@@ -4,8 +4,10 @@ import FeaturesSection from "../components/FeaturesSection";
 import Footer from "../components/Footer";
 import WaterBackground from "../components/WaterBackground";
 import DashboardShowcase from "../components/DashboardShowcase";
+import { useTranslation } from "react-i18next";
 
 function Landing() {
+  const { t } = useTranslation();
   return (
     <>
       <WaterBackground/>

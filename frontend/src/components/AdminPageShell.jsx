@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 import {
     BadgeDollarSign,
@@ -381,6 +382,8 @@ function AdminPageShell({
             {/* Right */}
 
             <div className="flex items-center gap-3">
+
+                <LanguageSwitcher />
 
                 <button
                     type="button"
