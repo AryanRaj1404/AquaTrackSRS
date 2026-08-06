@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import {
   CalendarDays,
@@ -38,6 +39,8 @@ const initialForm = {
 };
 
 function BillingCycles(){
+    const { t } = useTranslation();
+
     const [billingCycles, setBillingCycles] = useState([]);
 
     const [apartments, setApartments] = useState([]);
@@ -100,7 +103,7 @@ function BillingCycles(){
         console.error(error);
 
         toast.error(
-        "Unable to load billing data."
+        t("billingCycles.toasts.loadError")
         );
 
     } finally {
@@ -158,22 +161,22 @@ function BillingCycles(){
     const validateForm = () => {
 
     if (!form.apartmentId) {
-        toast.error("Select an Apartment.");
+        toast.error(t("billingCycles.toasts.selectApartment"));
         return false;
     }
 
     if (!form.startDate) {
-        toast.error("Start date is required.");
+        toast.error(t("billingCycles.toasts.startDateRequired"));
         return false;
     }
 
     if (!form.endDate) {
-        toast.error("End date is required.");
+        toast.error(t("billingCycles.toasts.endDateRequired"));
         return false;
     }
 
     if (form.startDate > form.endDate) {
-        toast.error("End date must be after start date.");
+        toast.error(t("billingCycles.toasts.endAfterStart"));
         return false;
     }
 
@@ -203,8 +206,8 @@ function BillingCycles(){
 
     const loadingToast = toast.loading(
         editingId
-        ? "Updating billing cycle..."
-        : "Creating billing cycle..."
+        ? t("billingCycles.toasts.updating")
+        : t("billingCycles.toasts.creating")
     );
 
     try {
@@ -223,7 +226,7 @@ function BillingCycles(){
         );
 
         toast.success(
-            "Billing cycle updated successfully.",
+            t("billingCycles.toasts.updateSuccess"),
             {
             id: loadingToast,
             }
@@ -239,7 +242,7 @@ function BillingCycles(){
         ]);
 
         toast.success(
-            "Billing cycle created successfully.",
+            t("billingCycles.toasts.createSuccess"),
             {
             id: loadingToast,
             }
@@ -256,8 +259,8 @@ function BillingCycles(){
 
         toast.error(
         editingId
-            ? "Failed to update billing cycle."
-            : "Failed to create billing cycle.",
+            ? t("billingCycles.toasts.updateError")
+            : t("billingCycles.toasts.createError"),
         {
             id: loadingToast,
         }
@@ -294,7 +297,7 @@ function BillingCycles(){
     }
 
     const loadingToast = toast.loading(
-        "Deleting billing cycle..."
+        t("billingCycles.toasts.deleting")
     );
 
     try {
@@ -308,7 +311,7 @@ function BillingCycles(){
         );
 
         toast.success(
-        "Billing cycle deleted successfully.",
+        t("billingCycles.toasts.deleteSuccess"),
         {
             id: loadingToast,
         }
@@ -321,7 +324,7 @@ function BillingCycles(){
         console.error(error);
 
         toast.error(
-        "Failed to delete billing cycle.",
+        t("billingCycles.toasts.deleteError"),
         {
             id: loadingToast,
         }
@@ -379,11 +382,11 @@ function BillingCycles(){
     return (
   <>
     <AdminPageShell
-      title="Billing Cycle Management"
-      description="Manage Apartment billing cycles and assigned tariff plans."
+      title={t("billingCycles.pageTitle")}
+      description={t("billingCycles.pageDesc")}
       searchValue={query}
       onSearchChange={setQuery}
-      searchPlaceholder="Search billing cycles..."
+      searchPlaceholder={t("billingCycles.searchPlaceholder")}
       action={
         <button
           type="button"
@@ -395,46 +398,46 @@ function BillingCycles(){
           }}
         >
           <Plus size={18} />
-          Add Billing Cycle
+          {t("billingCycles.addBillingCycle")}
         </button>
       }
     >
       <section className="mg-summary-grid">
         <StatCard
           icon={ReceiptText}
-          title="Billing Cycles"
+          title={t("billingCycles.stats.totalTitle")}
           value={billingCycles.length}
-          description="Total billing records"
+          description={t("billingCycles.stats.totalDesc")}
           delay={0}
         />
 
         <StatCard
           icon={CalendarDays}
-          title="Open Cycles"
+          title={t("billingCycles.stats.openTitle")}
           value={
             billingCycles.filter(
               (cycle) => cycle.status === "OPEN"
             ).length
           }
-          description="Currently active"
+          description={t("billingCycles.stats.openDesc")}
           delay={0.1}
         />
 
         <StatCard
           icon={CheckCircle2}
-          title="Paid Cycles"
+          title={t("billingCycles.stats.paidTitle")}
           value={
             billingCycles.filter(
               (cycle) => cycle.status === "PAID"
             ).length
           }
-          description="Completed payments"
+          description={t("billingCycles.stats.paidDesc")}
           delay={0.2}
         />
 
         <StatCard
           icon={ReceiptText}
-          title="Latest Cycle"
+          title={t("billingCycles.stats.latestTitle")}
           value={
             billingCycles.length > 0
               ? billingCycles[0].apartmentName
@@ -443,7 +446,7 @@ function BillingCycles(){
           description={
             billingCycles.length > 0
               ? billingCycles[0].status
-              : "No billing cycles"
+              : t("billingCycles.stats.noCycles")
           }
           delay={0.3}
         />
@@ -458,12 +461,12 @@ function BillingCycles(){
             <div>
               <h2>
                 {editingId
-                  ? "Update Billing Cycle"
-                  : "Create Billing Cycle"}
+                  ? t("billingCycles.form.updateTitle")
+                  : t("billingCycles.form.createTitle")}
               </h2>
 
               <p>
-                Configure billing cycle details.
+                {t("billingCycles.form.desc")}
               </p>
             </div>
 
@@ -474,7 +477,7 @@ function BillingCycles(){
               disabled={isSubmitting}
             >
               <X size={16} />
-              Close
+              {t("billingCycles.form.close")}
             </button>
           </div>
 
@@ -482,7 +485,7 @@ function BillingCycles(){
             <div className="mg-form-grid">
 
               <div className="mg-form-group">
-                <label>Apartment</label>
+                <label>{t("billingCycles.form.apartment")}</label>
 
                 <select
                   name="apartmentId"
@@ -491,7 +494,7 @@ function BillingCycles(){
                   disabled={isSubmitting}
                 >
                   <option value="">
-                    Select Apartment
+                    {t("billingCycles.form.selectApartment")}
                   </option>
 
                   {apartments.map((apartment) => (
@@ -506,7 +509,7 @@ function BillingCycles(){
               </div>
 
               <div className="mg-form-group">
-                <label>Tariff Plan</label>
+                <label>{t("billingCycles.form.tariffPlan")}</label>
 
                 <select
                   name="tariffPlanId"
@@ -515,7 +518,7 @@ function BillingCycles(){
                   disabled={isSubmitting}
                 >
                   <option value="">
-                    Select Tariff Plan
+                    {t("billingCycles.form.selectTariffPlan")}
                   </option>
 
                   {tariffPlans.map((plan) => (
@@ -530,7 +533,7 @@ function BillingCycles(){
               </div>
 
               <div className="mg-form-group">
-                <label>Start Date</label>
+                <label>{t("billingCycles.form.startDate")}</label>
 
                 <input
                   type="date"
@@ -542,7 +545,7 @@ function BillingCycles(){
               </div>
 
               <div className="mg-form-group">
-                <label>End Date</label>
+                <label>{t("billingCycles.form.endDate")}</label>
 
                 <input
                   type="date"
@@ -554,7 +557,7 @@ function BillingCycles(){
               </div>
 
               <div className="mg-form-group">
-                <label>Status</label>
+                <label>{t("billingCycles.form.status")}</label>
 
                 <select
                   name="status"
@@ -579,7 +582,7 @@ function BillingCycles(){
                 disabled={isSubmitting}
               >
                 <X size={17} />
-                Cancel
+                {t("billingCycles.form.cancel")}
               </button>
 
               <button
@@ -591,11 +594,11 @@ function BillingCycles(){
 
                 {isSubmitting
                   ? editingId
-                    ? "Updating..."
-                    : "Saving..."
+                    ? t("billingCycles.form.updating")
+                    : t("billingCycles.form.saving")
                   : editingId
-                  ? "Update Billing Cycle"
-                  : "Create Billing Cycle"}
+                  ? t("billingCycles.form.updateTitle")
+                  : t("billingCycles.form.createTitle")}
               </button>
             </div>
           </form>
@@ -604,9 +607,9 @@ function BillingCycles(){
       <section className="mg-panel">
         <div className="mg-toolbar">
             <div>
-            <h2>Billing Cycle Records</h2>
+            <h2>{t("billingCycles.recordsTitle")}</h2>
             <p>
-                All billing cycles are listed below.
+                {t("billingCycles.recordsSubtitle")}
             </p>
             </div>
         </div>
@@ -618,10 +621,10 @@ function BillingCycles(){
                 className="animate-spin"
             />
 
-            <h3>Loading billing cycles</h3>
+            <h3>{t("billingCycles.loading")}</h3>
 
             <p>
-                Please wait while billing data is fetched.
+                {t("billingCycles.pleaseWait")}
             </p>
             </div>
         ) : filteredBillingCycles.length > 0 ? (
@@ -629,11 +632,11 @@ function BillingCycles(){
             <table className="mg-table">
                 <thead>
                 <tr>
-                    <th>Apartment</th>
-                    <th>Tariff Plan</th>
-                    <th>Period</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>{t("billingCycles.table.apartment")}</th>
+                    <th>{t("billingCycles.table.tariffPlan")}</th>
+                    <th>{t("billingCycles.table.period")}</th>
+                    <th>{t("billingCycles.table.status")}</th>
+                    <th>{t("billingCycles.table.actions")}</th>
                 </tr>
                 </thead>
 
@@ -684,7 +687,7 @@ function BillingCycles(){
                         onClick={() => handleEdit(cycle)}
                         >
                         <Pencil size={16} />
-                        Edit
+                        {t("billingCycles.table.edit")}
                         </button>
 
                         <button
@@ -695,7 +698,7 @@ function BillingCycles(){
                         }
                         >
                         <Trash2 size={16} />
-                        Delete
+                        {t("billingCycles.table.delete")}
                         </button>
                     </td>
                     </tr>
@@ -706,18 +709,18 @@ function BillingCycles(){
         ) : (
             <EmptyState
             icon={ReceiptText}
-            title="No billing cycles found"
-            description="Create your first billing cycle to begin tracking Apartment bills."
+            title={t("billingCycles.noCyclesFound")}
+            description={t("billingCycles.noCyclesDesc")}
             />
         )}
         </section>
     </AdminPageShell>
         <ConfirmDialog
             open={deleteId !== null}
-            title="Delete Billing Cycle"
-            message="Are you sure you want to delete this billing cycle? This action cannot be undone."
-            confirmText="Delete"
-            cancelText="Cancel"
+            title={t("billingCycles.deleteDialog.title")}
+            message={t("billingCycles.deleteDialog.message")}
+            confirmText={t("billingCycles.deleteDialog.confirm")}
+            cancelText={t("billingCycles.deleteDialog.cancel")}
             onCancel={() => setDeleteId(null)}
             onConfirm={handleDelete}
         />

@@ -2,6 +2,7 @@ import {
     Save,
     X,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function WaterUsageFormModal({
 
@@ -25,6 +26,8 @@ function WaterUsageFormModal({
 
 }) {
 
+    const { t } = useTranslation();
+
     if (!showModal) {
 
         return null;
@@ -44,14 +47,14 @@ function WaterUsageFormModal({
                         <h2>
 
                             {editingId
-                                ? "Edit Reading"
-                                : "Add Reading"}
+                                ? t("waterUsage.modal.editTitle")
+                                : t("waterUsage.modal.addTitle")}
 
                         </h2>
 
                         <p>
 
-                            Record household water consumption.
+                            {t("waterUsage.modal.desc")}
 
                         </p>
 
@@ -65,7 +68,7 @@ function WaterUsageFormModal({
 
                         <X size={16} />
 
-                        Close
+                        {t("waterUsage.modal.close")}
 
                     </button>
 
@@ -79,7 +82,7 @@ function WaterUsageFormModal({
 
                             <label>
 
-                                Billing Cycle
+                                {t("waterUsage.modal.billingCycle")}
 
                             </label>
 
@@ -92,7 +95,7 @@ function WaterUsageFormModal({
 
                                 <option value="">
 
-                                    Select Billing Cycle
+                                    {t("waterUsage.modal.selectBillingCycle")}
 
                                 </option>
 
@@ -127,7 +130,7 @@ function WaterUsageFormModal({
 
                             <label>
 
-                                Household
+                                {t("waterUsage.modal.household")}
 
                             </label>
 
@@ -140,7 +143,7 @@ function WaterUsageFormModal({
 
                                 <option value="">
 
-                                    Select Household
+                                    {t("waterUsage.modal.selectHousehold")}
 
                                 </option>
 
@@ -167,7 +170,7 @@ function WaterUsageFormModal({
 
                             <label>
 
-                                Usage Date
+                                {t("waterUsage.modal.usageDate")}
 
                             </label>
 
@@ -185,7 +188,7 @@ function WaterUsageFormModal({
 
                             <label>
 
-                                Liters Consumed
+                                {t("waterUsage.modal.litersConsumed")}
 
                             </label>
 
@@ -210,7 +213,7 @@ function WaterUsageFormModal({
                             onClick={closeModal}
                         >
 
-                            Cancel
+                            {t("waterUsage.modal.cancel")}
 
                         </button>
 
@@ -223,10 +226,10 @@ function WaterUsageFormModal({
                             <Save size={16} />
 
                             {isSubmitting
-                                ? "Saving..."
+                                ? t("waterUsage.modal.saving")
                                 : editingId
-                                ? "Update Reading"
-                                : "Save Reading"}
+                                ? t("waterUsage.modal.updateReading")
+                                : t("waterUsage.modal.saveReading")}
 
                         </button>
 

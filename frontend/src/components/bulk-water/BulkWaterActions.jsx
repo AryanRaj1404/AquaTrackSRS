@@ -1,10 +1,13 @@
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function BulkWaterActions({
 
     openCreateModal,
 
 }) {
+
+    const { t } = useTranslation();
 
     return (
 
@@ -16,7 +19,7 @@ function BulkWaterActions({
 
             <Plus size={18} />
 
-            Add Purchase
+            {t("bulkWaterPurchases.addPurchase")}
 
         </button>
 

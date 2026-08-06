@@ -568,10 +568,298 @@
       "assign": "Assign"
     }
   },
-  "meterConfig": {},
-  "waterUsage": {},
-  "tariffPlans": {},
-  "billingCycles": {},
+  "meterConfig": {
+    "pageTitle": "Meter Configuration",
+    "pageDesc": "Assign and manage water meters for registered households.",
+    "searchPlaceholder": "Search meter, apartment or flat...",
+    "addMeter": "Add Meter",
+    "stats": {
+      "totalTitle": "Total Meters",
+      "activeTitle": "Active Meters",
+      "inactiveTitle": "Inactive Meters",
+      "digitalTitle": "Digital Meters"
+    },
+    "recordsTitle": "Configured Meters",
+    "recordsSubtitle": "View household meter assignment and status.",
+    "filters": {
+      "all": "All Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "meterNumber": "Meter Number",
+      "apartment": "Apartment",
+      "flat": "Flat",
+      "meterType": "Meter Type",
+      "installedDate": "Installed Date",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "noMetersYet": "No meters have been configured yet.",
+    "noMetersMatch": "No meters match your search.",
+    "modal": {
+      "editTitle": "Edit Meter",
+      "addTitle": "Add New Meter",
+      "editDesc": "Update meter and household assignment.",
+      "addDesc": "Configure a water meter for a household."
+    },
+    "form": {
+      "meterNumber": "Meter number",
+      "household": "Household",
+      "selectHousehold": "Select Household",
+      "meterType": "Meter type",
+      "installedDate": "Installed date",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes"
+    },
+    "deleteDialog": {
+      "title": "Delete Meter",
+      "message": "Are you sure you want to delete meter \"{{meterNumber}}\"?"
+    },
+    "toasts": {
+      "loadError": "Unable to load meters.",
+      "completeDetails": "Please complete all meter details.",
+      "updating": "Updating meter...",
+      "creating": "Creating meter...",
+      "updateSuccess": "Meter updated successfully.",
+      "createSuccess": "Meter created successfully.",
+      "updateError": "Unable to update meter.",
+      "createError": "Unable to create meter.",
+      "deleting": "Deleting meter...",
+      "deleteSuccess": "Meter deleted successfully.",
+      "deleteError": "Unable to delete meter."
+    }
+  },
+  "waterUsage": {
+    "pageTitle": "Water Usage Management",
+    "pageDesc": "Track and manage household water consumption records.",
+    "searchPlaceholder": "Search by household, apartment or date...",
+    "recordsTitle": "Water Usage Records",
+    "recordsSubtitle": "Track, filter and manage household water consumption records.",
+    "loading": "Loading usage logs",
+    "pleaseWait": "Please wait while usage logs are fetched.",
+    "noLogsFound": "No usage logs found",
+    "noLogsDesc": "Start by adding a manual reading or uploading a CSV file.",
+    "stats": {
+      "totalUsageTitle": "Total Usage",
+      "totalUsageDesc": "Total recorded consumption",
+      "householdsTitle": "Households",
+      "householdsDesc": "Households in current view",
+      "readingsTitle": "Readings",
+      "readingsDesc": "Usage records",
+      "avgTitle": "Average Consumption",
+      "avgDesc": "Per recorded reading"
+    },
+    "actions": {
+      "allBillingCycles": "All Billing Cycles",
+      "uploadCsv": "Upload CSV",
+      "addReading": "Add Reading"
+    },
+    "table": {
+      "apartment": "Apartment",
+      "household": "Household",
+      "readingDate": "Reading Date",
+      "consumption": "Consumption",
+      "source": "Source",
+      "action": "Action",
+      "litersUnit": "L",
+      "manual": "Manual",
+      "csv": "CSV",
+      "records": "records"
+    },
+    "modal": {
+      "editTitle": "Edit Reading",
+      "addTitle": "Add Reading",
+      "desc": "Record household water consumption.",
+      "close": "Close",
+      "billingCycle": "Billing Cycle",
+      "selectBillingCycle": "Select Billing Cycle",
+      "household": "Household",
+      "selectHousehold": "Select Household",
+      "usageDate": "Usage Date",
+      "litersConsumed": "Liters Consumed",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "updateReading": "Update Reading",
+      "saveReading": "Save Reading"
+    },
+    "deleteDialog": {
+      "title": "Delete Usage Log",
+      "message": "Delete usage record for Flat {{flatNumber}}?"
+    },
+    "toasts": {
+      "loadError": "Unable to load water usage logs.",
+      "selectHousehold": "Please select a household.",
+      "selectBillingCycle": "Please select a billing cycle.",
+      "selectUsageDate": "Please select a usage date.",
+      "enterLiters": "Please enter liters consumed.",
+      "updating": "Updating usage log...",
+      "saving": "Saving usage log...",
+      "updateSuccess": "Usage log updated successfully.",
+      "createSuccess": "Usage log created successfully.",
+      "saveError": "Unable to save usage log.",
+      "deleting": "Deleting usage log...",
+      "deleteSuccess": "Usage log deleted successfully.",
+      "deleteError": "Unable to delete usage log.",
+      "selectCycleFirst": "Select a billing cycle first.",
+      "uploadingCsv": "Uploading CSV...",
+      "uploadSuccess": "CSV uploaded successfully.",
+      "uploadError": "CSV upload failed."
+    }
+  },
+  "tariffPlans": {
+    "pageTitle": "Tariff Plan Management",
+    "pageDesc": "Manage water tariff plans used for billing.",
+    "searchPlaceholder": "Search tariff plans...",
+    "addTariffPlan": "Add Tariff Plan",
+    "recordsTitle": "Tariff Plan Records",
+    "recordsSubtitle": "All configured tariff plans are listed below.",
+    "loading": "Loading tariff plans",
+    "pleaseWait": "Please wait while tariff plans are fetched.",
+    "noPlansFound": "No tariff plans found",
+    "noPlansDesc": "Create your first tariff plan to begin billing households.",
+    "stats": {
+      "totalTitle": "Total Plans",
+      "totalDesc": "Available tariff plans",
+      "activeTitle": "Active Plans",
+      "activeDesc": "Currently configured",
+      "highestTitle": "Highest Rate",
+      "highestDesc": "Rate per unit",
+      "latestTitle": "Latest Plan",
+      "noPlansYet": "No plans yet"
+    },
+    "form": {
+      "updateTitle": "Update Tariff Plan",
+      "registerTitle": "Register Tariff Plan",
+      "desc": "Configure tariff details for billing.",
+      "close": "Close",
+      "planName": "Plan Name",
+      "fixedCharge": "Fixed Charge",
+      "effectiveFrom": "Effective From",
+      "effectiveTo": "Effective To",
+      "description": "Description",
+      "descriptionPlaceholder": "Tariff description...",
+      "tariffTiers": "Tariff Tiers",
+      "addTier": "Add Tier",
+      "uptoKl": "Up To (KL)",
+      "uptoKlPlaceholder": "Leave empty for unlimited",
+      "ratePerKl": "Rate / KL",
+      "remove": "Remove",
+      "cancel": "Cancel",
+      "updating": "Updating...",
+      "saving": "Saving...",
+      "savePlan": "Save Tariff Plan"
+    },
+    "table": {
+      "planName": "Plan Name",
+      "tariffSlabs": "Tariff Slabs",
+      "fixedCharge": "Fixed Charge",
+      "effective": "Effective",
+      "actions": "Actions",
+      "klUnit": "KL",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "deleteDialog": {
+      "title": "Delete Tariff Plan",
+      "message": "Are you sure you want to delete this tariff plan? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "toasts": {
+      "loadError": "Unable to load tariff plans.",
+      "planNameRequired": "Plan name is required.",
+      "atLeastOneTier": "Add at least one tariff tier.",
+      "tierRateRequired": "Each tier must have a rate.",
+      "fixedChargeRequired": "Fixed charge is required.",
+      "fixedChargeNegative": "Fixed charge cannot be negative.",
+      "effectiveFromRequired": "Effective From is required.",
+      "effectiveToRequired": "Effective To is required.",
+      "effectiveToAfterFrom": "Effective To must be after Effective From.",
+      "updating": "Updating tariff plan...",
+      "creating": "Creating tariff plan...",
+      "updateSuccess": "Tariff plan updated successfully.",
+      "createSuccess": "Tariff plan created successfully.",
+      "updateError": "Failed to update tariff plan.",
+      "createError": "Failed to create tariff plan.",
+      "deleting": "Deleting tariff plan...",
+      "deleteSuccess": "Tariff plan deleted successfully.",
+      "deleteError": "Failed to delete tariff plan."
+    }
+  },
+  "billingCycles": {
+    "pageTitle": "Billing Cycle Management",
+    "pageDesc": "Manage Apartment billing cycles and assigned tariff plans.",
+    "searchPlaceholder": "Search billing cycles...",
+    "addBillingCycle": "Add Billing Cycle",
+    "recordsTitle": "Billing Cycle Records",
+    "recordsSubtitle": "All billing cycles are listed below.",
+    "loading": "Loading billing cycles",
+    "pleaseWait": "Please wait while billing data is fetched.",
+    "noCyclesFound": "No billing cycles found",
+    "noCyclesDesc": "Create your first billing cycle to begin tracking Apartment bills.",
+    "stats": {
+      "totalTitle": "Billing Cycles",
+      "totalDesc": "Total billing records",
+      "openTitle": "Open Cycles",
+      "openDesc": "Currently active",
+      "paidTitle": "Paid Cycles",
+      "paidDesc": "Completed payments",
+      "latestTitle": "Latest Cycle",
+      "noCycles": "No billing cycles"
+    },
+    "form": {
+      "updateTitle": "Update Billing Cycle",
+      "createTitle": "Create Billing Cycle",
+      "desc": "Configure billing cycle details.",
+      "close": "Close",
+      "apartment": "Apartment",
+      "selectApartment": "Select Apartment",
+      "tariffPlan": "Tariff Plan",
+      "selectTariffPlan": "Select Tariff Plan",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Status",
+      "cancel": "Cancel",
+      "updating": "Updating...",
+      "saving": "Saving..."
+    },
+    "table": {
+      "apartment": "Apartment",
+      "tariffPlan": "Tariff Plan",
+      "period": "Period",
+      "status": "Status",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "deleteDialog": {
+      "title": "Delete Billing Cycle",
+      "message": "Are you sure you want to delete this billing cycle? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "toasts": {
+      "loadError": "Unable to load billing data.",
+      "selectApartment": "Select an Apartment.",
+      "startDateRequired": "Start date is required.",
+      "endDateRequired": "End date is required.",
+      "endAfterStart": "End date must be after start date.",
+      "updating": "Updating billing cycle...",
+      "creating": "Creating billing cycle...",
+      "updateSuccess": "Billing cycle updated successfully.",
+      "createSuccess": "Billing cycle created successfully.",
+      "updateError": "Failed to update billing cycle.",
+      "createError": "Failed to create billing cycle.",
+      "deleting": "Deleting billing cycle...",
+      "deleteSuccess": "Billing cycle deleted successfully.",
+      "deleteError": "Failed to delete billing cycle."
+    }
+  },
   "profile": {
     "pageTitle": "My Profile",
     "pageSubtitle": "View and update your personal information.",
@@ -646,7 +934,74 @@
       "generateError": "Unable to generate invoices."
     }
   },
-  "bulkWaterPurchases": {},
+  "bulkWaterPurchases": {
+    "pageTitle": "Bulk Water Purchases",
+    "pageDesc": "Record and manage tanker and municipal water purchases.",
+    "searchPlaceholder": "Search supplier, source or apartment...",
+    "addPurchase": "Add Purchase",
+    "recordsTitle": "Bulk Water Purchases",
+    "recordsSubtitle": "Record and manage tanker and municipal water purchases.",
+    "noPurchasesFound": "No purchases found",
+    "noPurchasesDesc": "Record your first bulk water purchase.",
+    "stats": {
+      "purchasesTitle": "Purchases",
+      "purchasesDesc": "Purchases recorded",
+      "volumeTitle": "Volume",
+      "volumeDesc": "Purchased water",
+      "costTitle": "Total Cost",
+      "costDesc": "Total expenditure",
+      "rateTitle": "Average Rate",
+      "rateDesc": "Average purchase rate"
+    },
+    "table": {
+      "date": "Date",
+      "apartment": "Apartment",
+      "billingCycle": "Billing Cycle",
+      "supplier": "Supplier",
+      "source": "Source",
+      "volume": "Volume",
+      "unitCost": "Unit Cost",
+      "totalCost": "Total Cost",
+      "actions": "Actions",
+      "tanker": "Tanker",
+      "municipal": "Municipal",
+      "klUnit": "KL",
+      "purchases": "purchases"
+    },
+    "modal": {
+      "editTitle": "Edit Purchase",
+      "addTitle": "Add Purchase",
+      "desc": "Record bulk water purchases.",
+      "close": "Close",
+      "apartment": "Apartment",
+      "selectApartment": "Select Apartment",
+      "billingCycle": "Billing Cycle",
+      "selectBillingCycle": "Select Billing Cycle",
+      "selectApartmentFirst": "Select Apartment First",
+      "purchaseDate": "Purchase Date",
+      "source": "Source",
+      "volume": "Volume (KL)",
+      "unitCost": "Unit Cost",
+      "supplier": "Supplier",
+      "cancel": "Cancel",
+      "updatePurchase": "Update Purchase",
+      "savePurchase": "Save Purchase"
+    },
+    "deleteDialog": {
+      "title": "Delete Purchase?",
+      "message": "This purchase record will be permanently deleted. This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "toasts": {
+      "loadError": "Unable to load purchases.",
+      "updateSuccess": "Purchase updated successfully.",
+      "createSuccess": "Purchase created successfully.",
+      "saveError": "Unable to save purchase.",
+      "deleteSuccess": "Purchase deleted.",
+      "deleteError": "Unable to delete purchase."
+    }
+  },
   "focusPanel": {
     "todaysFocus": "Today's Focus",
     "pickUpWhereYouLeftOff": "Pick up where you left off.",

@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import StatCard from "../StatCard";
+import { useTranslation } from "react-i18next";
 
 function WaterUsageStats({
 
@@ -19,39 +20,41 @@ function WaterUsageStats({
 
 }) {
 
+    const { t } = useTranslation();
+
     return (
 
         <section className="mg-summary-grid">
 
             <StatCard
                 icon={Droplets}
-                title="Total Usage"
+                title={t("waterUsage.stats.totalUsageTitle")}
                 value={`${totalUsage.toFixed(0)} L`}
-                description="Total recorded consumption"
+                description={t("waterUsage.stats.totalUsageDesc")}
                 delay={0}
             />
 
             <StatCard
                 icon={Home}
-                title="Households"
+                title={t("waterUsage.stats.householdsTitle")}
                 value={displayedHouseholds}
-                description="Households in current view"
+                description={t("waterUsage.stats.householdsDesc")}
                 delay={0.1}
             />
 
             <StatCard
                 icon={ClipboardList}
-                title="Readings"
+                title={t("waterUsage.stats.readingsTitle")}
                 value={totalLogs}
-                description="Usage records"
+                description={t("waterUsage.stats.readingsDesc")}
                 delay={0.2}
             />
 
             <StatCard
                 icon={BarChart3}
-                title="Average Consumption"
+                title={t("waterUsage.stats.avgTitle")}
                 value={`${averageUsage.toFixed(0)} L`}
-                description="Per recorded reading"
+                description={t("waterUsage.stats.avgDesc")}
                 delay={0.3}
             />
 

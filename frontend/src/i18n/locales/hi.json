@@ -568,10 +568,298 @@
       "assign": "असाइन करें"
     }
   },
-  "meterConfig": {},
-  "waterUsage": {},
-  "tariffPlans": {},
-  "billingCycles": {},
+  "meterConfig": {
+    "pageTitle": "मीटर कॉन्फ़िगरेशन",
+    "pageDesc": "पंजीकृत परिवारों के लिए पानी के मीटर असाइन और प्रबंधित करें।",
+    "searchPlaceholder": "मीटर, अपार्टमेंट या फ्लैट खोजें...",
+    "addMeter": "मीटर जोड़ें",
+    "stats": {
+      "totalTitle": "कुल मीटर",
+      "activeTitle": "सक्रिय मीटर",
+      "inactiveTitle": "निष्क्रिय मीटर",
+      "digitalTitle": "डिजिटल मीटर"
+    },
+    "recordsTitle": "कॉन्फ़िगर किए गए मीटर",
+    "recordsSubtitle": "परिवार मीटर असाइनमेंट और स्थिति देखें।",
+    "filters": {
+      "all": "सभी स्थिति",
+      "active": "सक्रिय",
+      "inactive": "निष्क्रिय"
+    },
+    "table": {
+      "meterNumber": "मीटर नंबर",
+      "apartment": "अपार्टमेंट",
+      "flat": "फ्लैट",
+      "meterType": "मीटर प्रकार",
+      "installedDate": "स्थापना तिथि",
+      "status": "स्थिति",
+      "actions": "कार्रवाइयाँ"
+    },
+    "actions": {
+      "edit": "संपादित करें",
+      "delete": "हटाएं"
+    },
+    "noMetersYet": "अभी तक कोई मीटर कॉन्फ़िगर नहीं किया गया है।",
+    "noMetersMatch": "आपकी खोज से कोई मीटर मेल नहीं खाता।",
+    "modal": {
+      "editTitle": "मीटर संपादित करें",
+      "addTitle": "नया मीटर जोड़ें",
+      "editDesc": "मीटर और परिवार असाइनमेंट अपडेट करें।",
+      "addDesc": "किसी परिवार के लिए पानी का मीटर कॉन्फ़िगर करें।"
+    },
+    "form": {
+      "meterNumber": "मीटर नंबर",
+      "household": "परिवार",
+      "selectHousehold": "परिवार चुनें",
+      "meterType": "मीटर प्रकार",
+      "installedDate": "स्थापना तिथि",
+      "cancel": "रद्द करें",
+      "saveChanges": "परिवर्तन सहेजें"
+    },
+    "deleteDialog": {
+      "title": "मीटर हटाएं",
+      "message": "क्या आप वाकई मीटर \"{{meterNumber}}\" को हटाना चाहते हैं?"
+    },
+    "toasts": {
+      "loadError": "मीटर लोड करने में असमर्थ।",
+      "completeDetails": "कृपया सभी मीटर विवरण पूरे करें।",
+      "updating": "मीटर अपडेट हो रहा है...",
+      "creating": "मीटर बनाया जा रहा है...",
+      "updateSuccess": "मीटर सफलतापूर्वक अपडेट किया गया।",
+      "createSuccess": "मीटर सफलतापूर्वक बनाया गया।",
+      "updateError": "मीटर अपडेट करने में असमर्थ।",
+      "createError": "मीटर बनाने में असमर्थ।",
+      "deleting": "मीटर हटाया जा रहा है...",
+      "deleteSuccess": "मीटर सफलतापूर्वक हटा दिया गया।",
+      "deleteError": "मीटर हटाने में असमर्थ।"
+    }
+  },
+  "waterUsage": {
+    "pageTitle": "जल उपयोग प्रबंधन",
+    "pageDesc": "परिवार के पानी की खपत के रिकॉर्ड ट्रैक और प्रबंधित करें।",
+    "searchPlaceholder": "परिवार, अपार्टमेंट या तिथि से खोजें...",
+    "recordsTitle": "जल उपयोग रिकॉर्ड",
+    "recordsSubtitle": "परिवार के पानी की खपत के रिकॉर्ड को ट्रैक, फ़िल्टर और प्रबंधित करें।",
+    "loading": "उपयोग लॉग लोड हो रहे हैं",
+    "pleaseWait": "कृपया प्रतीक्षा करें जब तक उपयोग लॉग प्राप्त किए जाते हैं।",
+    "noLogsFound": "कोई उपयोग लॉग नहीं मिला",
+    "noLogsDesc": "मैन्युअल रीडिंग जोड़कर या CSV फ़ाइल अपलोड करके शुरू करें।",
+    "stats": {
+      "totalUsageTitle": "कुल उपयोग",
+      "totalUsageDesc": "कुल दर्ज खपत",
+      "householdsTitle": "परिवार",
+      "householdsDesc": "वर्तमान दृश्य में परिवार",
+      "readingsTitle": "रीडिंग",
+      "readingsDesc": "उपयोग रिकॉर्ड",
+      "avgTitle": "औसत खपत",
+      "avgDesc": "प्रति दर्ज रीडिंग"
+    },
+    "actions": {
+      "allBillingCycles": "सभी बिलिंग चक्र",
+      "uploadCsv": "CSV अपलोड करें",
+      "addReading": "रीडिंग जोड़ें"
+    },
+    "table": {
+      "apartment": "अपार्टमेंट",
+      "household": "परिवार",
+      "readingDate": "रीडिंग तिथि",
+      "consumption": "खपत",
+      "source": "स्रोत",
+      "action": "कार्रवाई",
+      "litersUnit": "लीटर",
+      "manual": "मैन्युअल",
+      "csv": "CSV",
+      "records": "रिकॉर्ड"
+    },
+    "modal": {
+      "editTitle": "रीडिंग संपादित करें",
+      "addTitle": "रीडिंग जोड़ें",
+      "desc": "परिवार के पानी की खपत दर्ज करें।",
+      "close": "बंद करें",
+      "billingCycle": "बिलिंग चक्र",
+      "selectBillingCycle": "बिलिंग चक्र चुनें",
+      "household": "परिवार",
+      "selectHousehold": "परिवार चुनें",
+      "usageDate": "उपयोग तिथि",
+      "litersConsumed": "उपभोग किए गए लीटर",
+      "cancel": "रद्द करें",
+      "saving": "सहेजा जा रहा है...",
+      "updateReading": "रीडिंग अपडेट करें",
+      "saveReading": "रीडिंग सहेजें"
+    },
+    "deleteDialog": {
+      "title": "उपयोग लॉग हटाएं",
+      "message": "फ्लैट {{flatNumber}} के लिए उपयोग रिकॉर्ड हटाएं?"
+    },
+    "toasts": {
+      "loadError": "जल उपयोग लॉग लोड करने में असमर्थ।",
+      "selectHousehold": "कृपया एक परिवार चुनें।",
+      "selectBillingCycle": "कृपया एक बिलिंग चक्र चुनें।",
+      "selectUsageDate": "कृपया उपयोग तिथि चुनें।",
+      "enterLiters": "कृपया उपभोग किए गए लीटर दर्ज करें।",
+      "updating": "उपयोग लॉग अपडेट हो रहा है...",
+      "saving": "उपयोग लॉग सहेजा जा रहा है...",
+      "updateSuccess": "उपयोग लॉग सफलतापूर्वक अपडेट किया गया।",
+      "createSuccess": "उपयोग लॉग सफलतापूर्वक बनाया गया।",
+      "saveError": "उपयोग लॉग सहेजने में असमर्थ।",
+      "deleting": "उपयोग लॉग हटाया जा रहा है...",
+      "deleteSuccess": "उपयोग लॉग सफलतापूर्वक हटा दिया गया।",
+      "deleteError": "उपयोग लॉग हटाने में असमर्थ।",
+      "selectCycleFirst": "पहले एक बिलिंग चक्र चुनें।",
+      "uploadingCsv": "CSV अपलोड हो रहा है...",
+      "uploadSuccess": "CSV सफलतापूर्वक अपलोड की गई।",
+      "uploadError": "CSV अपलोड विफल।"
+    }
+  },
+  "tariffPlans": {
+    "pageTitle": "टैरिफ योजना प्रबंधन",
+    "pageDesc": "बिलिंग के लिए उपयोग की जाने वाली जल टैरिफ योजनाओं को प्रबंधित करें।",
+    "searchPlaceholder": "टैरिफ योजनाएं खोजें...",
+    "addTariffPlan": "टैरिफ योजना जोड़ें",
+    "recordsTitle": "टैरिफ योजना रिकॉर्ड",
+    "recordsSubtitle": "सभी कॉन्फ़िगर की गई टैरिफ योजनाएं नीचे सूचीबद्ध हैं।",
+    "loading": "टैरिफ योजनाएं लोड हो रही हैं",
+    "pleaseWait": "कृपया प्रतीक्षा करें जब तक टैरिफ योजनाएं प्राप्त की जाती हैं।",
+    "noPlansFound": "कोई टैरिफ योजना नहीं मिली",
+    "noPlansDesc": "परिवारों को बिल करना शुरू करने के लिए अपनी पहली टैरिफ योजना बनाएं।",
+    "stats": {
+      "totalTitle": "कुल योजनाएं",
+      "totalDesc": "उपलब्ध टैरिफ योजनाएं",
+      "activeTitle": "सक्रिय योजनाएं",
+      "activeDesc": "वर्तमान में कॉन्फ़िगर की गई",
+      "highestTitle": "उच्चतम दर",
+      "highestDesc": "प्रति इकाई दर",
+      "latestTitle": "नवीनतम योजना",
+      "noPlansYet": "अभी तक कोई योजना नहीं"
+    },
+    "form": {
+      "updateTitle": "टैरिफ योजना अपडेट करें",
+      "registerTitle": "टैरिफ योजना पंजीकृत करें",
+      "desc": "बिलिंग के लिए टैरिफ विवरण कॉन्फ़िगर करें।",
+      "close": "बंद करें",
+      "planName": "योजना का नाम",
+      "fixedCharge": "निश्चित शुल्क",
+      "effectiveFrom": "प्रभावी तिथि से",
+      "effectiveTo": "प्रभावी तिथि तक",
+      "description": "विवरण",
+      "descriptionPlaceholder": "टैरिफ विवरण...",
+      "tariffTiers": "टैरिफ स्तर",
+      "addTier": "स्तर जोड़ें",
+      "uptoKl": "अधिकतम (KL)",
+      "uptoKlPlaceholder": "असीमित के लिए खाली छोड़ें",
+      "ratePerKl": "दर / KL",
+      "remove": "हटाएं",
+      "cancel": "रद्द करें",
+      "updating": "अपडेट हो रहा है...",
+      "saving": "सहेजा जा रहा है...",
+      "savePlan": "टैरिफ योजना सहेजें"
+    },
+    "table": {
+      "planName": "योजना का नाम",
+      "tariffSlabs": "टैरिफ स्लैब",
+      "fixedCharge": "निश्चित शुल्क",
+      "effective": "प्रभावी",
+      "actions": "कार्रवाइयाँ",
+      "klUnit": "KL",
+      "edit": "संपादित करें",
+      "delete": "हटाएं"
+    },
+    "deleteDialog": {
+      "title": "टैरिफ योजना हटाएं",
+      "message": "क्या आप वाकई इस टैरिफ योजना को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
+      "confirm": "हटाएं",
+      "cancel": "रद्द करें"
+    },
+    "toasts": {
+      "loadError": "टैरिफ योजनाएं लोड करने में असमर्थ।",
+      "planNameRequired": "योजना का नाम आवश्यक है।",
+      "atLeastOneTier": "कम से कम एक टैरिफ स्तर जोड़ें।",
+      "tierRateRequired": "प्रत्येक स्तर की एक दर होनी चाहिए।",
+      "fixedChargeRequired": "निश्चित शुल्क आवश्यक है।",
+      "fixedChargeNegative": "निश्चित शुल्क नकारात्मक नहीं हो सकता।",
+      "effectiveFromRequired": "प्रभावी तिथि से आवश्यक है।",
+      "effectiveToRequired": "प्रभावी तिथि तक आवश्यक है।",
+      "effectiveToAfterFrom": "प्रभावी तिथि तक, प्रभावी तिथि से के बाद होनी चाहिए।",
+      "updating": "टैरिफ योजना अपडेट हो रही है...",
+      "creating": "टैरिफ योजना बनाई जा रही है...",
+      "updateSuccess": "टैरिफ योजना सफलतापूर्वक अपडेट की गई।",
+      "createSuccess": "टैरिफ योजना सफलतापूर्वक बनाई गई।",
+      "updateError": "टैरिफ योजना अपडेट करने में विफल।",
+      "createError": "टैरिफ योजना बनाने में विफल।",
+      "deleting": "टैरिफ योजना हटाई जा रही है...",
+      "deleteSuccess": "टैरिफ योजना सफलतापूर्वक हटा दी गई।",
+      "deleteError": "टैरिफ योजना हटाने में विफल।"
+    }
+  },
+  "billingCycles": {
+    "pageTitle": "बिलिंग चक्र प्रबंधन",
+    "pageDesc": "अपार्टमेंट बिलिंग चक्र और असाइन किए गए टैरिफ योजनाओं को प्रबंधित करें।",
+    "searchPlaceholder": "बिलिंग चक्र खोजें...",
+    "addBillingCycle": "बिलिंग चक्र जोड़ें",
+    "recordsTitle": "बिलिंग चक्र रिकॉर्ड",
+    "recordsSubtitle": "सभी बिलिंग चक्र नीचे सूचीबद्ध हैं।",
+    "loading": "बिलिंग चक्र लोड हो रहे हैं",
+    "pleaseWait": "कृपया प्रतीक्षा करें जब तक बिलिंग डेटा प्राप्त किया जाता है।",
+    "noCyclesFound": "कोई बिलिंग चक्र नहीं मिला",
+    "noCyclesDesc": "अपार्टमेंट बिल ट्रैक करना शुरू करने के लिए अपना पहला बिलिंग चक्र बनाएं।",
+    "stats": {
+      "totalTitle": "बिलिंग चक्र",
+      "totalDesc": "कुल बिलिंग रिकॉर्ड",
+      "openTitle": "खुले चक्र",
+      "openDesc": "वर्तमान में सक्रिय",
+      "paidTitle": "भुगतान किए गए चक्र",
+      "paidDesc": "पूर्ण किए गए भुगतान",
+      "latestTitle": "नवीनतम चक्र",
+      "noCycles": "कोई बिलिंग चक्र नहीं"
+    },
+    "form": {
+      "updateTitle": "बिलिंग चक्र अपडेट करें",
+      "createTitle": "बिलिंग चक्र बनाएं",
+      "desc": "बिलिंग चक्र विवरण कॉन्फ़िगर करें।",
+      "close": "बंद करें",
+      "apartment": "अपार्टमेंट",
+      "selectApartment": "अपार्टमेंट चुनें",
+      "tariffPlan": "टैरिफ योजना",
+      "selectTariffPlan": "टैरिफ योजना चुनें",
+      "startDate": "प्रारंभ तिथि",
+      "endDate": "समाप्ति तिथि",
+      "status": "स्थिति",
+      "cancel": "रद्द करें",
+      "updating": "अपडेट हो रहा है...",
+      "saving": "सहेजा जा रहा है..."
+    },
+    "table": {
+      "apartment": "अपार्टमेंट",
+      "tariffPlan": "टैरिफ योजना",
+      "period": "अवधि",
+      "status": "स्थिति",
+      "actions": "कार्रवाइयाँ",
+      "edit": "संपादित करें",
+      "delete": "हटाएं"
+    },
+    "deleteDialog": {
+      "title": "बिलिंग चक्र हटाएं",
+      "message": "क्या आप वाकई इस बिलिंग चक्र को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
+      "confirm": "हटाएं",
+      "cancel": "रद्द करें"
+    },
+    "toasts": {
+      "loadError": "बिलिंग डेटा लोड करने में असमर्थ।",
+      "selectApartment": "एक अपार्टमेंट चुनें।",
+      "startDateRequired": "प्रारंभ तिथि आवश्यक है।",
+      "endDateRequired": "समाप्ति तिथि आवश्यक है।",
+      "endAfterStart": "समाप्ति तिथि प्रारंभ तिथि के बाद होनी चाहिए।",
+      "updating": "बिलिंग चक्र अपडेट हो रहा है...",
+      "creating": "बिलिंग चक्र बनाया जा रहा है...",
+      "updateSuccess": "बिलिंग चक्र सफलतापूर्वक अपडेट किया गया।",
+      "createSuccess": "बिलिंग चक्र सफलतापूर्वक बनाया गया।",
+      "updateError": "बिलिंग चक्र अपडेट करने में विफल।",
+      "createError": "बिलिंग चक्र बनाने में विफल।",
+      "deleting": "बिलिंग चक्र हटाया जा रहा है...",
+      "deleteSuccess": "बिलिंग चक्र सफलतापूर्वक हटा दिया गया।",
+      "deleteError": "बिलिंग चक्र हटाने में विफल।"
+    }
+  },
   "profile": {
     "pageTitle": "मेरी प्रोफ़ाइल",
     "pageSubtitle": "अपनी व्यक्तिगत जानकारी देखें और अपडेट करें।",
@@ -646,7 +934,74 @@
       "generateError": "चालान जनरेट करने में असमर्थ।"
     }
   },
-  "bulkWaterPurchases": {},
+  "bulkWaterPurchases": {
+    "pageTitle": "थोक जल खरीद",
+    "pageDesc": "टैंकर और नगरपालिका जल खरीद को दर्ज और प्रबंधित करें।",
+    "searchPlaceholder": "आपूर्तिकर्ता, स्रोत या अपार्टमेंट खोजें...",
+    "addPurchase": "खरीद जोड़ें",
+    "recordsTitle": "थोक जल खरीद",
+    "recordsSubtitle": "टैंकर और नगरपालिका जल खरीद को दर्ज और प्रबंधित करें।",
+    "noPurchasesFound": "कोई खरीद नहीं मिली",
+    "noPurchasesDesc": "अपनी पहली थोक जल खरीद दर्ज करें।",
+    "stats": {
+      "purchasesTitle": "खरीद",
+      "purchasesDesc": "दर्ज की गई खरीद",
+      "volumeTitle": "आयतन",
+      "volumeDesc": "खरीदा गया पानी",
+      "costTitle": "कुल लागत",
+      "costDesc": "कुल व्यय",
+      "rateTitle": "औसत दर",
+      "rateDesc": "औसत खरीद दर"
+    },
+    "table": {
+      "date": "तिथि",
+      "apartment": "अपार्टमेंट",
+      "billingCycle": "बिलिंग चक्र",
+      "supplier": "आपूर्तिकर्ता",
+      "source": "स्रोत",
+      "volume": "आयतन",
+      "unitCost": "इकाई लागत",
+      "totalCost": "कुल लागत",
+      "actions": "कार्रवाइयाँ",
+      "tanker": "टैंकर",
+      "municipal": "नगरपालिका",
+      "klUnit": "KL",
+      "purchases": "खरीद"
+    },
+    "modal": {
+      "editTitle": "खरीद संपादित करें",
+      "addTitle": "खरीद जोड़ें",
+      "desc": "थोक जल खरीद दर्ज करें।",
+      "close": "बंद करें",
+      "apartment": "अपार्टमेंट",
+      "selectApartment": "अपार्टमेंट चुनें",
+      "billingCycle": "बिलिंग चक्र",
+      "selectBillingCycle": "बिलिंग चक्र चुनें",
+      "selectApartmentFirst": "पहले अपार्टमेंट चुनें",
+      "purchaseDate": "खरीद तिथि",
+      "source": "स्रोत",
+      "volume": "आयतन (KL)",
+      "unitCost": "इकाई लागत",
+      "supplier": "आपूर्तिकर्ता",
+      "cancel": "रद्द करें",
+      "updatePurchase": "खरीद अपडेट करें",
+      "savePurchase": "खरीद सहेजें"
+    },
+    "deleteDialog": {
+      "title": "खरीद हटाएं?",
+      "message": "यह खरीद रिकॉर्ड स्थायी रूप से हटा दिया जाएगा। यह क्रिया पूर्ववत नहीं की जा सकती।",
+      "confirm": "हटाएं",
+      "cancel": "रद्द करें"
+    },
+    "toasts": {
+      "loadError": "खरीद लोड करने में असमर्थ।",
+      "updateSuccess": "खरीद सफलतापूर्वक अपडेट की गई।",
+      "createSuccess": "खरीद सफलतापूर्वक बनाई गई।",
+      "saveError": "खरीद सहेजने में असमर्थ।",
+      "deleteSuccess": "खरीद हटा दी गई।",
+      "deleteError": "खरीद हटाने में असमर्थ।"
+    }
+  },
   "focusPanel": {
     "todaysFocus": "आज का फोकस",
     "pickUpWhereYouLeftOff": "जहां आपने छोड़ा था वहीं से जारी रखें।",

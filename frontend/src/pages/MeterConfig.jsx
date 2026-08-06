@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getHouseholds } from "../services/householdService";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import ConfirmDialog from "../components/ConfirmDialog";
 
 import {
@@ -31,6 +32,7 @@ const emptyForm = {
 };
 
 function MeterConfig() {
+  const { t } = useTranslation();
   const [meters, setMeters] = useState([]);
   const [households, setHouseholds] = useState([]); 
   const [query, setQuery] = useState("");
@@ -58,7 +60,7 @@ function MeterConfig() {
 
   } catch (error) {
     console.error(error);
-    toast.error("Unable to load meters.");
+    toast.error(t("meterConfig.toasts.loadError"));
     setMeters([]);
 
   }
@@ -138,7 +140,7 @@ function MeterConfig() {
     !form.householdId ||
     !form.installedDate
   ) {
-    toast.error("Please complete all meter details.");
+    toast.error(t("meterConfig.toasts.completeDetails"));
     return;
   }
 
@@ -150,20 +152,20 @@ function MeterConfig() {
   };
 
   const loadingToast = toast.loading(
-    editingId ? "Updating meter..." : "Creating meter..."
+    editingId ? t("meterConfig.toasts.updating") : t("meterConfig.toasts.creating")
   );
 
   try {
     if (editingId) {
       await updateMeter(editingId, meterPayload);
 
-      toast.success("Meter updated successfully.", {
+      toast.success(t("meterConfig.toasts.updateSuccess"), {
         id: loadingToast,
       });
     } else {
       await createMeter(meterPayload);
 
-      toast.success("Meter created successfully.", {
+      toast.success(t("meterConfig.toasts.createSuccess"), {
         id: loadingToast,
       });
     }
@@ -176,8 +178,8 @@ function MeterConfig() {
 
     toast.error(
       editingId
-        ? "Unable to update meter."
-        : "Unable to create meter.",
+        ? t("meterConfig.toasts.updateError")
+        : t("meterConfig.toasts.createError"),
       {
         id: loadingToast,
       }
@@ -194,14 +196,14 @@ function MeterConfig() {
       return;
     }
 
-    const loadingToast = toast.loading("Deleting meter...");
+    const loadingToast = toast.loading(t("meterConfig.toasts.deleting"));
 
     try {
       await deleteMeter(meterToDelete.id);
 
       await loadMeters();
 
-      toast.success("Meter deleted successfully.", {
+      toast.success(t("meterConfig.toasts.deleteSuccess"), {
         id: loadingToast,
       });
 
@@ -210,7 +212,7 @@ function MeterConfig() {
     } catch (error) {
       console.error(error);
 
-      toast.error("Unable to delete meter.", {
+      toast.error(t("meterConfig.toasts.deleteError"), {
         id: loadingToast,
       });
     }
@@ -218,11 +220,11 @@ function MeterConfig() {
 
   return (
     <AdminPageShell
-      title="Meter Configuration"
-      description="Assign and manage water meters for registered households."
+      title={t("meterConfig.pageTitle")}
+      description={t("meterConfig.pageDesc")}
       searchValue={query}
       onSearchChange={setQuery}
-      searchPlaceholder="Search meter, apartment or flat..."
+      searchPlaceholder={t("meterConfig.searchPlaceholder")}
       action={
         <button
           type="button"
@@ -230,7 +232,7 @@ function MeterConfig() {
           onClick={openAddModal}
         >
           <Plus size={18} />
-          Add Meter
+          {t("meterConfig.addMeter")}
         </button>
       }
     >
@@ -241,7 +243,7 @@ function MeterConfig() {
           </div>
 
           <div>
-            <p>Total Meters</p>
+            <p>{t("meterConfig.stats.totalTitle")}</p>
             <h2>{meters.length}</h2>
           </div>
         </article>
@@ -252,7 +254,7 @@ function MeterConfig() {
           </div>
 
           <div>
-            <p>Active Meters</p>
+            <p>{t("meterConfig.stats.activeTitle")}</p>
             <h2>{activeMeters}</h2>
           </div>
         </article>
@@ -263,7 +265,7 @@ function MeterConfig() {
           </div>
 
           <div>
-            <p>Inactive Meters</p>
+            <p>{t("meterConfig.stats.inactiveTitle")}</p>
             <h2>{inactiveMeters}</h2>
           </div>
         </article>
@@ -274,7 +276,7 @@ function MeterConfig() {
           </div>
 
           <div>
-            <p>Digital Meters</p>
+            <p>{t("meterConfig.stats.digitalTitle")}</p>
             <h2>{digitalMeters}</h2>
           </div>
         </article>
@@ -283,8 +285,8 @@ function MeterConfig() {
       <section className="mg-panel">
         <div className="mg-toolbar">
           <div>
-            <h2>Configured Meters</h2>
-            <p>View household meter assignment and status.</p>
+            <h2>{t("meterConfig.recordsTitle")}</h2>
+            <p>{t("meterConfig.recordsSubtitle")}</p>
           </div>
 
           <select
@@ -292,9 +294,9 @@ function MeterConfig() {
             value={statusFilter}
             onChange={(event) => setStatusFilter(event.target.value)}
           >
-            <option value="All">All Status</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
+            <option value="All">{t("meterConfig.filters.all")}</option>
+            <option value="Active">{t("meterConfig.filters.active")}</option>
+            <option value="Inactive">{t("meterConfig.filters.inactive")}</option>
           </select>
         </div>
 
@@ -302,13 +304,13 @@ function MeterConfig() {
           <table className="mg-table">
             <thead>
               <tr>
-                <th>Meter Number</th>
-                <th>Apartment</th>
-                <th>Flat</th>
-                <th>Meter Type</th>
-                <th>Installed Date</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>{t("meterConfig.table.meterNumber")}</th>
+                <th>{t("meterConfig.table.apartment")}</th>
+                <th>{t("meterConfig.table.flat")}</th>
+                <th>{t("meterConfig.table.meterType")}</th>
+                <th>{t("meterConfig.table.installedDate")}</th>
+                <th>{t("meterConfig.table.status")}</th>
+                <th>{t("meterConfig.table.actions")}</th>
               </tr>
             </thead>
 
@@ -343,7 +345,7 @@ function MeterConfig() {
                           : "mg-status-pending"
                       }`}
                     >
-                      {meter.active ? "Active" : "Inactive"}
+                      {meter.active ? t("meterConfig.filters.active") : t("meterConfig.filters.inactive")}
                     </span>
                   </td>
 
@@ -359,7 +361,7 @@ function MeterConfig() {
                         type="button"
                         className="mg-action-button"
                         onClick={() => openEditModal(meter)}
-                        title="Edit"
+                        title={t("meterConfig.actions.edit")}
                       >
                         <Edit3 size={15} />
                       </button>
@@ -368,7 +370,7 @@ function MeterConfig() {
                         type="button"
                         className="mg-action-button"
                         onClick={() => handleDelete(meter)}
-                        title="Delete"
+                        title={t("meterConfig.actions.delete")}
                       >
                         <Trash2 size={15} />
                       </button>
@@ -388,8 +390,8 @@ function MeterConfig() {
           ) : (
             <div className="mg-empty-state">
               {meters.length === 0
-                ? "No meters have been configured yet."
-                : "No meters match your search."}
+                ? t("meterConfig.noMetersYet")
+                : t("meterConfig.noMetersMatch")}
             </div>
           )}
         </div>
@@ -400,12 +402,12 @@ function MeterConfig() {
           <div className="mg-modal">
             <div className="mg-modal-header">
               <div>
-                <h2>{editingId ? "Edit Meter" : "Add New Meter"}</h2>
+                <h2>{editingId ? t("meterConfig.modal.editTitle") : t("meterConfig.modal.addTitle")}</h2>
 
                 <p>
                   {editingId
-                    ? "Update meter and household assignment."
-                    : "Configure a water meter for a household."}
+                    ? t("meterConfig.modal.editDesc")
+                    : t("meterConfig.modal.addDesc")}
                 </p>
               </div>
 
@@ -421,7 +423,7 @@ function MeterConfig() {
             <form onSubmit={handleSubmit}>
               <div className="mg-form-grid">
                 <div className="mg-form-group">
-                  <label htmlFor="meterNumber">Meter number</label>
+                  <label htmlFor="meterNumber">{t("meterConfig.form.meterNumber")}</label>
 
                   <input
                     id="meterNumber"
@@ -434,7 +436,7 @@ function MeterConfig() {
                 </div>
 
                 <div className="mg-form-group">
-                  <label htmlFor="householdId">Household</label>
+                  <label htmlFor="householdId">{t("meterConfig.form.household")}</label>
 
                   <select
                     id="householdId"
@@ -442,7 +444,7 @@ function MeterConfig() {
                     value={form.householdId}
                     onChange={handleInputChange}
                   >
-                    <option value="">Select Household</option>
+                    <option value="">{t("meterConfig.form.selectHousehold")}</option>
 
                     {households.map((household) => (
                       <option
@@ -456,7 +458,7 @@ function MeterConfig() {
                 </div>
 
                 <div className="mg-form-group">
-                  <label htmlFor="meterType">Meter type</label>
+                  <label htmlFor="meterType">{t("meterConfig.form.meterType")}</label>
 
                   <select
                     id="meterType"
@@ -471,7 +473,7 @@ function MeterConfig() {
 
                 <div className="mg-form-group">
                   <label htmlFor="installednDate">
-                    Installed date
+                    {t("meterConfig.form.installedDate")}
                   </label>
 
                   <input
@@ -491,11 +493,11 @@ function MeterConfig() {
                   className="mg-cancel-button"
                   onClick={closeModal}
                 >
-                  Cancel
+                  {t("meterConfig.form.cancel")}
                 </button>
 
                 <button type="submit" className="mg-primary-button">
-                  {editingId ? "Save Changes" : "Add Meter"}
+                  {editingId ? t("meterConfig.form.saveChanges") : t("meterConfig.addMeter")}
                 </button>
               </div>
             </form>
@@ -504,10 +506,10 @@ function MeterConfig() {
       )}
       <ConfirmDialog
         open={showDeleteDialog}
-        title="Delete Meter"
+        title={t("meterConfig.deleteDialog.title")}
         message={
           meterToDelete
-            ? `Are you sure you want to delete meter "${meterToDelete.meterNumber}"?`
+            ? t("meterConfig.deleteDialog.message", { meterNumber: meterToDelete.meterNumber })
             : ""
         }
         onCancel={() => {

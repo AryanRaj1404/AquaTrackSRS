@@ -3,6 +3,8 @@ import {
     Upload,
 } from "lucide-react";
 
+import { useTranslation } from "react-i18next";
+
 function WaterUsageActions({
 
     billingCycles,
@@ -16,6 +18,8 @@ function WaterUsageActions({
     openAddModal,
 
 }) {
+
+    const { t } = useTranslation();
 
     return (
 
@@ -33,7 +37,7 @@ function WaterUsageActions({
 
                 <option value="">
 
-                    All Billing Cycles
+                    {t("waterUsage.actions.allBillingCycles")}
 
                 </option>
 
@@ -74,7 +78,7 @@ function WaterUsageActions({
 
                 <Upload size={18} />
 
-                Upload CSV
+                {t("waterUsage.actions.uploadCsv")}
 
             </button>
 
@@ -86,7 +90,7 @@ function WaterUsageActions({
 
                 <Plus size={18} />
 
-                Add Reading
+                {t("waterUsage.actions.addReading")}
 
             </button>
 

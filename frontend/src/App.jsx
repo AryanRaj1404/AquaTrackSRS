@@ -19,6 +19,7 @@ import Invoices from "./pages/Invoices";
 import BulkWaterPurchases from "./pages/BulkWaterPurchases";
 import WaterRipples from "./components/WaterRipples";
 import ResidentDashboard from "./pages/ResidentDashboard";
+import Alerts from "./pages/Alerts";
 
 function App() {
   const location = useLocation();

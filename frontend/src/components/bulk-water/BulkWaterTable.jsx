@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 
 import Pagination from "../Pagination";
+import { useTranslation } from "react-i18next";
 
 function BulkWaterTable({
 
@@ -23,6 +24,8 @@ function BulkWaterTable({
 
 }) {
 
+    const { t } = useTranslation();
+
     return (
 
         <div className="mg-table-wrapper">
@@ -33,25 +36,25 @@ function BulkWaterTable({
 
                     <tr>
 
-                        <th>Date</th>
+                        <th>{t("bulkWaterPurchases.table.date")}</th>
 
-                        <th>Apartment</th>
+                        <th>{t("bulkWaterPurchases.table.apartment")}</th>
 
-                        <th>Billing Cycle</th>
+                        <th>{t("bulkWaterPurchases.table.billingCycle")}</th>
 
-                        <th>Supplier</th>
+                        <th>{t("bulkWaterPurchases.table.supplier")}</th>
 
-                        <th>Source</th>
+                        <th>{t("bulkWaterPurchases.table.source")}</th>
 
-                        <th>Volume</th>
+                        <th>{t("bulkWaterPurchases.table.volume")}</th>
 
-                        <th>Unit Cost</th>
+                        <th>{t("bulkWaterPurchases.table.unitCost")}</th>
 
-                        <th>Total Cost</th>
+                        <th>{t("bulkWaterPurchases.table.totalCost")}</th>
 
                         <th className="text-center">
 
-                            Actions
+                            {t("bulkWaterPurchases.table.actions")}
 
                         </th>
 
@@ -112,8 +115,8 @@ function BulkWaterTable({
                                 >
 
                                     {purchase.source === "TANKER"
-                                        ? "Tanker"
-                                        : "Municipal"}
+                                        ? t("bulkWaterPurchases.table.tanker")
+                                        : t("bulkWaterPurchases.table.municipal")}
 
                                 </span>
 
@@ -121,7 +124,7 @@ function BulkWaterTable({
 
                             <td className="font-semibold">
 
-                                {purchase.volumeKl} KL
+                                {purchase.volumeKl} {t("bulkWaterPurchases.table.klUnit")}
 
                             </td>
 
@@ -212,7 +215,7 @@ function BulkWaterTable({
                 pageData={pageData}
                 pageSize={pageData?.size ?? 20}
                 currentCount={purchases.length}
-                label="purchases"
+                label={t("bulkWaterPurchases.table.purchases")}
                 onPrevious={() =>
                     setPage(previous => previous - 1)
                 }
