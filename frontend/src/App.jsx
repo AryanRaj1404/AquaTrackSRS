@@ -66,14 +66,6 @@ function App() {
         }
       />
       <Route
-        path="/alerts"
-        element={
-          <ProtectedRoute role="ADMIN">
-            <Alerts />
-          </ProtectedRoute>
-        }
-      />
-      <Route
         path="/bulk-water-purchases"
         element={
           <ProtectedRoute role="ADMIN">

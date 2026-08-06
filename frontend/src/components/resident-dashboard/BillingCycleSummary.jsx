@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { CalendarDays, Droplets, IndianRupee, Gauge } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 /**
  * Summary card for the household's currently open billing cycle.
@@ -7,6 +8,8 @@ import { CalendarDays, Droplets, IndianRupee, Gauge } from "lucide-react";
  * residentDashboardService.getOverview().
  */
 function BillingCycleSummary({ overview, loading }) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <motion.div
@@ -14,7 +17,7 @@ function BillingCycleSummary({ overview, loading }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="mg-empty-state">Loading billing cycle...</div>
+        <div className="mg-empty-state">{t("residentDashboard.billingCycle.loading")}</div>
       </motion.div>
     );
   }
@@ -30,11 +33,11 @@ function BillingCycleSummary({ overview, loading }) {
     >
       <div className="mg-toolbar">
         <div>
-          <h2>Current Billing Cycle</h2>
+          <h2>{t("residentDashboard.billingCycle.title")}</h2>
           <p>
             {overview?.tariffPlanName
-              ? `Tariff plan: ${overview.tariffPlanName}`
-              : "In-progress usage for this cycle"}
+              ? t("residentDashboard.billingCycle.tariffPlan", { plan: overview.tariffPlanName })
+              : t("residentDashboard.billingCycle.inProgress")}
           </p>
         </div>
 
@@ -47,7 +50,7 @@ function BillingCycleSummary({ overview, loading }) {
 
       {!hasCycle && (
         <div className="mg-empty-state">
-          No billing cycle is currently open for your apartment.
+          {t("residentDashboard.billingCycle.noCycleOpen")}
         </div>
       )}
 
@@ -64,7 +67,7 @@ function BillingCycleSummary({ overview, loading }) {
               <CalendarDays size={16} />
             </div>
             <div>
-              <span className="mg-table-secondary">Cycle period</span>
+              <span className="mg-table-secondary">{t("residentDashboard.billingCycle.cyclePeriod")}</span>
               <p style={{ margin: 0, fontSize: 12, fontWeight: 600 }}>
                 {overview.cycleStartDate} &rarr; {overview.cycleEndDate}
               </p>
@@ -76,7 +79,7 @@ function BillingCycleSummary({ overview, loading }) {
               <Droplets size={16} />
             </div>
             <div>
-              <span className="mg-table-secondary">Consumed so far</span>
+              <span className="mg-table-secondary">{t("residentDashboard.billingCycle.consumedSoFar")}</span>
               <p style={{ margin: 0, fontSize: 12, fontWeight: 600 }}>
                 {overview.cycleConsumptionKl} KL
               </p>
@@ -88,7 +91,7 @@ function BillingCycleSummary({ overview, loading }) {
               <IndianRupee size={16} />
             </div>
             <div>
-              <span className="mg-table-secondary">Estimated cost</span>
+              <span className="mg-table-secondary">{t("residentDashboard.billingCycle.estimatedCost")}</span>
               <p style={{ margin: 0, fontSize: 12, fontWeight: 600 }}>
                 &#8377; {overview.estimatedCost?.toLocaleString("en-IN")}
               </p>
@@ -100,9 +103,9 @@ function BillingCycleSummary({ overview, loading }) {
               <Gauge size={16} />
             </div>
             <div>
-              <span className="mg-table-secondary">Days remaining</span>
+              <span className="mg-table-secondary">{t("residentDashboard.billingCycle.daysRemaining")}</span>
               <p style={{ margin: 0, fontSize: 12, fontWeight: 600 }}>
-                {overview.daysRemaining ?? "-"} day(s)
+                {overview.daysRemaining ?? "-"} {t("residentDashboard.billingCycle.days")}
               </p>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import {
     Loader2,
@@ -37,6 +38,7 @@ import {
 const PAGE_SIZE = 20;
 
 function BulkWaterPurchases() {
+    const { t } = useTranslation();
 
     const [purchases, setPurchases] = useState([]);
 
@@ -130,7 +132,7 @@ const loadData = async () => {
         console.error(error);
 
         toast.error(
-            "Unable to load purchases."
+            t("bulkWaterPurchases.toasts.loadError")
         );
 
     }
@@ -242,7 +244,7 @@ const handleSubmit = async (event) => {
 
             toast.success(
 
-                "Purchase updated successfully."
+                t("bulkWaterPurchases.toasts.updateSuccess")
 
             );
 
@@ -254,7 +256,7 @@ const handleSubmit = async (event) => {
 
             toast.success(
 
-                "Purchase created successfully."
+                t("bulkWaterPurchases.toasts.createSuccess")
 
             );
 
@@ -278,7 +280,7 @@ const handleSubmit = async (event) => {
 
             error.response?.data ||
 
-            "Unable to save purchase."
+            t("bulkWaterPurchases.toasts.saveError")
 
         );
 
@@ -296,7 +298,7 @@ const handleDelete = async () => {
 
         await deletePurchase(purchaseToDelete.id);
 
-        toast.success("Purchase deleted.");
+        toast.success(t("bulkWaterPurchases.toasts.deleteSuccess"));
 
         setShowDeleteDialog(false);
 
@@ -312,7 +314,7 @@ const handleDelete = async () => {
         toast.error(
             error.response?.data?.message ||
             error.response?.data ||
-            "Unable to delete purchase."
+            t("bulkWaterPurchases.toasts.deleteError")
         );
     }
 };
@@ -410,9 +412,9 @@ const filteredBillingCycles = billingCycles.filter(
     <>
 
 <AdminPageShell
-    title="Bulk Water Purchases"
-    description="Record and manage tanker and municipal water purchases."
-    searchPlaceholder="Search supplier, source or apartment..."
+    title={t("bulkWaterPurchases.pageTitle")}
+    description={t("bulkWaterPurchases.pageDesc")}
+    searchPlaceholder={t("bulkWaterPurchases.searchPlaceholder")}
     searchValue={query}
     onSearchChange={setQuery}
     action={
@@ -441,11 +443,11 @@ const filteredBillingCycles = billingCycles.filter(
     <div>
 
         <h2 >
-            Bulk Water Purchases
+            {t("bulkWaterPurchases.recordsTitle")}
         </h2>
 
         <p >
-            Record and manage tanker and municipal water purchases.
+            {t("bulkWaterPurchases.recordsSubtitle")}
         </p>
 
     </div>
@@ -473,9 +475,9 @@ filteredPurchases.length === 0 ?
 
 icon={Truck}
 
-title="No purchases found"
+title={t("bulkWaterPurchases.noPurchasesFound")}
 
-description="Record your first bulk water purchase."
+description={t("bulkWaterPurchases.noPurchasesDesc")}
 
 />
 
@@ -533,10 +535,10 @@ description="Record your first bulk water purchase."
 </AdminPageShell>
 <ConfirmDialog
     open={showDeleteDialog}
-    title="Delete Purchase?"
-    message="This purchase record will be permanently deleted. This action cannot be undone."
-    confirmText="Delete"
-    cancelText="Cancel"
+    title={t("bulkWaterPurchases.deleteDialog.title")}
+    message={t("bulkWaterPurchases.deleteDialog.message")}
+    confirmText={t("bulkWaterPurchases.deleteDialog.confirm")}
+    cancelText={t("bulkWaterPurchases.deleteDialog.cancel")}
     onConfirm={handleDelete}
     onCancel={() => {
         setShowDeleteDialog(false);

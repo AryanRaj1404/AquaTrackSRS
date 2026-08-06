@@ -1,10 +1,8 @@
 import { motion } from "framer-motion";
-import ResponsiveTable from "./ResponsiveTable";
 
 export default function SkeletonTable({ rows = 5 }) {
     return (
         <div className="mg-table-wrapper">
-            <ResponsiveTable>
             <table className="mg-table">
                 <tbody>
                     {[...Array(rows)].map((_, index) => (
@@ -34,7 +32,6 @@ export default function SkeletonTable({ rows = 5 }) {
                     ))}
                 </tbody>
             </table>
-            </ResponsiveTable>
         </div>
     );
 }

@@ -1,4 +1,5 @@
 import { AlertTriangle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function ConfirmDialog({
   open,
@@ -6,9 +7,11 @@ function ConfirmDialog({
   message,
   onConfirm,
   onCancel,
-  confirmText = "Delete",
-  cancelText = "Cancel",
+  confirmText,
+  cancelText,
 }) {
+  const { t } = useTranslation();
+
   if (!open) {
     return null;
   }
@@ -42,7 +45,7 @@ function ConfirmDialog({
             className="mg-cancel-button"
             onClick={onCancel}
           >
-            {cancelText}
+            {cancelText || t("confirmDialog.cancel")}
           </button>
 
           <button
@@ -53,7 +56,7 @@ function ConfirmDialog({
             }}
             onClick={onConfirm}
           >
-            {confirmText}
+            {confirmText || t("confirmDialog.delete")}
           </button>
         </div>
       </div>

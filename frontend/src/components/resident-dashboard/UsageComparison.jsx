@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import {
   ResponsiveContainer,
   BarChart,
@@ -21,6 +22,7 @@ import residentDashboardService from "../../services/residentDashboardService";
  * page can pass that flag into WaterTipsFeed.
  */
 function UsageComparison({ onLoaded }) {
+  const { t } = useTranslation();
   const [comparison, setComparison] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,7 +39,7 @@ function UsageComparison({ onLoaded }) {
           );
         }
       } catch {
-        if (!ignore) toast.error("Could not load usage comparison");
+        if (!ignore) toast.error(t("residentDashboard.usageComparison.couldNotLoad"));
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -52,8 +54,8 @@ function UsageComparison({ onLoaded }) {
 
   const chartData = comparison
     ? [
-        { name: "You", kl: comparison.householdConsumptionKl },
-        { name: "Building Avg", kl: comparison.buildingAverageKl },
+        { name: t("residentDashboard.usageComparison.you"), kl: comparison.householdConsumptionKl },
+        { name: t("residentDashboard.usageComparison.buildingAvg"), kl: comparison.buildingAverageKl },
       ]
     : [];
 
@@ -69,16 +71,16 @@ function UsageComparison({ onLoaded }) {
     >
       <div className="mg-toolbar">
         <div>
-          <h2>You vs. Building Average</h2>
-          <p>{comparison?.cycleLabel || "Current billing cycle"}</p>
+          <h2>{t("residentDashboard.usageComparison.title")}</h2>
+          <p>{comparison?.cycleLabel || t("residentDashboard.usageComparison.currentCycle")}</p>
         </div>
       </div>
 
-      {loading && <div className="mg-empty-state">Loading comparison...</div>}
+      {loading && <div className="mg-empty-state">{t("residentDashboard.usageComparison.loading")}</div>}
 
       {!loading && comparison && comparison.householdsCompared === 0 && (
         <div className="mg-empty-state">
-          Not enough data yet to compare against the building.
+          {t("residentDashboard.usageComparison.notEnoughData")}
         </div>
       )}
 
@@ -91,7 +93,7 @@ function UsageComparison({ onLoaded }) {
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#8792a2" }} />
                 <YAxis tick={{ fontSize: 10, fill: "#8792a2" }} />
                 <Tooltip
-                  formatter={(value) => [`${value} KL`, "Consumption"]}
+                  formatter={(value) => [`${value} KL`, t("residentDashboard.consumptionTrend.consumption")]}
                   contentStyle={{ fontSize: 12, borderRadius: 8 }}
                 />
                 <Bar dataKey="kl" radius={[6, 6, 0, 0]}>
@@ -111,8 +113,8 @@ function UsageComparison({ onLoaded }) {
             }}
           >
             {isHigh
-              ? "You're using more water than the building average this cycle."
-              : "You're at or below the building average this cycle. Nice work!"}
+              ? t("residentDashboard.usageComparison.aboveAverage")
+              : t("residentDashboard.usageComparison.atOrBelowAverage")}
           </p>
         </>
       )}

@@ -197,4 +197,18 @@ public interface WaterUsageLogRepository extends JpaRepository<WaterUsageLog, Lo
     );
 
     long countByHousehold_Apartment_Id(Long apartmentId);
+
+    Page<WaterUsageLog> findByHousehold_Apartment_Id(
+        Long apartmentId,
+        Pageable pageable
+);
+
+Page<WaterUsageLog>
+findByHousehold_Apartment_IdAndHousehold_FlatNumberContainingIgnoreCaseOrHousehold_Apartment_IdAndHousehold_Apartment_NameContainingIgnoreCase(
+        Long apartmentId1,
+        String flatNumber,
+        Long apartmentId2,
+        String apartmentName,
+        Pageable pageable
+);
 }

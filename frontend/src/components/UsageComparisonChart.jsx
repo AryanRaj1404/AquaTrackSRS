@@ -26,7 +26,6 @@ import AlertsPanel from "../components/AlertsPanel";
 import Charts from "../components/Charts";
 import UsageComparisonChart from "../components/UsageComparisonChart";
 import WaterTips from "../components/WaterTips";
-import ResponsiveTable from "./ResponsiveTable";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -132,8 +131,8 @@ function Dashboard() {
   if (!dashboard) {
     return (
         <AdminPageShell
-            title="Dashboard Overview"
-            description="Loading dashboard..."
+            title={t("dashboard.overview")}
+            description={t("dashboard.loadingDashboard")}
         >
             <section className="mg-summary-grid">
                 {Array.from({ length: 12 }).map((_, i) => (
@@ -150,11 +149,11 @@ function Dashboard() {
 
   return (
     <AdminPageShell
-      title="Dashboard Overview"
-      description="Monitor apartments, households, meters and water usage across the system."
+      title={t("dashboard.overview")}
+      description={t("dashboard.registeredHouseholdsDesc")}
       searchValue={query}
       onSearchChange={setQuery}
-      searchPlaceholder="Search households or apartments..."
+      searchPlaceholder={t("dashboard.searchHouseholdsApartments")}
       action={
         <button
           type="button"
@@ -168,100 +167,100 @@ function Dashboard() {
     >
       <section className="mg-summary-grid">        <StatCard
             icon={Building2}
-            title="Apartments"
+            title={t("dashboard.apartments")}
             value={dashboard?.totalApartments ?? 0}
             animatedValue
-            description="Registered apartments"
+            description={t("dashboard.registeredApartments")}
         />
 
         <StatCard
             icon={Users}
-            title="Households"
+            title={t("dashboard.households")}
             value={dashboard?.totalHouseholds ?? 0}
             animatedValue
-            description="Registered households"
+            description={t("dashboard.registeredHouseholds")}
         />
 
         <StatCard
             icon={Users}
-            title="Users"
+            title={t("dashboard.users")}
             value={dashboard?.totalUsers ?? 0}
             animatedValue
-            description="Registered users"
+            description={t("dashboard.registeredUsers")}
         />
 
         <StatCard
             icon={Droplets}
-            title="Water Consumed"
+            title={t("dashboard.waterConsumed")}
             value={`${Number(
                 dashboard?.totalWaterConsumedKl ?? 0
             ).toFixed(2)} KL`}
             animatedValue
-            description="Household consumption"
+            description={t("dashboard.householdConsumption")}
         />
         <StatCard
             icon={Droplets}
-            title="Bulk Water"
+            title={t("dashboard.bulkWater")}
             value={`${Number(dashboard?.totalBulkWaterPurchasedKl ?? 0).toFixed(2)} KL`}
             animatedValue
-            description="Purchased water"
+            description={t("dashboard.purchasedWater")}
         />
 
         <StatCard
             icon={Droplets}
-            title="Remaining Water"
+            title={t("dashboard.remainingWater")}
             value={`${Number(dashboard?.waterLossKl ?? 0).toFixed(2)} KL`}
             animatedValue
-            description={`${dashboard?.waterLossPercentage ?? 0}% loss`}
+            description={`${dashboard?.waterLossPercentage ?? 0}${t("dashboard.lossSuffix")}`}
         />
 
         <StatCard
             icon={IndianRupee}
-            title="Revenue"
+            title={t("dashboard.totalRevenue")}
             value={`₹ ${Number(
                 dashboard?.totalRevenue ?? 0
             ).toLocaleString("en-IN")}`}
             animatedValue
-            description="Invoice value"
+            description={t("dashboard.revenuePerformance")}
         />
 
         <StatCard
             icon={Wallet}
-            title="Collection"
+            title={t("dashboard.collection")}
             value={`${Number(dashboard?.collectionRate ?? 0).toFixed(1)}%`}
             animatedValue
-            description="Payment collection"
+            description={t("dashboard.paymentCollection")}
         />
         <StatCard
             icon={Receipt}
-            title="Generated"
+            title={t("dashboard.generated")}
             value={dashboard?.generatedInvoices ?? 0}
             animatedValue
-            description="Generated invoices"
+            description={t("dashboard.generatedInvoices")}
         />
 
         <StatCard
             icon={BadgeCheck}
-            title="Paid"
+            title={t("dashboard.paid")}
             value={dashboard?.paidInvoices ?? 0}
             animatedValue
-            description="Paid invoices"
+            description={t("dashboard.paidInvoices")}
         />
 
         <StatCard
             icon={Clock3}
-            title="Pending"
+            title={t("dashboard.pending")}
             value={dashboard?.pendingInvoices ?? 0}
             animatedValue
-            description="Pending invoices"
+            description={t("dashboard.pendingInvoices")}
         />
 
         <StatCard
             icon={TriangleAlert}
-            title="Overdue"
+            title={t("dashboard.overdue")}
             value={dashboard?.overdueInvoices ?? 0}
             animatedValue
-            description="Overdue invoices"
+            description={t("dashboard.overdueInvoices")}
         />
       </section>
 
@@ -277,7 +276,6 @@ function Dashboard() {
 
         <div className="mg-table-wrapper">
           {filteredHouseholds.length > 0 ? (
-            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
@@ -301,7 +299,7 @@ function Dashboard() {
 
                     <td>{household.apartmentName}</td>
 
-                    <td>{household.residentName ?? "Not Assigned"}</td>
+                    <td>{household.residentName ?? t("dashboard.notAssigned")}</td>
 
                     <td>{household.occupancy}</td>
 
@@ -314,12 +312,11 @@ function Dashboard() {
                 ))}
               </tbody>
             </table>
-            </ResponsiveTable>
           ) : (
             <EmptyState
               icon={Users}
-              title="No residents found"
-              description="Resident data will appear here after registration or backend API connection."
+              title={t("dashboard.noResidentsFound")}
+              description={t("dashboard.noResidentsDesc")}
             />
           )}
         </div>
@@ -346,7 +343,6 @@ function Dashboard() {
 
         <div className="mg-table-wrapper">
           {apartments.length > 0 ? (
-            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
@@ -377,12 +373,11 @@ function Dashboard() {
                   ))}
               </tbody>
             </table>
-            </ResponsiveTable>
           ) : (
             <EmptyState
               icon={Building2}
-              title="No apartments found"
-              description="Click Add Apartment to create a new apartment after confirming backend fields."
+              title={t("dashboard.noApartmentsFound")}
+              description={t("dashboard.noApartmentsDesc")}
             />
           )}
         </div>
@@ -399,7 +394,6 @@ function Dashboard() {
 
         <div className="mg-table-wrapper">
           {recentReadings.length > 0 ? (
-            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
@@ -432,12 +426,11 @@ function Dashboard() {
                 ))}
               </tbody>
             </table>
-            </ResponsiveTable>
           ) : (
             <EmptyState
               icon={Droplets}
-              title="No water usage logs found"
-              description="Water usage records will appear here after they are added."            />
+              title={t("dashboard.noUsageLogsFound")}
+              description={t("dashboard.noUsageLogsDesc")}            />
           )}
         </div>
       </section>

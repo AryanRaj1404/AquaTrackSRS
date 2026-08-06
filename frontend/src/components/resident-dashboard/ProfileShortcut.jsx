@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { CircleUser, Home, Gauge, ChevronRight } from "lucide-react";
 
 /**
@@ -7,6 +8,7 @@ import { CircleUser, Home, Gauge, ChevronRight } from "lucide-react";
  * their household and meter details from the overview payload.
  */
 function ProfileShortcut({ overview, loading }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
 
@@ -19,12 +21,12 @@ function ProfileShortcut({ overview, loading }) {
     >
       <div className="mg-toolbar">
         <div>
-          <h2>Household & Profile</h2>
-          <p>Your account details at a glance</p>
+          <h2>{t("residentDashboard.profileShortcut.title")}</h2>
+          <p>{t("residentDashboard.profileShortcut.subtitle")}</p>
         </div>
       </div>
 
-      {loading && <div className="mg-empty-state">Loading...</div>}
+      {loading && <div className="mg-empty-state">{t("residentDashboard.profileShortcut.loading")}</div>}
 
       {!loading && (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -33,9 +35,9 @@ function ProfileShortcut({ overview, loading }) {
               <CircleUser size={16} />
             </div>
             <div>
-              <span className="mg-table-secondary">Signed in as</span>
+              <span className="mg-table-secondary">{t("residentDashboard.profileShortcut.signedInAs")}</span>
               <p style={{ margin: 0, fontSize: 12, fontWeight: 600 }}>
-                {username || "Resident"}
+                {username || t("residentDashboard.profileShortcut.resident")}
               </p>
             </div>
           </div>
@@ -45,11 +47,11 @@ function ProfileShortcut({ overview, loading }) {
               <Home size={16} />
             </div>
             <div>
-              <span className="mg-table-secondary">Household</span>
+              <span className="mg-table-secondary">{t("residentDashboard.profileShortcut.household")}</span>
               <p style={{ margin: 0, fontSize: 12, fontWeight: 600 }}>
                 {overview?.flatNumber
                   ? `${overview.flatNumber} — ${overview.apartmentName}`
-                  : "Not linked to a household"}
+                  : t("residentDashboard.profileShortcut.notLinked")}
               </p>
             </div>
           </div>
@@ -59,11 +61,11 @@ function ProfileShortcut({ overview, loading }) {
               <Gauge size={16} />
             </div>
             <div>
-              <span className="mg-table-secondary">Meter</span>
+              <span className="mg-table-secondary">{t("residentDashboard.profileShortcut.meter")}</span>
               <p style={{ margin: 0, fontSize: 12, fontWeight: 600 }}>
                 {overview?.meterNumber
                   ? `${overview.meterNumber} (${overview.meterType})`
-                  : "No meter on record"}
+                  : t("residentDashboard.profileShortcut.noMeter")}
               </p>
             </div>
           </div>
@@ -74,7 +76,7 @@ function ProfileShortcut({ overview, loading }) {
             onClick={() => navigate("/profile")}
             style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
           >
-            View Full Profile
+            {t("residentDashboard.profileShortcut.viewFullProfile")}
             <ChevronRight size={14} />
           </button>
         </div>

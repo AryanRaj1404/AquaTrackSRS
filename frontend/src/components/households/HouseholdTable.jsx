@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from "react-i18next";
 
-import { 
-  ChevronDown,
-  Check
- } from "lucide-react";
-import ResponsiveTable from '../ResponsiveTable';
+
 
 function HouseholdTable(
     {
@@ -19,44 +16,22 @@ function HouseholdTable(
 
 }
 ) {
-
-    const [showApartmentFilter, setShowApartmentFilter] = useState(false);
-
-     useEffect(() => {
-        setShowApartmentFilter(false);
-    }, []);
-
-    useEffect(() => {
-    
-        const handleClick = () => {
-    
-            setShowApartmentFilter(false);
-    
-        };
-    
-        window.addEventListener("click", handleClick);
-    
-        return () =>
-            window.removeEventListener("click", handleClick);
-    
-    }, []);
+    const { t } = useTranslation();
 
     return (
 
         <div className="mg-table-wrapper">
-          <ResponsiveTable>
             <table className="mg-table">
               <thead>
               <tr>
-                <th>Flat Number</th>
-                <th>Apartment </th>
-                <th>Flat Size</th>
-                <th>Occupancy</th>
-                <th>Resident</th>
-                <th>Actions</th>
-              </tr>
+                <th>{t("households.table.colFlatNumber")}</th>
+                <th>{t("households.table.colApartment")}</th>
+                <th>{t("households.table.colFlatSize")}</th>
+                <th>{t("households.table.colOccupancy")}</th>
+                <th>{t("households.table.colResident")}</th>
+                <th>{t("households.table.colActions")}</th>
+                </tr>
               </thead>
-
               <tbody>
                 {households.map((household) => (
                   <tr className="hover:bg-slate-50 transition-colors"
@@ -79,7 +54,7 @@ function HouseholdTable(
                         household.residentName
                       ) : (
                         <span className="mg-badge">
-                          Not Assigned
+                          {t("households.table.notAssigned")}
                         </span>
                       )}
                     </td>
@@ -93,7 +68,7 @@ function HouseholdTable(
                           type="button"
                           onClick={() => handleRemoveResident(household)}
                         >
-                          Remove
+                          {t("households.table.remove")}
                         </button>
 
                       ) : (
@@ -103,7 +78,7 @@ function HouseholdTable(
                           type="button"
                           onClick={() => openAssignResident(household)}
                         >
-                          Assign
+                          {t("households.table.assign")}
                         </button>
 
                       )}
@@ -112,9 +87,9 @@ function HouseholdTable(
 
                   </tr>
                 ))}
+                
               </tbody>
             </table>
-            </ResponsiveTable>
           </div>
 
     );

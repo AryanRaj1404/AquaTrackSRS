@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import {
   ResponsiveContainer,
   LineChart,
@@ -17,6 +18,7 @@ import residentDashboardService from "../../services/residentDashboardService";
  * Daily (last 30 days) / Monthly (last 12 months) toggle.
  */
 function ConsumptionTrendChart() {
+  const { t } = useTranslation();
   const [range, setRange] = useState("daily");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ function ConsumptionTrendChart() {
           );
         }
       } catch {
-        if (!ignore) toast.error("Could not load consumption trend");
+        if (!ignore) toast.error(t("residentDashboard.consumptionTrend.couldNotLoad"));
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -62,8 +64,8 @@ function ConsumptionTrendChart() {
     >
       <div className="mg-toolbar">
         <div>
-          <h2>Consumption Trend</h2>
-          <p>Your household's water usage over time (KL)</p>
+          <h2>{t("residentDashboard.consumptionTrend.title")}</h2>
+          <p>{t("residentDashboard.consumptionTrend.subtitle")}</p>
         </div>
 
         <div style={{ display: "flex", gap: 8 }}>
@@ -74,7 +76,7 @@ function ConsumptionTrendChart() {
             }
             onClick={() => setRange("daily")}
           >
-            Daily
+            {t("residentDashboard.consumptionTrend.daily")}
           </button>
           <button
             type="button"
@@ -85,15 +87,15 @@ function ConsumptionTrendChart() {
             }
             onClick={() => setRange("monthly")}
           >
-            Monthly
+            {t("residentDashboard.consumptionTrend.monthly")}
           </button>
         </div>
       </div>
 
-      {loading && <div className="mg-empty-state">Loading trend...</div>}
+      {loading && <div className="mg-empty-state">{t("residentDashboard.consumptionTrend.loading")}</div>}
 
       {!loading && data.length === 0 && (
-        <div className="mg-empty-state">No usage data available yet</div>
+        <div className="mg-empty-state">{t("residentDashboard.consumptionTrend.noData")}</div>
       )}
 
       {!loading && data.length > 0 && (
@@ -108,7 +110,7 @@ function ConsumptionTrendChart() {
               />
               <YAxis tick={{ fontSize: 10, fill: "#8792a2" }} />
               <Tooltip
-                formatter={(value) => [`${value} KL`, "Consumption"]}
+                formatter={(value) => [`${value} KL`, t("residentDashboard.consumptionTrend.consumption")]}
                 contentStyle={{ fontSize: 12, borderRadius: 8 }}
               />
               <Line

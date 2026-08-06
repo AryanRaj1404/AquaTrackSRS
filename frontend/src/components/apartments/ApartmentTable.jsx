@@ -1,7 +1,7 @@
 import { Building2, Loader2 } from "lucide-react";
 import EmptyState from "../EmptyState";
 import { memo } from "react";
-import ResponsiveTable from "../ResponsiveTable";
+import { useTranslation } from "react-i18next";
 
 function ApartmentTable({
 
@@ -12,6 +12,8 @@ function ApartmentTable({
     onViewOverview,
 
 }) {
+
+    const { t } = useTranslation();
 
     if (isLoading) {
 
@@ -24,10 +26,10 @@ function ApartmentTable({
                         className="animate-spin"
                     />
 
-                    <h3>Loading apartments</h3>
+                    <h3>{t("apartments.loadingApartments")}</h3>
 
                     <p>
-                        Please wait while apartment data is fetched.
+                        {t("apartments.pleaseWaitFetch")}
                     </p>
 
                 </div>
@@ -44,10 +46,10 @@ function ApartmentTable({
 
                 <div>
 
-                    <h2>Apartment Records</h2>
+                    <h2>{t("apartments.apartmentRecords")}</h2>
 
                     <p>
-                        All registered apartment complexes are listed below.
+                        {t("apartments.allComplexesListed")}
                     </p>
 
                 </div>
@@ -58,21 +60,19 @@ function ApartmentTable({
 
                 <div className="mg-table-wrapper">
 
-                    <ResponsiveTable>
-
                     <table className="mg-table">
 
                         <thead>
 
                             <tr>
 
-                                <th>Apartment Name</th>
+                                <th>{t("apartments.apartmentName")}</th>
 
-                                <th>Address</th>
+                                <th>{t("apartments.address")}</th>
 
-                                <th>Households</th>
+                                <th>{t("apartments.colHouseholds")}</th>
 
-                                <th>Action</th>
+                                <th>{t("apartments.colAction")}</th>
 
                             </tr>
 
@@ -123,7 +123,7 @@ function ApartmentTable({
                                             }
                                         >
 
-                                            View
+                                            {t("apartments.view")}
 
                                         </button>
 
@@ -137,16 +137,14 @@ function ApartmentTable({
 
                     </table>
 
-                    </ResponsiveTable>
-
                 </div>
 
             ) : (
 
                 <EmptyState
                     icon={Building2}
-                    title="No apartments found"
-                    description="Create your first apartment to begin managing households."
+                    title={t("apartments.noApartmentsFound")}
+                    description={t("apartments.createFirstApartment")}
                 />
 
             )}

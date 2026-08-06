@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function Pagination({
 
@@ -10,7 +11,7 @@ function Pagination({
 
     currentCount,
 
-    label = "records",
+    label,
 
     onPrevious,
 
@@ -20,6 +21,7 @@ function Pagination({
 
 })
 {
+    const { t } = useTranslation();
     const [pageInput, setPageInput] = useState(page + 1);
 
     useEffect(() => {
@@ -34,12 +36,12 @@ function Pagination({
 
             <p className="text-sm text-slate-500">
 
-                Showing {page * pageSize + 1}
-                {" - "}
-                {page * pageSize + currentCount}
-                {" of "}
-                {pageData.totalElements}
-                {` ${label}`}
+                {t("pagination.showing", {
+                    from: page * pageSize + 1,
+                    to: page * pageSize + currentCount,
+                    total: pageData.totalElements,
+                    label: label || t("pagination.records"),
+                })}
 
             </p>
 
@@ -50,13 +52,13 @@ function Pagination({
                     disabled={page === 0}
                     onClick={onPrevious}
                 >
-                    ← Previous
+                    {t("pagination.previous")}
                 </button>
 
                 <div className="flex items-center gap-2">
 
     <span className="text-sm">
-        Page
+        {t("pagination.page")}
     </span>
 
     <input
@@ -90,7 +92,7 @@ function Pagination({
 
     <span className="text-sm">
 
-        of {pageData.totalPages}
+        {t("pagination.of")} {pageData.totalPages}
 
     </span>
 
@@ -101,7 +103,7 @@ function Pagination({
                     disabled={pageData?.last}
                     onClick={onNext}
                 >
-                    Next →
+                    {t("pagination.next")}
                 </button>
 
             </div>

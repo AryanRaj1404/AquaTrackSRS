@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   CalendarDays,
   Building2,
@@ -7,17 +8,18 @@ import {
 } from "lucide-react";
 
 export default function DashboardHero({ dashboard }) {
+  const { t } = useTranslation();
   const username =
     localStorage.getItem("username") ||
     localStorage.getItem("user") ||
-    "Administrator";
+    t("dashboardHero.administrator");
 
   const greeting = (() => {
     const hour = new Date().getHours();
 
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
+    if (hour < 12) return t("dashboardHero.goodMorning");
+    if (hour < 17) return t("dashboardHero.goodAfternoon");
+    return t("dashboardHero.goodEvening");
   })();
 
   const today = new Date().toLocaleDateString("en-IN", {
@@ -50,7 +52,7 @@ export default function DashboardHero({ dashboard }) {
 
             <ShieldCheck size={16} />
 
-            Platform Operational
+            {t("dashboardHero.platformOperational")}
 
           </div>
 
@@ -66,10 +68,7 @@ export default function DashboardHero({ dashboard }) {
 
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
 
-            Welcome back to AquaTrack.
-
-            Monitor apartment performance, billing,
-            water consumption and revenue from one place.
+            {t("dashboardHero.welcomeBack")}
 
           </p>
 
@@ -87,7 +86,7 @@ export default function DashboardHero({ dashboard }) {
 
               <Building2 size={17} />
 
-              AquaTrack Platform
+              {t("dashboardHero.aquaTrackPlatform")}
 
             </div>
 
@@ -106,7 +105,7 @@ export default function DashboardHero({ dashboard }) {
               <div>
 
                 <p className="text-sm text-slate-500">
-                  Collection Rate
+                  {t("dashboardHero.collectionRate")}
                 </p>
 
                 <h2 className="mt-1 text-4xl font-black">
@@ -138,7 +137,7 @@ export default function DashboardHero({ dashboard }) {
 
               <p className="text-xs uppercase tracking-wider text-slate-400">
 
-                Water Loss
+                {t("dashboardHero.waterLoss")}
 
               </p>
 
@@ -162,7 +161,7 @@ export default function DashboardHero({ dashboard }) {
 
               <p className="text-xs uppercase tracking-wider text-slate-400">
 
-                Apartments
+                {t("dashboardHero.apartments")}
 
               </p>
 

@@ -1,29 +1,17 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { Droplet, ChevronLeft, ChevronRight } from "lucide-react";
-
-const TIPS = [
-  "Fix leaking taps promptly — a single drip can waste over 3,000 litres a year.",
-  "Use a bucket instead of a hose when washing your vehicle.",
-  "Install low-flow showerheads to cut usage without losing pressure.",
-  "Reuse RO reject water for mopping or watering plants.",
-  "Run washing machines only with a full load to save water per cycle.",
-  "Turn off the tap while brushing your teeth or shaving.",
-  "Check your meter reading before and after a 2-hour period with no water use — a change means a hidden leak.",
-  "Water plants early morning or late evening to reduce evaporation loss.",
-  "Collect and reuse water used for rinsing fruits and vegetables.",
-  "Set a shorter shower timer — every minute saved cuts roughly 9 litres.",
-];
-
-// Tip shown first if the household is running above the building average
-const HIGH_USAGE_TIP =
-  "Your usage is above the building average this cycle — a quick leak check around taps and toilets could help bring it down.";
 
 /**
  * Auto-rotating feed of water-saving tips. Pass `highUsage` to
  * surface a targeted tip first (e.g. when above the building average).
  */
 function WaterTipsFeed({ highUsage = false }) {
+  const { t } = useTranslation();
+  const TIPS = t("residentDashboard.waterTips.list", { returnObjects: true });
+  const HIGH_USAGE_TIP = t("residentDashboard.waterTips.highUsageTip");
+
   const tips = highUsage ? [HIGH_USAGE_TIP, ...TIPS] : TIPS;
   const [index, setIndex] = useState(0);
 
@@ -47,8 +35,8 @@ function WaterTipsFeed({ highUsage = false }) {
     >
       <div className="mg-toolbar">
         <div>
-          <h2>Water Saving Tips</h2>
-          <p>Small habits, big savings</p>
+          <h2>{t("residentDashboard.waterTips.title")}</h2>
+          <p>{t("residentDashboard.waterTips.subtitle")}</p>
         </div>
       </div>
 
@@ -64,7 +52,7 @@ function WaterTipsFeed({ highUsage = false }) {
           type="button"
           className="mg-action-button"
           onClick={goPrev}
-          aria-label="Previous tip"
+          aria-label={t("residentDashboard.waterTips.previousTip")}
         >
           <ChevronLeft size={14} />
         </button>
@@ -92,7 +80,7 @@ function WaterTipsFeed({ highUsage = false }) {
           type="button"
           className="mg-action-button"
           onClick={goNext}
-          aria-label="Next tip"
+          aria-label={t("residentDashboard.waterTips.nextTip")}
         >
           <ChevronRight size={14} />
         </button>

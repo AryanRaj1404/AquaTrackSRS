@@ -3,7 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import api from "../services/api";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const initialForm = {
   firstName: "",
@@ -15,6 +17,7 @@ const initialForm = {
 };
 
 function Register() {
+  const { t } = useTranslation();
   const [form, setForm] = useState(initialForm);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,42 +35,42 @@ function Register() {
 
   const validateForm = () => {
     if (!form.firstName.trim()) {
-      toast.error("First name is required.");
+      toast.error(t("register.errors.firstNameRequired"));
       return false;
     }
 
     if (!form.lastName.trim()) {
-      toast.error("Last name is required.");
+      toast.error(t("register.errors.lastNameRequired"));
       return false;
     }
 
     if (!form.email.trim()) {
-      toast.error("Email ID is required.");
+      toast.error(t("register.errors.emailRequired"));
       return false;
     }
 
     if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-      toast.error("Please enter a valid email ID.");
+      toast.error(t("register.errors.emailInvalid"));
       return false;
     }
 
     if (!form.mobileNumber.trim()) {
-      toast.error("Mobile number is required.");
+      toast.error(t("register.errors.mobileRequired"));
       return false;
     }
 
     if (!/^[0-9]{10}$/.test(form.mobileNumber)) {
-      toast.error("Mobile number must contain 10 digits.");
+      toast.error(t("register.errors.mobileInvalid"));
       return false;
     }
 
     if (!form.username.trim()) {
-      toast.error("Username is required.");
+      toast.error(t("register.errors.usernameRequired"));
       return false;
     }
 
     if (form.password.length < 6) {
-      toast.error("Password must have at least 6 characters.");
+      toast.error(t("register.errors.passwordTooShort"));
       return false;
     }
 
@@ -92,12 +95,12 @@ function Register() {
 
     setIsSubmitting(true);
 
-    const loadingToast = toast.loading("Creating resident account...");
+    const loadingToast = toast.loading(t("register.toasts.creating"));
 
     try {
       await api.post("/auth/register", payload);
 
-      toast.success("Resident registered successfully.", {
+      toast.success(t("register.toasts.success"), {
         id: loadingToast,
       });
 
@@ -112,7 +115,7 @@ function Register() {
 
       const message =
         error.response?.data?.message ||
-        "Unable to connect to the server. Please try again.";
+        t("register.errors.serverError");
 
       toast.error(message, {
         id: loadingToast,
@@ -145,7 +148,7 @@ function Register() {
         })
       );
 
-      toast.success("Google Sign-In Successful!");
+      toast.success(t("register.toasts.googleSuccess"));
 
       navigate("/dashboard");
 
@@ -154,12 +157,15 @@ function Register() {
 
       toast.error(
         error.response?.data?.message ||
-        "Google Sign-In Failed"
+        t("register.errors.googleFailed")
       );
     }
   };
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(7,129,165,0.14),transparent_32%),linear-gradient(135deg,#f6fbff_0%,#e7f4fb_100%)] px-4 py-8">
+      <div className="mx-auto mb-4 flex max-w-6xl justify-end">
+        <LanguageSwitcher />
+      </div>
       <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-6xl items-center justify-center">
         <div className="grid w-full overflow-hidden rounded-3xl border border-[#dce8ef] bg-white shadow-[0_24px_70px_rgba(15,23,42,0.12)] lg:grid-cols-[0.95fr_1.05fr]">
           {/* Left branding panel */}
@@ -175,20 +181,19 @@ function Register() {
                 </div>
 
                 <div>
-                  <h1 className="text-2xl font-bold">AquaTrack</h1>
+                  <h1 className="text-2xl font-bold">{t("common.appName")}</h1>
                   <p className="text-sm text-cyan-100">
-                    Water Management Platform
+                    {t("register.waterManagementPlatform")}
                   </p>
                 </div>
               </div>
 
               <h2 className="mb-5 text-4xl font-bold leading-tight">
-                Create resident accounts easily.
+                {t("register.heroTitle")}
               </h2>
 
               <p className="max-w-md text-base leading-8 text-cyan-50">
-                Register residents using their personal details, username,
-                and password. Login will continue with username and password.
+                {t("register.heroSubtitle")}
               </p>
             </div>
           </div>
@@ -203,22 +208,21 @@ function Register() {
               />
 
               <h1 className="text-3xl font-extrabold text-[#075d78]">
-                AquaTrack
+                {t("common.appName")}
               </h1>
             </div>
 
             <div className="mb-8 text-center lg:text-left">
               <p className="mb-2 text-xs font-bold tracking-[0.22em] text-[#0781a5]">
-                RESIDENT REGISTRATION
+                {t("register.residentRegistration")}
               </p>
 
               <h2 className="text-3xl font-bold text-[#06334b]">
-                Create Resident Account
+                {t("register.createResidentAccount")}
               </h2>
 
               <p className="mt-3 text-sm leading-6 text-slate-500">
-                Enter resident details and create a username and password
-                for login.
+                {t("register.formSubtitle")}
               </p>
             </div>
 
@@ -229,7 +233,7 @@ function Register() {
                     htmlFor="firstName"
                     className="mb-2 block text-sm font-semibold text-[#06334b]"
                   >
-                    First Name
+                    {t("register.firstName")}
                   </label>
 
                   <input
@@ -238,7 +242,7 @@ function Register() {
                     type="text"
                     value={form.firstName}
                     onChange={handleChange}
-                    placeholder="Enter first name"
+                    placeholder={t("register.firstNamePlaceholder")}
                     disabled={isSubmitting}
                     className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-800 outline-none transition focus:border-[#0781a5] focus:ring-4 focus:ring-[#0781a5]/10 disabled:cursor-not-allowed disabled:bg-slate-50"
                   />
@@ -249,7 +253,7 @@ function Register() {
                     htmlFor="lastName"
                     className="mb-2 block text-sm font-semibold text-[#06334b]"
                   >
-                    Last Name
+                    {t("register.lastName")}
                   </label>
 
                   <input
@@ -258,7 +262,7 @@ function Register() {
                     type="text"
                     value={form.lastName}
                     onChange={handleChange}
-                    placeholder="Enter last name"
+                    placeholder={t("register.lastNamePlaceholder")}
                     disabled={isSubmitting}
                     className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-800 outline-none transition focus:border-[#0781a5] focus:ring-4 focus:ring-[#0781a5]/10 disabled:cursor-not-allowed disabled:bg-slate-50"
                   />
@@ -271,7 +275,7 @@ function Register() {
                     htmlFor="email"
                     className="mb-2 block text-sm font-semibold text-[#06334b]"
                   >
-                    Email ID
+                    {t("register.emailId")}
                   </label>
 
                   <input
@@ -291,7 +295,7 @@ function Register() {
                     htmlFor="mobileNumber"
                     className="mb-2 block text-sm font-semibold text-[#06334b]"
                   >
-                    Mobile Number
+                    {t("register.mobileNumber")}
                   </label>
 
                   <input
@@ -313,7 +317,7 @@ function Register() {
                     htmlFor="username"
                     className="mb-2 block text-sm font-semibold text-[#06334b]"
                   >
-                    Username
+                    {t("register.username")}
                   </label>
 
                   <input
@@ -322,7 +326,7 @@ function Register() {
                     type="text"
                     value={form.username}
                     onChange={handleChange}
-                    placeholder="Choose username"
+                    placeholder={t("register.usernamePlaceholder")}
                     disabled={isSubmitting}
                     className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-800 outline-none transition focus:border-[#0781a5] focus:ring-4 focus:ring-[#0781a5]/10 disabled:cursor-not-allowed disabled:bg-slate-50"
                   />
@@ -333,7 +337,7 @@ function Register() {
                     htmlFor="password"
                     className="mb-2 block text-sm font-semibold text-[#06334b]"
                   >
-                    Password
+                    {t("register.password")}
                   </label>
 
                   <div className="relative">
@@ -343,7 +347,7 @@ function Register() {
                       type={showPassword ? "text" : "password"}
                       value={form.password}
                       onChange={handleChange}
-                      placeholder="Minimum 6 characters"
+                      placeholder={t("register.passwordPlaceholder")}
                       disabled={isSubmitting}
                       className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 pr-20 text-sm text-slate-800 outline-none transition focus:border-[#0781a5] focus:ring-4 focus:ring-[#0781a5]/10 disabled:cursor-not-allowed disabled:bg-slate-50"
                     />
@@ -356,7 +360,7 @@ function Register() {
                       disabled={isSubmitting}
                       className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg bg-[#eef7fb] px-3 py-1.5 text-xs font-bold text-[#075d78] transition hover:bg-[#dff0f6] disabled:cursor-not-allowed"
                     >
-                      {showPassword ? "Hide" : "Show"}
+                      {showPassword ? t("register.hide") : t("register.show")}
                     </button>
                   </div>
                 </div>
@@ -367,7 +371,7 @@ function Register() {
                 disabled={isSubmitting}
                 className="flex h-13 w-full items-center justify-center rounded-xl bg-linear-to-r from-[#0781a5] to-[#075d78] px-5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(7,93,120,0.22)] transition hover:from-[#075d78] hover:to-[#06334b] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {isSubmitting ? "Creating Account..." : "Create Account"}
+                {isSubmitting ? t("register.creatingAccount") : t("register.createAccount")}
               </button>
             </form>
 
@@ -375,7 +379,7 @@ function Register() {
               <div className="h-px flex-1 bg-slate-300"></div>
 
               <span className="mx-4 text-sm text-slate-500">
-                OR
+                {t("common.or")}
               </span>
 
               <div className="h-px flex-1 bg-slate-300"></div>
@@ -385,18 +389,18 @@ function Register() {
               <GoogleLogin
                 onSuccess={handleGoogleRegister}
                 onError={() => {
-                  toast.error("Google Sign-In Failed");
+                  toast.error(t("register.errors.googleFailed"));
                 }}
               />
             </div>
 
             <p className="mt-7 text-center text-sm text-slate-500">
-              Already have an account?{" "}
+              {t("register.alreadyHaveAccount")}{" "}
               <Link
                 to="/login"
                 className="font-bold text-[#0781a5] hover:text-[#075d78]"
               >
-                Login
+                {t("register.login")}
               </Link>
             </p>
           </div>

@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import StatCard from "../StatCard";
+import { useTranslation } from "react-i18next";
 
 function BulkWaterStats({
 
@@ -19,39 +20,41 @@ function BulkWaterStats({
 
 }) {
 
+    const { t } = useTranslation();
+
     return (
 
         <section className="mg-summary-grid">
 
             <StatCard
                 icon={Truck}
-                title="Purchases"
+                title={t("bulkWaterPurchases.stats.purchasesTitle")}
                 value={totalPurchases}
-                description="Purchases recorded"
+                description={t("bulkWaterPurchases.stats.purchasesDesc")}
                 delay={0}
             />
 
             <StatCard
                 icon={Droplets}
-                title="Volume"
+                title={t("bulkWaterPurchases.stats.volumeTitle")}
                 value={`${totalVolume.toFixed(2)} KL`}
-                description="Purchased water"
+                description={t("bulkWaterPurchases.stats.volumeDesc")}
                 delay={0.1}
             />
 
             <StatCard
                 icon={IndianRupee}
-                title="Total Cost"
+                title={t("bulkWaterPurchases.stats.costTitle")}
                 value={`₹ ${totalCost.toLocaleString("en-IN")}`}
-                description="Total expenditure"
+                description={t("bulkWaterPurchases.stats.costDesc")}
                 delay={0.2}
             />
 
             <StatCard
                 icon={Calendar}
-                title="Average Rate"
+                title={t("bulkWaterPurchases.stats.rateTitle")}
                 value={`₹ ${averageRate.toFixed(2)}/KL`}
-                description="Average purchase rate"
+                description={t("bulkWaterPurchases.stats.rateDesc")}
                 delay={0.3}
             />
 

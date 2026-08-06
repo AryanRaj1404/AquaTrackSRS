@@ -3,9 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import api from "../services/api";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 function Login() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,30 +22,24 @@ function Login() {
     const cleanUsername = username.trim();
 
     if (!cleanUsername) {
-      toast.error("Please enter your username.");
+      toast.error(t("login.errors.enterUsername"));
       return;
     }
 
     if (!password) {
-      toast.error("Please enter your password.");
+      toast.error(t("login.errors.enterPassword"));
       return;
     }
 
     setIsSubmitting(true);
 
-    const loadingToast = toast.loading("Signing in to AquaTrack...");
+    const loadingToast = toast.loading(t("login.toasts.signingIn"));
 
     try {
       const response = await api.post("/auth/login", {
         username: cleanUsername,
         password: password,
       });
-
-      console.log(response.data);
-
-      console.log("Full response:", response);
-      console.log("Response data:", response.data);
-      console.log("Token:", response.data.token);
 
       const token = response.data.token;
 
@@ -60,7 +57,7 @@ function Login() {
         })
       );
 
-      toast.success("Login successful. Welcome back!", {
+      toast.success(t("login.toasts.loginSuccess"), {
         id: loadingToast,
       });
 
@@ -72,7 +69,7 @@ function Login() {
 
       const message =
         error.response?.data?.message ||
-        "Invalid username or password.";
+        t("login.errors.invalidCredentials");
 
       toast.error(message, {
         id: loadingToast,
@@ -84,6 +81,9 @@ function Login() {
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(7,129,165,0.14),transparent_32%),linear-gradient(135deg,#f6fbff_0%,#e7f4fb_100%)] px-4 py-8">
+  <div className="mx-auto mb-4 flex max-w-6xl justify-end">
+    <LanguageSwitcher />
+  </div>
   <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-6xl items-center justify-center">
 
     <div className="grid w-full overflow-hidden rounded-3xl border border-[#dce8ef] bg-white shadow-[0_24px_70px_rgba(15,23,42,0.12)] lg:grid-cols-[0.95fr_1.05fr]">
@@ -104,11 +104,11 @@ function Login() {
 
             <div>
               <h1 className="text-3xl font-black tracking-wide">
-                AquaTrack
+                {t("common.appName")}
               </h1>
 
               <p className="text-sm text-cyan-100">
-                Smart Water Management
+                {t("login.smartWaterManagement")}
               </p>
             </div>
 
@@ -117,13 +117,11 @@ function Login() {
           <div className="mt-14">
 
             <h2 className="text-4xl font-black leading-tight">
-              Welcome Back!
+              {t("login.welcomeBack")}
             </h2>
 
             <p className="mt-5 max-w-md text-base leading-7 text-cyan-50/90">
-              Sign in to monitor water consumption,
-              manage households and simplify
-              apartment operations from one secure dashboard.
+              {t("login.welcomeSubtitle")}
             </p>
 
           </div>
@@ -133,16 +131,15 @@ function Login() {
         <div className="rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur">
 
           <p className="text-sm uppercase tracking-[0.3em] text-cyan-100">
-            AquaTrack
+            {t("common.appName")}
           </p>
 
           <p className="mt-3 text-lg font-semibold">
-            Secure. Reliable. Smart.
+            {t("login.secureReliableSmart")}
           </p>
 
           <p className="mt-2 text-sm leading-6 text-cyan-50/80">
-            Continue where you left off and manage your
-            apartment's water consumption with ease.
+            {t("login.continueMessage")}
           </p>
 
         </div>
@@ -165,23 +162,22 @@ function Login() {
 
             <div>
               <h1 className="text-2xl font-black text-[#075d78]">
-                AquaTrack
+                {t("common.appName")}
               </h1>
 
               <p className="text-sm text-slate-500">
-                Smart Water Management
+                {t("login.smartWaterManagement")}
               </p>
             </div>
 
           </div>
 
           <h2 className="text-3xl font-black text-slate-900">
-            Sign In
+            {t("login.signIn")}
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Welcome back. Login to continue managing your
-            apartment community.
+            {t("login.signInSubtitle")}
           </p>
 
           <form
@@ -195,13 +191,13 @@ function Login() {
                 htmlFor="login-username"
                 className="mb-2 block text-sm font-semibold text-slate-700"
               >
-                Username
+                {t("login.username")}
               </label>
 
               <input
                 id="login-username"
                 type="text"
-                placeholder="Enter your username"
+                placeholder={t("login.usernamePlaceholder")}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
@@ -217,7 +213,7 @@ function Login() {
                 htmlFor="login-password"
                 className="mb-2 block text-sm font-semibold text-slate-700"
               >
-                Password
+                {t("login.password")}
               </label>
 
               <div className="relative">
@@ -225,7 +221,7 @@ function Login() {
                 <input
                   id="login-password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
+                  placeholder={t("login.passwordPlaceholder")}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
@@ -239,7 +235,7 @@ function Login() {
                   disabled={isSubmitting}
                   className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg bg-[#eef7fb] px-3 py-1.5 text-xs font-bold text-[#075d78] hover:bg-[#dff0f6]"
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword ? t("login.hide") : t("login.show")}
                 </button>
 
               </div>
@@ -251,7 +247,7 @@ function Login() {
               disabled={isSubmitting}
               className="flex h-12 w-full items-center justify-center rounded-xl bg-linear-to-r from-[#0781a5] to-[#075d78] px-5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(7,93,120,0.22)] transition hover:from-[#075d78] hover:to-[#06334b] disabled:opacity-70"
             >
-              {isSubmitting ? "Signing In..." : "Sign In"}
+              {isSubmitting ? t("login.signingIn") : t("login.signIn")}
             </button>
 
           </form>
@@ -261,7 +257,7 @@ function Login() {
             <div className="h-px flex-1 bg-slate-300" />
 
             <span className="mx-4 text-sm font-semibold text-slate-500">
-              OR
+              {t("common.or")}
             </span>
 
             <div className="h-px flex-1 bg-slate-300" />
@@ -293,7 +289,7 @@ function Login() {
                     })
                   );
 
-                  toast.success("Signed in with Google successfully!");
+                  toast.success(t("login.toasts.googleSuccess"));
 
                   navigate("/dashboard");
 
@@ -302,25 +298,25 @@ function Login() {
 
                   toast.error(
                     error.response?.data?.message ||
-                    "Google Sign-In Failed"
+                    t("login.errors.googleFailed")
                   );
                 }
               }}
 
               onError={() => {
-                toast.error("Google Sign-In Failed");
+                toast.error(t("login.errors.googleFailed"));
               }}
             />
 
           </div>
 
           <p className="mt-7 text-center text-sm text-slate-500">
-            Don't have an account?{" "}
+            {t("login.noAccount")}{" "}
             <Link
               to="/register"
               className="font-semibold text-[#0781a5] hover:text-[#075d78]"
             >
-              Create Account
+              {t("login.createAccount")}
             </Link>
           </p>
 

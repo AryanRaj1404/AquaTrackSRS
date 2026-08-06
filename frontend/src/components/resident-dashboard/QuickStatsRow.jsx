@@ -1,4 +1,5 @@
 import { Droplets, IndianRupee, CalendarClock, TrendingUp } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import StatCard from "../StatCard";
 import SkeletonCard from "../SkeletonCard";
 
@@ -8,6 +9,8 @@ import SkeletonCard from "../SkeletonCard";
  * residentDashboardService.getOverview().
  */
 function QuickStatsRow({ overview, loading }) {
+  const { t } = useTranslation();
+
   if (loading || !overview) {
     return (
       <section className="mg-summary-grid">
@@ -22,34 +25,34 @@ function QuickStatsRow({ overview, loading }) {
     <section className="mg-summary-grid">
       <StatCard
         icon={Droplets}
-        title="This Cycle's Usage"
+        title={t("residentDashboard.quickStats.cycleUsageTitle")}
         value={`${overview.cycleUsageKl ?? 0} KL`}
         animatedValue={false}
-        description="Consumed so far this cycle"
+        description={t("residentDashboard.quickStats.cycleUsageDescription")}
       />
 
       <StatCard
         icon={IndianRupee}
-        title="Amount Due"
+        title={t("residentDashboard.quickStats.amountDueTitle")}
         value={`\u20B9 ${(overview.amountDue ?? 0).toLocaleString("en-IN")}`}
         animatedValue={false}
-        description="Across unpaid invoices"
+        description={t("residentDashboard.quickStats.amountDueDescription")}
       />
 
       <StatCard
         icon={CalendarClock}
-        title="Days Until Next Bill"
+        title={t("residentDashboard.quickStats.daysUntilBillTitle")}
         value={overview.daysUntilNextBill ?? "-"}
         animatedValue
-        description="Days left in current cycle"
+        description={t("residentDashboard.quickStats.daysUntilBillDescription")}
       />
 
       <StatCard
         icon={TrendingUp}
-        title="YTD Consumption"
+        title={t("residentDashboard.quickStats.ytdConsumptionTitle")}
         value={`${overview.ytdConsumptionKl ?? 0} KL`}
         animatedValue={false}
-        description="Total usage so far this year"
+        description={t("residentDashboard.quickStats.ytdConsumptionDescription")}
       />
     </section>
   );

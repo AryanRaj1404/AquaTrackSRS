@@ -4,7 +4,7 @@ import {
 } from "lucide-react";
 
 import Pagination from "../Pagination";
-import ResponsiveTable from "../ResponsiveTable";
+import { useTranslation } from "react-i18next";
 
 function WaterUsageTable({
 
@@ -24,11 +24,11 @@ function WaterUsageTable({
 
 }) {
 
+    const { t } = useTranslation();
+
     return (
 
         <div className="mg-table-wrapper">
-
-            <ResponsiveTable>
 
             <table className="mg-table">
 
@@ -36,17 +36,17 @@ function WaterUsageTable({
 
                     <tr>
 
-                        <th>Apartment</th>
+                        <th>{t("waterUsage.table.apartment")}</th>
 
-                        <th>Household</th>
+                        <th>{t("waterUsage.table.household")}</th>
 
-                        <th>Reading Date</th>
+                        <th>{t("waterUsage.table.readingDate")}</th>
 
-                        <th>Consumption</th>
+                        <th>{t("waterUsage.table.consumption")}</th>
 
-                        <th>Source</th>
+                        <th>{t("waterUsage.table.source")}</th>
 
-                        <th>Action</th>
+                        <th>{t("waterUsage.table.action")}</th>
 
                     </tr>
 
@@ -82,7 +82,7 @@ function WaterUsageTable({
 
                             <td className="font-semibold text-slate-800">
 
-                                {log.litersConsumed} L
+                                {log.litersConsumed} {t("waterUsage.table.litersUnit")}
 
                             </td>
 
@@ -97,8 +97,8 @@ function WaterUsageTable({
                                 >
 
                                     {log.source === "MANUAL_ENTRY"
-                                        ? "Manual"
-                                        : "CSV"}
+                                        ? t("waterUsage.table.manual")
+                                        : t("waterUsage.table.csv")}
 
                                 </span>
 
@@ -148,14 +148,12 @@ function WaterUsageTable({
 
             </table>
 
-            </ResponsiveTable>
-
             <Pagination
                 page={page}
                 pageData={pageData}
                 pageSize={pageData?.size ?? 20}
                 currentCount={displayedLogs.length}
-                label="records"
+                label={t("waterUsage.table.records")}
                 onPrevious={() =>
                     setPage(previous => previous - 1)
                 }

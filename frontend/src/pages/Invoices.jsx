@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { generateInvoices } from "../services/invoiceService";
 import { getBillingCycles } from "../services/billingCycleService";
@@ -27,9 +28,10 @@ import {
     markInvoicePaid,
     emailBillingCycleInvoices,
 } from "../services/invoiceService";
-import ResponsiveTable from "../components/ResponsiveTable";
 
 function Invoices() {
+
+    const { t } = useTranslation();
 
     const [invoices, setInvoices] = useState([]);
 
@@ -70,7 +72,7 @@ function Invoices() {
             console.error(error);
 
             toast.error(
-                "Unable to load invoices."
+                t("invoices.toasts.loadError")
             );
 
         } finally {
@@ -138,7 +140,7 @@ function Invoices() {
             window.URL.revokeObjectURL(url);
 
             toast.success(
-                "Invoice downloaded."
+                t("invoices.toasts.downloadSuccess")
             );
 
         }
@@ -148,7 +150,7 @@ function Invoices() {
             console.error(error);
 
             toast.error(
-                "Unable to download invoice."
+                t("invoices.toasts.downloadError")
             );
 
         }
@@ -159,7 +161,7 @@ function Invoices() {
 
         const loadingToast =
             toast.loading(
-                "Sending invoice..."
+                t("invoices.toasts.sending")
             );
 
         try {
@@ -168,7 +170,7 @@ function Invoices() {
 
             toast.success(
 
-                "Invoice emailed successfully.",
+                t("invoices.toasts.emailSuccess"),
 
                 {
                     id: loadingToast,
@@ -186,7 +188,7 @@ function Invoices() {
 
                 error.response?.data?.message ??
 
-                "Unable to send invoice.",
+                t("invoices.toasts.emailError"),
 
                 {
                     id: loadingToast,
@@ -203,7 +205,7 @@ function Invoices() {
         if (!selectedBillingCycle) {
 
             toast.error(
-                "Select a billing cycle."
+                t("invoices.toasts.selectCycle")
             );
 
             return;
@@ -212,7 +214,7 @@ function Invoices() {
 
         const loadingToast =
             toast.loading(
-                "Sending invoices..."
+                t("invoices.toasts.sendingAll")
             );
 
         try {
@@ -226,8 +228,7 @@ function Invoices() {
 
             toast.success(
 
-                `Emails sent: ${result.emailsSent}/${result.totalInvoices}
-                Failed: ${result.failed}`,
+                t("invoices.toasts.emailAllSuccess", { sent: result.emailsSent, total: result.totalInvoices, failed: result.failed }),
 
                 {
                     id: loadingToast,
@@ -245,7 +246,7 @@ function Invoices() {
 
                 error.response?.data?.message ??
 
-                "Unable to send invoices.",
+                t("invoices.toasts.emailAllError"),
 
                 {
                     id: loadingToast,
@@ -262,7 +263,7 @@ function Invoices() {
         if (invoice.status === "PAID") {
 
             toast(
-                "Invoice is already paid."
+                t("invoices.toasts.alreadyPaid")
             );
 
             return;
@@ -271,7 +272,7 @@ function Invoices() {
 
         const loadingToast =
             toast.loading(
-                "Updating invoice..."
+                t("invoices.toasts.updating")
             );
 
         try {
@@ -282,7 +283,7 @@ function Invoices() {
 
             toast.success(
 
-                "Invoice marked as paid.",
+                t("invoices.toasts.markPaidSuccess"),
 
                 {
                     id: loadingToast,
@@ -298,7 +299,7 @@ function Invoices() {
 
             toast.error(
 
-                "Unable to update invoice.",
+                t("invoices.toasts.markPaidError"),
 
                 {
                     id: loadingToast,
@@ -315,7 +316,7 @@ function Invoices() {
         if (!selectedBillingCycle) {
 
             toast.error(
-                "Select a billing cycle."
+                t("invoices.toasts.selectCycle")
             );
 
             return;
@@ -324,7 +325,7 @@ function Invoices() {
 
         const loadingToast =
             toast.loading(
-                "Generating invoices..."
+                t("invoices.toasts.generating")
             );
 
         try {
@@ -338,7 +339,7 @@ function Invoices() {
             await loadInvoices();
 
             toast.success(
-                "Invoices generated successfully.",
+                t("invoices.toasts.generateSuccess"),
                 {
                     id: loadingToast,
                 }
@@ -354,7 +355,7 @@ function Invoices() {
 
                 error.response?.data?.message ??
 
-                "Unable to generate invoices.",
+                t("invoices.toasts.generateError"),
 
                 {
                     id: loadingToast,
@@ -528,7 +529,7 @@ function Invoices() {
     >
 
     <option value="">
-    Select Billing Cycle
+    {t("invoices.selectBillingCycle")}
     </option>
 
     {billingCycles.map((cycle) => (
@@ -538,7 +539,7 @@ function Invoices() {
         value={cycle.id}
     >
 
-    {cycle.apartmentName ?? "Unknnown Apartment"} | {new Date(cycle.startDate).toLocaleString("en-IN",{
+    {cycle.apartmentName ?? t("invoices.unknownApartment")} | {new Date(cycle.startDate).toLocaleString("en-IN",{
         month: "long",
         year: "numeric",
     })}
@@ -555,29 +556,29 @@ function Invoices() {
         disabled={isGenerating}
         >
         <Plus size={16}/>
-        Generate
+        {t("invoices.generate")}
     </button>
 
     <button
         className="mg-secondary-button"
         onClick={handleEmailAll}
     >
-        Email All
+        {t("invoices.emailAll")}
     </button>
 
     </div>
 
     }
 
-            title="Invoice Management"
+            title={t("invoices.pageTitle")}
 
-            description="View and manage generated water invoices."
+            description={t("invoices.pageDesc")}
 
             searchValue={query}
 
             onSearchChange={setQuery}
 
-            searchPlaceholder="Search invoice, apartment or flat..."
+            searchPlaceholder={t("invoices.searchPlaceholder")}
 
         >
 
@@ -587,11 +588,11 @@ function Invoices() {
 
                     icon={Receipt}
 
-                    title="Invoices"
+                    title={t("invoices.stats.invoicesTitle")}
 
                     value={totalInvoices}
 
-                    description="Generated invoices"
+                    description={t("invoices.stats.invoicesDesc")}
 
                     delay={0}
 
@@ -601,11 +602,11 @@ function Invoices() {
 
                     icon={Users}
 
-                    title="Pending"
+                    title={t("invoices.stats.pendingTitle")}
 
                     value={pendingInvoices}
 
-                    description="Awaiting payment"
+                    description={t("invoices.stats.pendingDesc")}
 
                     delay={0.1}
 
@@ -615,11 +616,11 @@ function Invoices() {
 
                     icon={Building2}
 
-                    title="Paid"
+                    title={t("invoices.stats.paidTitle")}
 
                     value={paidInvoices}
 
-                    description="Completed payments"
+                    description={t("invoices.stats.paidDesc")}
 
                     delay={0.2}
 
@@ -629,11 +630,11 @@ function Invoices() {
 
                     icon={IndianRupee}
 
-                    title="Revenue"
+                    title={t("invoices.stats.revenueTitle")}
 
                     value={`₹ ${totalRevenue.toLocaleString("en-IN")}`}
 
-                    description="Invoice amount"
+                    description={t("invoices.stats.revenueDesc")}
 
                     delay={0.3}
 
@@ -647,10 +648,10 @@ function Invoices() {
 
                     <div>
 
-                        <h2>Invoice Records</h2>
+                        <h2>{t("invoices.recordsTitle")}</h2>
 
                         <p>
-                            Generated invoices are listed below.
+                            {t("invoices.recordsSubtitle")}
                         </p>
 
                     </div>
@@ -666,10 +667,10 @@ function Invoices() {
                             className="animate-spin"
                         />
 
-                        <h3>Loading invoices...</h3>
+                        <h3>{t("invoices.loading")}</h3>
 
                         <p>
-                            Please wait while invoices are fetched.
+                            {t("invoices.pleaseWait")}
                         </p>
 
                     </div>
@@ -678,27 +679,25 @@ function Invoices() {
 
                     <div className="mg-table-wrapper">
 
-                        <ResponsiveTable>
-
                         <table className="mg-table">
 
                             <thead>
 
                                 <tr>
 
-                                    <th>Invoice</th>
+                                    <th>{t("invoices.table.colInvoice")}</th>
 
-                                    <th>Apartment</th>
+                                    <th>{t("invoices.table.colApartment")}</th>
 
-                                    <th>Flat</th>
+                                    <th>{t("invoices.table.colFlat")}</th>
 
-                                    <th>Amount</th>
+                                    <th>{t("invoices.table.colAmount")}</th>
 
-                                    <th>Status</th>
+                                    <th>{t("invoices.table.colStatus")}</th>
 
-                                    <th>Generated</th>
+                                    <th>{t("invoices.table.colGenerated")}</th>
 
-                                    <th>Actions</th>
+                                    <th>{t("invoices.table.colActions")}</th>
 
                                 </tr>
 
@@ -752,7 +751,7 @@ function Invoices() {
                                                 className="mg-status"
                                                 style={getStatusStyle(invoice.status)}
                                             >
-                                                {invoice.status}
+                                                {t(`residentDashboard.invoiceHistory.status.${invoice.status}`, { defaultValue: invoice.status })}
                                             </span>
 
                                         </td>
@@ -825,8 +824,6 @@ function Invoices() {
 
                         </table>
 
-                        </ResponsiveTable>
-
                     </div>
 
                 ) : (
@@ -835,9 +832,9 @@ function Invoices() {
 
                         icon={Receipt}
 
-                        title="No invoices found"
+                        title={t("invoices.noInvoicesFound")}
 
-                        description="Generate invoices from a billing cycle."
+                        description={t("invoices.noInvoicesDesc")}
 
                     />
 

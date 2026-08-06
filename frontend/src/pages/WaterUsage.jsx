@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import {
   Loader2,
@@ -13,6 +14,7 @@ import WaterUsageStats from "../components/water-usage/WaterUsageStats";
 import WaterUsageTable from "../components/water-usage/WaterUsageTable";
 import WaterUsageFormModal from "../components/water-usage/WaterUsageFormModal";
 import WaterUsageActions from "../components/water-usage/WaterUsageActions";
+import { useWorkspace } from "../context/WorkspaceContext";
 
 import {
   getUsageLogs,
@@ -33,7 +35,10 @@ const emptyForm = {
         };
 
 function WaterUsage() {
-    
+    const { t } = useTranslation();
+
+    const { workspaceId } = useWorkspace();
+
     const [usageLogs, setUsageLogs] = useState([]);
     const [households, setHouseholds] = useState([]);
     const [billingCycles, setBillingCycles] = useState([]);
@@ -79,7 +84,7 @@ useEffect(() => {
 
     useEffect(() => {
         loadUsageLogs();
-        }, [page, debouncedQuery]);
+        }, [workspaceId, page, debouncedQuery]);
 
     const loadUsageLogs = async () => {
     try {
@@ -122,7 +127,7 @@ setBillingCycles(
     } catch (error) {
         console.error(error);
 
-        toast.error("Unable to load water usage logs.");
+        toast.error(t("waterUsage.toasts.loadError"));
 
         setUsageLogs([]);
 
@@ -167,22 +172,22 @@ setBillingCycles(
 
     const validateForm = () => {
     if (!form.householdId) {
-        toast.error("Please select a household.");
+        toast.error(t("waterUsage.toasts.selectHousehold"));
         return false;
     }
 
     if (!form.billingCycleId) {
-        toast.error("Please select a billing cycle.");
+        toast.error(t("waterUsage.toasts.selectBillingCycle"));
         return false;
     }
 
     if (!form.usageDate) {
-        toast.error("Please select a usage date.");
+        toast.error(t("waterUsage.toasts.selectUsageDate"));
         return false;
     }
 
     if (!form.litersConsumed) {
-        toast.error("Please enter liters consumed.");
+        toast.error(t("waterUsage.toasts.enterLiters"));
         return false;
     }
 
@@ -207,8 +212,8 @@ setBillingCycles(
 
     const loadingToast = toast.loading(
         editingId
-        ? "Updating usage log..."
-        : "Saving usage log..."
+        ? t("waterUsage.toasts.updating")
+        : t("waterUsage.toasts.saving")
     );
 
     try {
@@ -217,7 +222,7 @@ setBillingCycles(
 
         await updateUsageLog(editingId, payload);
 
-        toast.success("Usage log updated successfully.", {
+        toast.success(t("waterUsage.toasts.updateSuccess"), {
             id: loadingToast,
         });
 
@@ -225,7 +230,7 @@ setBillingCycles(
 
         await createUsageLog(payload);
 
-        toast.success("Usage log created successfully.", {
+        toast.success(t("waterUsage.toasts.createSuccess"), {
             id: loadingToast,
         });
 
@@ -241,7 +246,7 @@ setBillingCycles(
 
         toast.error(
         error.response?.data?.message ??
-        "Unable to save usage log.",
+        t("waterUsage.toasts.saveError"),
         {
             id: loadingToast,
         }
@@ -258,7 +263,7 @@ setBillingCycles(
     if (!usageToDelete) return;
 
     const loadingToast = toast.loading(
-        "Deleting usage log..."
+        t("waterUsage.toasts.deleting")
     );
 
     try {
@@ -266,7 +271,7 @@ setBillingCycles(
         await deleteUsageLog(usageToDelete.id);
 
         toast.success(
-        "Usage log deleted successfully.",
+        t("waterUsage.toasts.deleteSuccess"),
         {
             id: loadingToast,
         }
@@ -279,7 +284,7 @@ setBillingCycles(
         console.error(error);
 
         toast.error(
-        "Unable to delete usage log.",
+        t("waterUsage.toasts.deleteError"),
         {
             id: loadingToast,
         }
@@ -301,14 +306,14 @@ setBillingCycles(
 
     if (!selectedBillingCycle) {
 
-            toast.error("Select a billing cycle first.");
+            toast.error(t("waterUsage.toasts.selectCycleFirst"));
 
             return;
 
         }
 
     const loadingToast = toast.loading(
-        "Uploading CSV..."
+        t("waterUsage.toasts.uploadingCsv")
     );
 
     try {
@@ -321,7 +326,7 @@ setBillingCycles(
         );
 
         toast.success(
-        "CSV uploaded successfully.",
+        t("waterUsage.toasts.uploadSuccess"),
         {
             id: loadingToast,
         }
@@ -336,7 +341,7 @@ setBillingCycles(
         toast.error(
             error.response?.data?.message ||
             error.response?.data ||
-            "CSV upload failed.",
+            t("waterUsage.toasts.uploadError"),
             {
                 id: loadingToast,
             }
@@ -369,14 +374,14 @@ setBillingCycles(
 
   return (
     <AdminPageShell
-        title="Water Usage Management"
-        description="Track and manage household water consumption records."
+        title={t("waterUsage.pageTitle")}
+        description={t("waterUsage.pageDesc")}
         searchValue={query}
         onSearchChange={(value) => {
             setPage(0);
             setQuery(value);
         }}
-        searchPlaceholder="Search by household, apartment or date..."
+        searchPlaceholder={t("waterUsage.searchPlaceholder")}
         action={
 
             <WaterUsageActions
@@ -416,10 +421,10 @@ setBillingCycles(
             <div>
 
     <h2>
-        Water Usage Records
+        {t("waterUsage.recordsTitle")}
     </h2>
     <p>
-        Track, filter and manage household water consumption records.
+        {t("waterUsage.recordsSubtitle")}
     </p>
     </div>
 
@@ -433,9 +438,9 @@ setBillingCycles(
             className="animate-spin"
             />
 
-            <h3>Loading usage logs</h3>
+            <h3>{t("waterUsage.loading")}</h3>
 
-            <p>Please wait while usage logs are fetched.</p>
+            <p>{t("waterUsage.pleaseWait")}</p>
         </div>
         ) : displayedLogs.length > 0 ? (
 
@@ -463,8 +468,8 @@ setBillingCycles(
 
         <EmptyState
             icon={Droplets}
-            title="No usage logs found"
-            description="Start by adding a manual reading or uploading a CSV file."
+            title={t("waterUsage.noLogsFound")}
+            description={t("waterUsage.noLogsDesc")}
         />
 
         )}
@@ -493,10 +498,10 @@ setBillingCycles(
         />
             <ConfirmDialog
                 open={showDeleteDialog}
-                title="Delete Usage Log"
+                title={t("waterUsage.deleteDialog.title")}
                 message={
                     usageToDelete
-                    ? `Delete usage record for Flat ${usageToDelete.flatNumber}?`
+                    ? t("waterUsage.deleteDialog.message", { flatNumber: usageToDelete.flatNumber })
                     : ""
                 }
                 onCancel={() => {

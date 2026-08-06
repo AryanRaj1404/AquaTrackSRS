@@ -32,24 +32,34 @@
     "home": "Home",
     "features": "Features",
     "login": "Login",
-    "register": "Register"
+    "register": "Register",
+    "contact": "Contact",
+    "getStarted": "Get Started"
   },
   "footer": {
     "tagline": "Smart Water Management System for Modern Apartments",
     "copyright": "© 2026 AquaTrack | Built with React, Spring Boot & PostgreSQL"
   },
   "hero": {
-    "titleLine1": "Smart Water Management",
-    "titleLine2": "for Modern Apartments",
-    "subtitle": "Monitor apartment water consumption, manage households and simplify community operations from one secure platform.",
-    "getStarted": "Get Started",
-    "login": "Login",
-    "communityOverview": "Community Overview",
+  "badge": "Smart Water Intelligence",
+
+  "title1": "Smart Water",
+  "title2": "Management",
+  "title3": "for",
+  "titleHighlight": "Modern Communities",
+
+  "description": "Monitor water consumption, automate billing, detect leaks and manage apartment communities from one intelligent platform.",
+
+  "stats": {
     "apartments": "Apartments",
     "households": "Households",
-    "waterUsage": "Water Usage",
-    "residents": "Residents"
+    "waterManaged": "Water Managed"
   },
+
+  "liveUsage": "Live Usage",
+  "leakDetection": "Leak Detection",
+  "systemNormal": "All Systems Normal"
+},
   "features": {
     "heading": "Why Choose AquaTrack?",
     "apartmentManagement": {

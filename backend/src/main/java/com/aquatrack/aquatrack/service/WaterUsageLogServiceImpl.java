@@ -46,72 +46,111 @@ public class WaterUsageLogServiceImpl implements WaterUsageLogService {
     }
 
     @Override
-    public WaterUsageLogResponse create(WaterUsageLogRequest request) {
+public WaterUsageLogResponse create(
+        Long apartmentId,
+        WaterUsageLogRequest request
+) {
 
-        if (waterUsageLogRepository.existsByHouseholdIdAndUsageDate(
-                request.getHouseholdId(),
-                request.getUsageDate())) {
+    if (waterUsageLogRepository.existsByHouseholdIdAndUsageDate(
+            request.getHouseholdId(),
+            request.getUsageDate())) {
 
-            throw new IllegalArgumentException(
-                    "A water usage log already exists for this household on "
-                            + request.getUsageDate());
-        }
-
-        Household household = householdRepository.findById(request.getHouseholdId())
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
-
-        BillingCycle billingCycle = null;
-
-        if (request.getBillingCycleId() != null) {
-            billingCycle = billingCycleRepository.findById(request.getBillingCycleId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("Billing cycle not found"));
-        }
-
-        if (billingCycle != null &&
-            (request.getUsageDate().isBefore(billingCycle.getStartDate())
-            || request.getUsageDate().isAfter(billingCycle.getEndDate()))) {
-
-            throw new IllegalArgumentException(
-                    "Usage date is outside the selected billing cycle.");
-        }
-
-        WaterUsageLog log = new WaterUsageLog();
-        log.setHousehold(household);
-        log.setUsageDate(request.getUsageDate());
-        log.setLitersConsumed(request.getLitersConsumed());
-        log.setSource(UsageSource.MANUAL_ENTRY);
-        log.setBillingCycle(billingCycle);
-
-        WaterUsageLog saved = waterUsageLogRepository.save(log);
-        return toResponse(saved);
+        throw new IllegalArgumentException(
+                "A water usage log already exists for this household on "
+                        + request.getUsageDate());
     }
+
+    Household household = householdRepository.findById(request.getHouseholdId())
+            .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+
+    if (apartmentId != null &&
+            !household.getApartment().getId().equals(apartmentId)) {
+
+        throw new ResourceNotFoundException("Household not found");
+    }
+
+    BillingCycle billingCycle = null;
+
+    if (request.getBillingCycleId() != null) {
+
+        billingCycle = billingCycleRepository.findById(request.getBillingCycleId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Billing cycle not found"));
+
+        if (apartmentId != null &&
+                !billingCycle.getApartment().getId().equals(apartmentId)) {
+
+            throw new ResourceNotFoundException("Billing cycle not found");
+        }
+    }
+
+    if (billingCycle != null &&
+            (request.getUsageDate().isBefore(billingCycle.getStartDate())
+                    || request.getUsageDate().isAfter(billingCycle.getEndDate()))) {
+
+        throw new IllegalArgumentException(
+                "Usage date is outside the selected billing cycle.");
+    }
+
+    WaterUsageLog log = new WaterUsageLog();
+
+    log.setHousehold(household);
+    log.setUsageDate(request.getUsageDate());
+    log.setLitersConsumed(request.getLitersConsumed());
+    log.setSource(UsageSource.MANUAL_ENTRY);
+    log.setBillingCycle(billingCycle);
+
+    return toResponse(waterUsageLogRepository.save(log));
+}
 
     @Override
 public Page<WaterUsageLogResponse> getAll(
+        Long apartmentId,
         String keyword,
-        Pageable pageable) {
+        Pageable pageable
+) {
 
     Page<WaterUsageLog> page;
 
-    if (keyword == null || keyword.isBlank()) {
+    if (apartmentId == null) {
 
-        page = waterUsageLogRepository.findAll(pageable);
+        if (keyword == null || keyword.isBlank()) {
+
+            page = waterUsageLogRepository.findAll(pageable);
+
+        } else {
+
+            page = waterUsageLogRepository
+                    .findByHousehold_FlatNumberContainingIgnoreCaseOrHousehold_Apartment_NameContainingIgnoreCase(
+                            keyword,
+                            keyword,
+                            pageable
+                    );
+        }
 
     } else {
 
-        page =
-            waterUsageLogRepository
-                .findByHousehold_FlatNumberContainingIgnoreCaseOrHousehold_Apartment_NameContainingIgnoreCase(
-                    keyword,
-                    keyword,
-                    pageable
-                );
+        if (keyword == null || keyword.isBlank()) {
 
+            page = waterUsageLogRepository.findByHousehold_Apartment_Id(
+                    apartmentId,
+                    pageable
+            );
+
+        } else {
+
+            page = waterUsageLogRepository
+                    .findByHousehold_Apartment_IdAndHousehold_FlatNumberContainingIgnoreCaseOrHousehold_Apartment_IdAndHousehold_Apartment_NameContainingIgnoreCase(
+                            apartmentId,
+                            keyword,
+                            apartmentId,
+                            keyword,
+                            pageable
+                    );
+        }
     }
 
     return page.map(this::toResponse);
-
 }
 
     @Override
@@ -133,173 +172,213 @@ public Page<WaterUsageLogResponse> getAll(
     }
 
     @Override
-    public WaterUsageLogResponse update(Long id, WaterUsageLogRequest request) {
+public WaterUsageLogResponse update(
+        Long apartmentId,
+        Long id,
+        WaterUsageLogRequest request
+) {
 
-        WaterUsageLog log = waterUsageLogRepository.findById(id)
+    WaterUsageLog log = waterUsageLogRepository.findById(id)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException("Water usage log not found"));
+
+    if (apartmentId != null &&
+            !log.getHousehold().getApartment().getId().equals(apartmentId)) {
+
+        throw new ResourceNotFoundException("Water usage log not found");
+    }
+
+    Household household = householdRepository.findById(request.getHouseholdId())
+            .orElseThrow(() ->
+                    new ResourceNotFoundException("Household not found"));
+
+    if (apartmentId != null &&
+            !household.getApartment().getId().equals(apartmentId)) {
+
+        throw new ResourceNotFoundException("Household not found");
+    }
+
+    if (waterUsageLogRepository.existsByHouseholdIdAndUsageDateAndIdNot(
+            request.getHouseholdId(),
+            request.getUsageDate(),
+            id)) {
+
+        throw new IllegalArgumentException(
+                "A water usage log already exists for this household on "
+                        + request.getUsageDate());
+    }
+
+    BillingCycle billingCycle = null;
+
+    if (request.getBillingCycleId() != null) {
+
+        billingCycle = billingCycleRepository.findById(request.getBillingCycleId())
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Water usage log not found"));
+                        new ResourceNotFoundException("Billing cycle not found"));
 
-        Household household = householdRepository.findById(request.getHouseholdId())
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+        if (apartmentId != null &&
+                !billingCycle.getApartment().getId().equals(apartmentId)) {
 
-        if (waterUsageLogRepository.existsByHouseholdIdAndUsageDateAndIdNot(
-                request.getHouseholdId(),
-                request.getUsageDate(),
-                id)) {
-
-            throw new IllegalArgumentException(
-                    "A water usage log already exists for this household on "
-                            + request.getUsageDate());
+            throw new ResourceNotFoundException("Billing cycle not found");
         }
-
-        log.setHousehold(household);
-        log.setUsageDate(request.getUsageDate());
-        log.setLitersConsumed(request.getLitersConsumed());
-
-        WaterUsageLog saved = waterUsageLogRepository.save(log);
-
-        return toResponse(saved);
     }
 
-    @Override
-    public void delete(Long id) {
+    log.setHousehold(household);
+    log.setUsageDate(request.getUsageDate());
+    log.setLitersConsumed(request.getLitersConsumed());
+    log.setBillingCycle(billingCycle);
 
-        if (!waterUsageLogRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Water usage log not found");
-        }
+    return toResponse(waterUsageLogRepository.save(log));
+}
 
-        waterUsageLogRepository.deleteById(id);
+
+@Override
+public void delete(
+        Long apartmentId,
+        Long id
+) {
+
+    WaterUsageLog log = waterUsageLogRepository.findById(id)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException("Water usage log not found"));
+
+    if (apartmentId != null &&
+            !log.getHousehold().getApartment().getId().equals(apartmentId)) {
+
+        throw new ResourceNotFoundException("Water usage log not found");
     }
 
-    @Override
-    public UploadCsvResponse uploadCsv(
-            MultipartFile file,
-            Long billingCycleId) {
+    waterUsageLogRepository.delete(log);
+}
+@Override
+public UploadCsvResponse uploadCsv(
+        Long apartmentId,
+        MultipartFile file,
+        Long billingCycleId
+) {
 
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("CSV file is empty.");
-        }
+    if (file.isEmpty()) {
+        throw new IllegalArgumentException("CSV file is empty.");
+    }
 
-        String fileName = file.getOriginalFilename();
+    String fileName = file.getOriginalFilename();
 
-        if (fileName == null ||
-                !fileName.toLowerCase().endsWith(".csv")) {
+    if (fileName == null ||
+            !fileName.toLowerCase().endsWith(".csv")) {
 
-            throw new IllegalArgumentException(
-                    "Please upload a .csv file.");
-        }
+        throw new IllegalArgumentException(
+                "Please upload a .csv file.");
+    }
 
-        BillingCycle billingCycle =
-                billingCycleRepository.findById(billingCycleId)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Billing cycle not found"));
+    BillingCycle billingCycle =
+            billingCycleRepository.findById(billingCycleId)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Billing cycle not found"));
 
-        List<CsvRowError> errors = new ArrayList<>();
+    if (apartmentId != null &&
+            !billingCycle.getApartment().getId().equals(apartmentId)) {
 
-        int totalRows = 0;
-        int importedRows = 0;
+        throw new ResourceNotFoundException("Billing cycle not found");
+    }
 
-        try (BufferedReader reader =
-                    new BufferedReader(
-                            new InputStreamReader(
-                                    file.getInputStream(),
-                                    StandardCharsets.UTF_8))) {
+    List<CsvRowError> errors = new ArrayList<>();
 
-            reader.readLine(); // Skip header
+    int totalRows = 0;
+    int importedRows = 0;
 
-            String line;
+    try (BufferedReader reader =
+                 new BufferedReader(
+                         new InputStreamReader(
+                                 file.getInputStream(),
+                                 StandardCharsets.UTF_8))) {
 
-            while ((line = reader.readLine()) != null) {
+        reader.readLine();
 
-                totalRows++;
+        String line;
 
-                try {
+        while ((line = reader.readLine()) != null) {
 
-                    String[] parts = line.split(",");
+            totalRows++;
 
-                    if (parts.length != 3) {
+            try {
 
-                        throw new IllegalArgumentException(
-                                "Invalid CSV format.");
+                String[] parts = line.split(",");
 
-                    }
-
-                    Long householdId =
-                            Long.parseLong(parts[0].trim());
-
-                    LocalDate usageDate =
-                            LocalDate.parse(parts[1].trim());
-
-                    Double litersConsumed =
-                            Double.parseDouble(parts[2].trim());
-
-                    WaterUsageLogRequest request =
-                            new WaterUsageLogRequest();
-
-                    request.setHouseholdId(householdId);
-                    request.setBillingCycleId(billingCycle.getId());
-                    request.setUsageDate(usageDate);
-                    request.setLitersConsumed(litersConsumed);
-
-                    create(request);
-
-                    importedRows++;
-
+                if (parts.length != 3) {
+                    throw new IllegalArgumentException(
+                            "Invalid CSV format.");
                 }
 
-                catch (NumberFormatException ex) {
+                Long householdId =
+                        Long.parseLong(parts[0].trim());
 
-                    errors.add(new CsvRowError(
-                            totalRows,
-                            "Invalid household id or liters consumed."
-                    ));
+                LocalDate usageDate =
+                        LocalDate.parse(parts[1].trim());
 
-                }
+                Double litersConsumed =
+                        Double.parseDouble(parts[2].trim());
 
-                catch (DateTimeParseException ex) {
+                WaterUsageLogRequest request =
+                        new WaterUsageLogRequest();
 
-                    errors.add(new CsvRowError(
-                            totalRows,
-                            "Invalid date format."
-                    ));
+                request.setHouseholdId(householdId);
+                request.setBillingCycleId(billingCycle.getId());
+                request.setUsageDate(usageDate);
+                request.setLitersConsumed(litersConsumed);
 
-                }
+                create(apartmentId, request);
 
-                catch (Exception ex) {
+                importedRows++;
 
-                    errors.add(new CsvRowError(
-                            totalRows,
-                            ex.getMessage()
-                    ));
+            }
 
-                }
+            catch (NumberFormatException ex) {
+
+                errors.add(new CsvRowError(
+                        totalRows,
+                        "Invalid household id or liters consumed."
+                ));
+
+            }
+
+            catch (DateTimeParseException ex) {
+
+                errors.add(new CsvRowError(
+                        totalRows,
+                        "Invalid date format."
+                ));
+
+            }
+
+            catch (Exception ex) {
+
+                errors.add(new CsvRowError(
+                        totalRows,
+                        ex.getMessage()
+                ));
 
             }
 
         }
 
-        catch (IOException ex) {
+    }
 
-            throw new RuntimeException(
-                    "Unable to read CSV file.",
-                    ex);
+    catch (IOException ex) {
 
-        }
-
-        return new UploadCsvResponse(
-
-                totalRows,
-
-                importedRows,
-
-                errors.size(),
-
-                errors
-
-        );
+        throw new RuntimeException(
+                "Unable to read CSV file.",
+                ex);
 
     }
+
+    return new UploadCsvResponse(
+            totalRows,
+            importedRows,
+            errors.size(),
+            errors
+    );
+}
 
     private WaterUsageLogResponse toResponse(WaterUsageLog log) {
 

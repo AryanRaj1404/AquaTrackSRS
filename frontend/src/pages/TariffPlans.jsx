@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import {
   BadgeDollarSign,
@@ -16,7 +17,6 @@ import AdminPageShell from "../components/AdminPageShell";
 import EmptyState from "../components/EmptyState";
 import StatCard from "../components/StatCard";
 import ConfirmDialog from "../components/ConfirmDialog";
-import ResponsiveTable from "../components/ResponsiveTable";
 
 import {
   getTariffPlans,
@@ -54,6 +54,7 @@ const initialForm = {
 };
 
 function TariffPlans() {
+  const { t } = useTranslation();
 
   const [tariffPlans, setTariffPlans] = useState([]);
 
@@ -87,7 +88,7 @@ function TariffPlans() {
 
       setTariffPlans([]);
 
-      toast.error("Unable to load tariff plans.");
+      toast.error(t("tariffPlans.toasts.loadError"));
     } finally {
       setIsLoading(false);
     }
@@ -217,7 +218,7 @@ function TariffPlans() {
 
   const validateForm = () => {
         if (!form.planName.trim()) {
-      toast.error("Plan name is required.");
+      toast.error(t("tariffPlans.toasts.planNameRequired"));
       return false;
     }
 
@@ -225,7 +226,7 @@ function TariffPlans() {
 
       toast.error(
 
-          "Add at least one tariff tier."
+          t("tariffPlans.toasts.atLeastOneTier")
 
       );
 
@@ -243,7 +244,7 @@ function TariffPlans() {
 
           toast.error(
 
-              "Each tier must have a rate."
+              t("tariffPlans.toasts.tierRateRequired")
 
           );
 
@@ -254,27 +255,27 @@ function TariffPlans() {
   }
 
     if (!form.fixedCharge) {
-      toast.error("Fixed charge is required.");
+      toast.error(t("tariffPlans.toasts.fixedChargeRequired"));
       return false;
     }
 
     if (Number(form.fixedCharge) < 0) {
-      toast.error("Fixed charge cannot be negative.");
+      toast.error(t("tariffPlans.toasts.fixedChargeNegative"));
       return false;
     }
 
     if (!form.effectiveFrom) {
-      toast.error("Effective From is required.");
+      toast.error(t("tariffPlans.toasts.effectiveFromRequired"));
       return false;
     }
 
     if (!form.effectiveTo) {
-      toast.error("Effective To is required.");
+      toast.error(t("tariffPlans.toasts.effectiveToRequired"));
       return false;
     }
 
     if (form.effectiveFrom > form.effectiveTo) {
-      toast.error("Effective To must be after Effective From.");
+      toast.error(t("tariffPlans.toasts.effectiveToAfterFrom"));
       return false;
     }
 
@@ -350,8 +351,8 @@ function TariffPlans() {
 
   const loadingToast = toast.loading(
     editingId
-      ? "Updating tariff plan..."
-      : "Creating tariff plan..."
+      ? t("tariffPlans.toasts.updating")
+      : t("tariffPlans.toasts.creating")
   );
 
   try {
@@ -367,7 +368,7 @@ function TariffPlans() {
         )
       );
 
-      toast.success("Tariff plan updated successfully.", {
+      toast.success(t("tariffPlans.toasts.updateSuccess"), {
         id: loadingToast,
       });
     } else {
@@ -380,7 +381,7 @@ function TariffPlans() {
         ...previous,
       ]);
 
-      toast.success("Tariff plan created successfully.", {
+      toast.success(t("tariffPlans.toasts.createSuccess"), {
         id: loadingToast,
       });
     }
@@ -393,8 +394,8 @@ function TariffPlans() {
 
     toast.error(
       editingId
-        ? "Failed to update tariff plan."
-        : "Failed to create tariff plan.",
+        ? t("tariffPlans.toasts.updateError")
+        : t("tariffPlans.toasts.createError"),
       {
         id: loadingToast,
       }
@@ -451,7 +452,7 @@ function TariffPlans() {
     return;
   }
 
-  const loadingToast = toast.loading("Deleting tariff plan...");
+  const loadingToast = toast.loading(t("tariffPlans.toasts.deleting"));
 
   try {
     await deleteTariffPlan(deleteId);
@@ -460,7 +461,7 @@ function TariffPlans() {
       previous.filter((plan) => plan.id !== deleteId)
     );
 
-    toast.success("Tariff plan deleted successfully.", {
+    toast.success(t("tariffPlans.toasts.deleteSuccess"), {
       id: loadingToast,
     });
 
@@ -471,7 +472,7 @@ function TariffPlans() {
     toast.error(
       error.response?.data?.message ||
       error.response?.data ||
-      "Failed to delete tariff plan.",
+      t("tariffPlans.toasts.deleteError"),
       {
           id: loadingToast,
       }
@@ -542,11 +543,11 @@ const highestRate =
   return (
     <>
       <AdminPageShell
-    title="Tariff Plan Management"
-    description="Manage water tariff plans used for billing."
+    title={t("tariffPlans.pageTitle")}
+    description={t("tariffPlans.pageDesc")}
     searchValue={query}
     onSearchChange={setQuery}
-    searchPlaceholder="Search tariff plans..."
+    searchPlaceholder={t("tariffPlans.searchPlaceholder")}
     action={
       <button
         type="button"
@@ -558,30 +559,30 @@ const highestRate =
         }}
       >
         <Plus size={18} />
-        Add Tariff Plan
+        {t("tariffPlans.addTariffPlan")}
       </button>
     }
   >
     <section className="mg-summary-grid">
       <StatCard
         icon={BadgeDollarSign}
-        title="Total Plans"
+        title={t("tariffPlans.stats.totalTitle")}
         value={tariffPlans.length}
-        description="Available tariff plans"
+        description={t("tariffPlans.stats.totalDesc")}
         delay={0}
       />
 
       <StatCard
         icon={CheckCircle2}
-        title="Active Plans"
+        title={t("tariffPlans.stats.activeTitle")}
         value={activePlans}
-        description="Currently configured"
+        description={t("tariffPlans.stats.activeDesc")}
         delay={0.1}
       />
 
       <StatCard
         icon={BadgeDollarSign}
-        title="Highest Rate"
+        title={t("tariffPlans.stats.highestTitle")}
         value={
           highestRate === "-"
 
@@ -595,20 +596,20 @@ const highestRate =
                   }
               )}`
       }
-        description="Rate per unit"
+        description={t("tariffPlans.stats.highestDesc")}
         delay={0.2}
       />
 
       <StatCard
         icon={BadgeDollarSign}
-        title="Latest Plan"
+        title={t("tariffPlans.stats.latestTitle")}
         value={
             latestPlan?.planName ?? "-"
         }
 
         description={
             latestPlan?.effectiveFrom ??
-            "No plans yet"
+            t("tariffPlans.stats.noPlansYet")
         }
         delay={0.3}
       />
@@ -623,12 +624,12 @@ const highestRate =
           <div>
             <h2>
               {editingId
-                ? "Update Tariff Plan"
-                : "Register Tariff Plan"}
+                ? t("tariffPlans.form.updateTitle")
+                : t("tariffPlans.form.registerTitle")}
             </h2>
 
             <p>
-              Configure tariff details for billing.
+              {t("tariffPlans.form.desc")}
             </p>
           </div>
 
@@ -639,7 +640,7 @@ const highestRate =
             disabled={isSubmitting}
           >
             <X size={16} />
-            Close
+            {t("tariffPlans.form.close")}
           </button>
         </div>
 
@@ -647,7 +648,7 @@ const highestRate =
           <div className="mg-form-grid">
 
             <div className="mg-form-group">
-              <label>Plan Name</label>
+              <label>{t("tariffPlans.form.planName")}</label>
 
               <input
                 name="planName"
@@ -662,7 +663,7 @@ const highestRate =
 
 
             <div className="mg-form-group">
-              <label>Fixed Charge</label>
+              <label>{t("tariffPlans.form.fixedCharge")}</label>
 
               <input
                 type="number"
@@ -676,7 +677,7 @@ const highestRate =
             
 
             <div className="mg-form-group">
-              <label>Effective From</label>
+              <label>{t("tariffPlans.form.effectiveFrom")}</label>
 
               <input
                 type="date"
@@ -688,7 +689,7 @@ const highestRate =
             </div>
 
             <div className="mg-form-group">
-              <label>Effective To</label>
+              <label>{t("tariffPlans.form.effectiveTo")}</label>
 
               <input
                 type="date"
@@ -700,7 +701,7 @@ const highestRate =
             </div>
 
             <div className="mg-form-group mg-form-group-full">
-              <label>Description</label>
+              <label>{t("tariffPlans.form.description")}</label>
 
               <textarea
                 rows={4}
@@ -708,7 +709,7 @@ const highestRate =
                 value={form.description}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                placeholder="Tariff description..."
+                placeholder={t("tariffPlans.form.descriptionPlaceholder")}
               />
             </div>
 
@@ -732,7 +733,7 @@ const highestRate =
                 margin: 0,
             }}
         >
-            Tariff Tiers
+            {t("tariffPlans.form.tariffTiers")}
         </h3>
 
         <button
@@ -742,7 +743,7 @@ const highestRate =
             disabled={isSubmitting}
         >
             <Plus size={16} />
-            Add Tier
+            {t("tariffPlans.form.addTier")}
         </button>
 
     </div>
@@ -768,7 +769,7 @@ const highestRate =
 
                     <label>
 
-                        Up To (KL)
+                        {t("tariffPlans.form.uptoKl")}
 
                     </label>
 
@@ -783,7 +784,7 @@ const highestRate =
                                 e.target.value
                             )
                         }
-                        placeholder="Leave empty for unlimited"
+                        placeholder={t("tariffPlans.form.uptoKlPlaceholder")}
                         disabled={isSubmitting}
                     />
 
@@ -793,7 +794,7 @@ const highestRate =
 
                         <label>
 
-                            Rate / KL
+                            {t("tariffPlans.form.ratePerKl")}
 
                         </label>
 
@@ -832,7 +833,7 @@ const highestRate =
                                 }
                             >
                                 <Trash2 size={16} />
-                                Remove
+                                {t("tariffPlans.form.remove")}
                             </button>
 
                         )}
@@ -858,7 +859,7 @@ const highestRate =
               disabled={isSubmitting}
             >
               <X size={17} />
-              Cancel
+              {t("tariffPlans.form.cancel")}
             </button>
 
             <button
@@ -870,11 +871,11 @@ const highestRate =
 
               {isSubmitting
                 ? editingId
-                  ? "Updating..."
-                  : "Saving..."
+                  ? t("tariffPlans.form.updating")
+                  : t("tariffPlans.form.saving")
                 : editingId
-                ? "Update Tariff Plan"
-                : "Save Tariff Plan"}
+                ? t("tariffPlans.form.updateTitle")
+                : t("tariffPlans.form.savePlan")}
             </button>
           </div>
         </form>
@@ -883,9 +884,9 @@ const highestRate =
             <section className="mg-panel">
         <div className="mg-toolbar">
           <div>
-            <h2>Tariff Plan Records</h2>
+            <h2>{t("tariffPlans.recordsTitle")}</h2>
             <p>
-              All configured tariff plans are listed below.
+              {t("tariffPlans.recordsSubtitle")}
             </p>
           </div>
         </div>
@@ -896,22 +897,21 @@ const highestRate =
               size={36}
               className="animate-spin"
             />
-            <h3>Loading tariff plans</h3>
+            <h3>{t("tariffPlans.loading")}</h3>
             <p>
-              Please wait while tariff plans are fetched.
+              {t("tariffPlans.pleaseWait")}
             </p>
           </div>
         ) : filteredTariffPlans.length > 0 ? (
           <div className="mg-table-wrapper">
-            <ResponsiveTable>
             <table className="mg-table">
               <thead>
                 <tr>
-                  <th>Plan Name</th>
-                  <th>Tariff Slabs</th>
-                  <th>Fixed Charge</th>
-                  <th>Effective</th>
-                  <th>Actions</th>
+                  <th>{t("tariffPlans.table.planName")}</th>
+                  <th>{t("tariffPlans.table.tariffSlabs")}</th>
+                  <th>{t("tariffPlans.table.fixedCharge")}</th>
+                  <th>{t("tariffPlans.table.effective")}</th>
+                  <th>{t("tariffPlans.table.actions")}</th>
                 </tr>
               </thead>
 
@@ -961,9 +961,9 @@ const highestRate =
 
                             {tier.uptoKl == null
 
-                                ? `${previous}+ KL`
+                                ? `${previous}+ ${t("tariffPlans.table.klUnit")}`
 
-                                : `${previous} - ${tier.uptoKl} KL`
+                                : `${previous} - ${tier.uptoKl} ${t("tariffPlans.table.klUnit")}`
 
                             }
 
@@ -1043,7 +1043,7 @@ const highestRate =
                         }
                       >
                         <Pencil size={16} />
-                        Edit
+                        {t("tariffPlans.table.edit")}
                       </button>
 
                       <button
@@ -1054,30 +1054,29 @@ const highestRate =
                         }
                       >
                         <Trash2 size={16} />
-                        Delete
+                        {t("tariffPlans.table.delete")}
                       </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            </ResponsiveTable>
           </div>
         ) : (
           <EmptyState
             icon={BadgeDollarSign}
-            title="No tariff plans found"
-            description="Create your first tariff plan to begin billing households."
+            title={t("tariffPlans.noPlansFound")}
+            description={t("tariffPlans.noPlansDesc")}
           />
         )}
       </section>
     </AdminPageShell>
     <ConfirmDialog
         open={deleteId !== null}
-        title="Delete Tariff Plan"
-        message="Are you sure you want to delete this tariff plan? This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t("tariffPlans.deleteDialog.title")}
+        message={t("tariffPlans.deleteDialog.message")}
+        confirmText={t("tariffPlans.deleteDialog.confirm")}
+        cancelText={t("tariffPlans.deleteDialog.cancel")}
         onCancel={() => setDeleteId(null)}
         onConfirm={handleDelete}
         />

@@ -1,4 +1,5 @@
 import GlassPanel from "../ui/GlassPanel";
+import { useTranslation } from "react-i18next";
 
 import {
   ArrowUpRight,
@@ -9,45 +10,47 @@ import {
   Mail,
 } from "lucide-react";
 
-const activities = [
-  {
-    title: "Meter readings uploaded",
-    description: "Harmony Gardens • 126 households",
-    time: "2 mins ago",
-    icon: Droplets,
-    color: "bg-sky-100 text-sky-600",
-  },
-  {
-    title: "Bills generated",
-    description: "River Plaza • July 2026",
-    time: "18 mins ago",
-    icon: FileText,
-    color: "bg-emerald-100 text-emerald-600",
-  },
-  {
-    title: "Payment reminders sent",
-    description: "38 households notified",
-    time: "42 mins ago",
-    icon: Mail,
-    color: "bg-violet-100 text-violet-600",
-  },
-  {
-    title: "New apartment registered",
-    description: "Sunrise Residency",
-    time: "Today",
-    icon: Building2,
-    color: "bg-orange-100 text-orange-600",
-  },
-  {
-    title: "High consumption alert",
-    description: "Green Valley",
-    time: "Today",
-    icon: Bell,
-    color: "bg-red-100 text-red-600",
-  },
-];
-
 export default function RecentActivity() {
+  const { t } = useTranslation();
+
+  const activities = [
+    {
+      title: t("recentActivity.meterReadingsUploaded"),
+      description: "Harmony Gardens • 126",
+      time: t("recentActivity.minsAgo", { count: 2 }),
+      icon: Droplets,
+      color: "bg-sky-100 text-sky-600",
+    },
+    {
+      title: t("recentActivity.billsGenerated"),
+      description: "River Plaza • July 2026",
+      time: t("recentActivity.minsAgo", { count: 18 }),
+      icon: FileText,
+      color: "bg-emerald-100 text-emerald-600",
+    },
+    {
+      title: t("recentActivity.paymentRemindersSent"),
+      description: t("recentActivity.householdsNotified"),
+      time: t("recentActivity.minsAgo", { count: 42 }),
+      icon: Mail,
+      color: "bg-violet-100 text-violet-600",
+    },
+    {
+      title: t("recentActivity.newApartmentRegistered"),
+      description: "Sunrise Residency",
+      time: t("recentActivity.today"),
+      icon: Building2,
+      color: "bg-orange-100 text-orange-600",
+    },
+    {
+      title: t("recentActivity.highConsumptionAlert"),
+      description: "Green Valley",
+      time: t("recentActivity.today"),
+      icon: Bell,
+      color: "bg-red-100 text-red-600",
+    },
+  ];
+
   return (
     <GlassPanel className="p-8 shadow-2xl">
 
@@ -56,17 +59,17 @@ export default function RecentActivity() {
         <div>
 
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-sky-600">
-            Recent Activity
+            {t("recentActivity.recentActivity")}
           </p>
 
           <h2 className="mt-2 text-3xl font-bold text-slate-900">
-            What's happening
+            {t("recentActivity.whatsHappening")}
           </h2>
 
         </div>
 
         <button className="flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">
-          View History
+          {t("recentActivity.viewHistory")}
           <ArrowUpRight size={16} />
         </button>
 

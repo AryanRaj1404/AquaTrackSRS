@@ -3,72 +3,105 @@ import api from "./api";
 export async function getUsageLogs(
     page = 0,
     size = 20,
-    keyword = ""
+    keyword = "",
+    workspaceId = null
 ) {
+    const response = await api.get("/usage-logs", {
+        params: {
+            page,
+            size,
+            keyword,
+            workspaceId,
+        },
+    });
 
-    const response = await api.get(
+    return response.data;
+}
+
+export async function createUsageLog(
+    usageLogData,
+    workspaceId
+) {
+    const response = await api.post(
         "/usage-logs",
+        usageLogData,
         {
             params: {
-                page,
-                size,
-                keyword,
+                workspaceId,
             },
         }
     );
 
     return response.data;
-
 }
 
-export async function createUsageLog(usageLogData) {
-  const response = await api.post("/usage-logs", usageLogData);
-  return response.data;
+export async function updateUsageLog(
+    id,
+    usageLogData,
+    workspaceId
+) {
+    const response = await api.put(
+        `/usage-logs/${id}`,
+        usageLogData,
+        {
+            params: {
+                workspaceId,
+            },
+        }
+    );
+
+    return response.data;
 }
 
-export async function updateUsageLog(id, usageLogData) {
-  const response = await api.put(`/usage-logs/${id}`, usageLogData);
-  return response.data;
-}
-
-export async function deleteUsageLog(id) {
-  await api.delete(`/usage-logs/${id}`);
+export async function deleteUsageLog(
+    id,
+    workspaceId
+) {
+    await api.delete(`/usage-logs/${id}`, {
+        params: {
+            workspaceId,
+        },
+    });
 }
 
 export const uploadCsv = async (
     file,
-    billingCycleId
+    billingCycleId,
+    workspaceId
 ) => {
-
     const formData = new FormData();
 
     formData.append("file", file);
-
-    formData.append(
-        "billingCycleId",
-        billingCycleId
-    );
+    formData.append("billingCycleId", billingCycleId);
 
     const response = await api.post(
-
         "/usage-logs/upload-csv",
-
         formData,
-
         {
+            params: {
+                workspaceId,
+            },
             headers: {
-                "Content-Type":
-                    "multipart/form-data",
+                "Content-Type": "multipart/form-data",
             },
         }
-
     );
 
     return response.data;
-
 };
 
-export async function getUsageLogsByHousehold(householdId) {
-  const response = await api.get(`/usage-logs/household/${householdId}`);
-  return response.data;
+export async function getUsageLogsByHousehold(
+    householdId,
+    workspaceId
+) {
+    const response = await api.get(
+        `/usage-logs/household/${householdId}`,
+        {
+            params: {
+                workspaceId,
+            },
+        }
+    );
+
+    return response.data;
 }
