@@ -69,10 +69,16 @@ public class HouseholdServiceImpl implements HouseholdService {
     }
 
     @Override
-    public Page<HouseholdResponse> getAll(Pageable pageable) {
-        return householdRepository
-                .findAll(pageable)
-                .map(this::toResponse);
+    public Page<HouseholdResponse> getAll(Long apartmentId, Pageable pageable) {
+        if (apartmentId == null) {
+                return householdRepository
+                        .findAll(pageable)
+                        .map(this::toResponse);
+                }
+
+                return householdRepository
+                        .findByApartmentId(apartmentId, pageable)
+                        .map(this::toResponse);
 
         }
 
@@ -132,11 +138,18 @@ public class HouseholdServiceImpl implements HouseholdService {
 
         @Override
         public Page<HouseholdResponse> search(
+                Long apartmentId,
                 String keyword,
                 Pageable pageable) {
 
+        if (apartmentId == null) {
+                return householdRepository
+                        .search(keyword, pageable)
+                        .map(this::toResponse);
+        }
+
         return householdRepository
-                .search(keyword, pageable)
+                .search(apartmentId, keyword, pageable)
                 .map(this::toResponse);
         }
 

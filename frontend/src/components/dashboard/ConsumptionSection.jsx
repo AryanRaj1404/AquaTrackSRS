@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { Activity, Building2, PieChart as PieChartIcon, RefreshCw } from "lucide-react";
 import adminDashboardService from "../../services/adminDashboardService";
+import { useWorkspace } from "../../context/WorkspaceContext";
 
 const COLORS = {
   darkTeal: "#06334b",
@@ -57,7 +58,7 @@ export default function AdminDashboardCharts() {
   const [viewMode, setViewMode] = useState("daily");
   const [timeRange, setTimeRange] = useState("1M");
   const [lastUpdated, setLastUpdated] = useState(new Date());
-
+  const { workspaceId } = useWorkspace();
  
 
   const fetchChartsData = async () => {
@@ -85,12 +86,12 @@ export default function AdminDashboardCharts() {
 
   useEffect(() => {
     fetchChartsData();
-  }, [viewMode, timeRange]);
+  }, [workspaceId,viewMode, timeRange]);
 
   useEffect(() => {
       const interval = setInterval(fetchChartsData, 30000);
       return () => clearInterval(interval);
-  }, []);
+  }, [workspaceId, viewMode, timeRange]);
 
   if (loading && chartData.length === 0) {
     return (

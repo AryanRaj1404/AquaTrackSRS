@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,10 +39,15 @@ public class HouseholdController {
     }
 
     @GetMapping
-    public Page<HouseholdResponse> getAll(Pageable pageable) {
-
-        return householdService.getAll(pageable);
-
+    public Page<HouseholdResponse> getAll(
+            @RequestHeader(
+                    value = "X-Workspace-Id",
+                    required = false
+            )
+            Long apartmentId,
+            Pageable pageable
+    ) {
+        return householdService.getAll(apartmentId, pageable);
     }
 
     @GetMapping("/unassigned-residents")
@@ -83,10 +89,15 @@ public class HouseholdController {
 
     @GetMapping("/search")
     public Page<HouseholdResponse> searchHouseholds(
+            @RequestHeader(
+                    value = "X-Workspace-Id",
+                    required = false
+            ) Long apartmentId,
             @RequestParam String keyword,
             Pageable pageable) {
 
         return householdService.search(
+                apartmentId,
                 keyword,
                 pageable
         );

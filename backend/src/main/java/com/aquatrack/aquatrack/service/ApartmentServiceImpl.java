@@ -8,23 +8,64 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.aquatrack.aquatrack.dto.ApartmentOverviewResponse;
 import com.aquatrack.aquatrack.dto.ApartmentRequest;
 import com.aquatrack.aquatrack.dto.ApartmentResponse;
 import com.aquatrack.aquatrack.entity.Apartment;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
+import com.aquatrack.aquatrack.repository.UserRepository;
 
 @Service
 public class ApartmentServiceImpl implements ApartmentService {
 
     private final ApartmentRepository apartmentRepository;
     private final HouseholdRepository householdRepository;
+    private final UserRepository userRepository;
 
-    public ApartmentServiceImpl(ApartmentRepository apartmentRepository, HouseholdRepository householdRepository) {
+    public ApartmentServiceImpl(ApartmentRepository apartmentRepository, 
+        HouseholdRepository householdRepository,
+        UserRepository userRepository) {
         this.apartmentRepository = apartmentRepository;
         this.householdRepository = householdRepository;
+        this.userRepository = userRepository;
     }
+
+    @Override
+public ApartmentOverviewResponse getOverview(Long apartmentId) {
+
+    Apartment apartment = apartmentRepository.findById(apartmentId)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException("Apartment not found"));
+
+    long householdCount =
+            householdRepository.countByApartmentId(apartmentId);
+
+    long occupied =
+            userRepository.countOccupiedHouseholds(apartmentId);
+
+    long vacant = householdCount - occupied;
+
+    long residents =
+            userRepository.countResidentsByApartment(apartmentId);
+
+    double avgOccupancy =
+            householdCount == 0
+                    ? 0
+                    : (double) residents / householdCount;
+
+    return new ApartmentOverviewResponse(
+            apartment.getId(),
+            apartment.getName(),
+            apartment.getAddress(),
+            householdCount,
+            residents,
+            occupied,
+            vacant,
+            Math.round(avgOccupancy * 100.0) / 100.0
+    );
+}
 
     @Override
     public ApartmentResponse create(ApartmentRequest request) {
@@ -41,7 +82,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         return apartmentRepository.findAll()
                 .stream()
                 .map(this::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

@@ -13,10 +13,6 @@ function HouseholdTable(
 
     apartments,
 
-    selectedApartment,
-
-    setSelectedApartment,
-
     handleRemoveResident,
 
     openAssignResident,
@@ -28,7 +24,7 @@ function HouseholdTable(
 
      useEffect(() => {
         setShowApartmentFilter(false);
-    }, [selectedApartment]);
+    }, []);
 
     useEffect(() => {
     
@@ -45,12 +41,6 @@ function HouseholdTable(
     
     }, []);
 
-    const selectedApartmentName = 
-      apartments.find(
-          apartment =>
-              String(apartment.id) === String(selectedApartment)
-      )?.name || "Apartment";
-
     return (
 
         <div className="mg-table-wrapper">
@@ -59,128 +49,7 @@ function HouseholdTable(
               <thead>
               <tr>
                 <th>Flat Number</th>
-                <th>
-
-  <div className="relative inline-block">
-
-    <button
-      type="button"
-      onClick={(event) => {
-
-        event.stopPropagation();
-        setShowApartmentFilter(previous => !previous);
-
-      }}
-      className="flex items-center gap-1 font-medium hover:text-sky-600 transition-colors"
-    >
-
-      <span>{selectedApartmentName}</span>
-
-      <ChevronDown
-        size={16}
-        strokeWidth={2.8}
-        className={`transition-transform duration-200 ${
-          showApartmentFilter ? "rotate-180" : ""
-        }`}
-      />
-
-    </button>
-
-    {showApartmentFilter && (
-
-      <div
-        onClick={(event) => event.stopPropagation()}
-        className="
-          absolute
-          left-0
-          top-full
-          mt-2
-          w-60
-          bg-white
-          border
-          border-slate-200
-          rounded-xl
-          shadow-xl
-          overflow-y-auto
-          max-h-64
-          z-50
-          "
-      >
-
-        <button
-          type="button"
-          onClick={() => {
-
-            setSelectedApartment("");
-            setShowApartmentFilter(false);
-
-          }}
-          className={`w-full px-4 py-3 text-left hover:bg-slate-50 transition ${
-            selectedApartment === ""
-              ? "bg-sky-50 text-sky-600 font-semibold"
-              : ""
-          }`}
-        >
-          <div className="flex items-center justify-between">
-
-    <span>All Apartments</span>
-
-    {selectedApartment === "" && (
-
-        <Check
-            size={16}
-            className="text-sky-600"
-        />
-
-    )}
-
-</div>
-        </button>
-        {apartments.map((apartment) => (
-
-  <button
-    key={apartment.id}
-    type="button"
-    onClick={() => {
-
-      setSelectedApartment(apartment.id);
-      setShowApartmentFilter(false);
-
-    }}
-    className={`
-      w-full
-      px-4
-      py-3
-      flex
-      items-center
-      justify-between
-      hover:bg-slate-50
-      transition
-      ${
-          String(selectedApartment) === String(apartment.id)
-              ? "bg-sky-50 text-sky-600 font-semibold"
-              : ""
-      }
-      `}
-  >
-    {apartment.name}
-      {String(selectedApartment) === String(apartment.id) && (
-        <Check
-            size={16}
-            className="text-sky-600"
-        />
-    )}
-  </button>
-
-))}
-
-      </div>
-
-    )}
-
-  </div>
-
-</th>
+                <th>Apartment </th>
                 <th>Flat Size</th>
                 <th>Occupancy</th>
                 <th>Resident</th>

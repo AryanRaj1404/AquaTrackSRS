@@ -31,7 +31,12 @@ public class AdminDashboardService {
     }
 
     public List<AdminAlertResponse> getAlerts(Long apartmentId) {
-        return usageAlertRepository.findAll().stream().map(a -> {
+        List<UsageAlert> alerts =
+            apartmentId == null
+                ? usageAlertRepository.findAll()
+                : usageAlertRepository.findByHousehold_Apartment_IdOrderByCreatedAtDesc(apartmentId);
+
+        return alerts.stream().map(a -> {
             AdminAlertResponse res = new AdminAlertResponse();
             res.setId(a.getId());
             res.setTitle(a.getAlertType() == UsageAlert.AlertType.ANOMALY_LEAK ? "Possible leakage detected" : "High water usage");
@@ -50,14 +55,31 @@ public class AdminDashboardService {
 
     public AdminAlertSummaryResponse getAlertSummary(Long apartmentId) {
 
-        long critical = usageAlertRepository.countByAlertType(
-                UsageAlert.AlertType.ANOMALY_LEAK);
+        long critical =
+        apartmentId == null
+                ? usageAlertRepository.countByAlertType(
+                        UsageAlert.AlertType.ANOMALY_LEAK)
+                : usageAlertRepository.countByHousehold_Apartment_IdAndAlertType(
+                        apartmentId,
+                        UsageAlert.AlertType.ANOMALY_LEAK);
 
-        long pending = usageAlertRepository.countByAcknowledgedFalse();
+        long pending =
+                apartmentId == null
+                        ? usageAlertRepository.countByAcknowledgedFalse()
+                        : usageAlertRepository.countByHousehold_Apartment_IdAndAcknowledgedFalse(
+                                apartmentId);
 
-        long acknowledged = usageAlertRepository.countByAcknowledgedTrue();
+        long acknowledged =
+                apartmentId == null
+                        ? usageAlertRepository.countByAcknowledgedTrue()
+                        : usageAlertRepository.countByHousehold_Apartment_IdAndAcknowledgedTrue(
+                                apartmentId);
 
-        long total = usageAlertRepository.count();
+        long total =
+                apartmentId == null
+                        ? usageAlertRepository.count()
+                        : usageAlertRepository.countByHousehold_Apartment_Id(
+                                apartmentId);
 
         return new AdminAlertSummaryResponse(
                 critical,
@@ -79,7 +101,10 @@ public class AdminDashboardService {
     }
 
     public List<ApartmentConsumptionResponse> getApartmentConsumption(Long apartmentId) {
-        List<Object[]> raw = waterUsageLogRepository.getTopHouseholds();
+        List<Object[]> raw =
+            apartmentId == null
+                    ? waterUsageLogRepository.getTopHouseholds()
+                    : waterUsageLogRepository.getTopHouseholds(apartmentId);
         List<ApartmentConsumptionResponse> list = new ArrayList<>();
         for (Object[] obj : raw) {
             String flatNumber = (String) obj[1];
@@ -129,7 +154,12 @@ public class AdminDashboardService {
 
             LocalDate startDate = getStartDate(range);
 
-            List<Object[]> raw = waterUsageLogRepository.getMonthlyConsumption(startDate);
+            List<Object[]> raw =
+                apartmentId == null
+                        ? waterUsageLogRepository.getMonthlyConsumption(startDate)
+                        : waterUsageLogRepository.getMonthlyConsumption(
+                                startDate,
+                                apartmentId);
 
             List<ConsumptionTrendResponse> list = new ArrayList<>();
 
@@ -156,7 +186,12 @@ public class AdminDashboardService {
 
             LocalDate startDate = getStartDate(range);
 
-            List<Object[]> raw = waterUsageLogRepository.getDailyConsumption(startDate);
+            List<Object[]> raw =
+                apartmentId == null
+                        ? waterUsageLogRepository.getDailyConsumption(startDate)
+                        : waterUsageLogRepository.getDailyConsumption(
+                                startDate,
+                                apartmentId);
 
             List<ConsumptionTrendResponse> list = new ArrayList<>();
 
@@ -177,10 +212,27 @@ public class AdminDashboardService {
 
     public List<UsageStatusResponse> getUsageStatus(Long apartmentId) {
         List<UsageStatusResponse> list = new ArrayList<>();
-        long criticalAlerts = usageAlertRepository.countByAlertType(UsageAlert.AlertType.ANOMALY_LEAK);
-        long highAlerts = usageAlertRepository.countByAlertType(UsageAlert.AlertType.THRESHOLD_BREACH);
-        
-        long totalRecords = waterUsageLogRepository.count();
+        long criticalAlerts =
+        apartmentId == null
+                ? usageAlertRepository.countByAlertType(
+                        UsageAlert.AlertType.ANOMALY_LEAK)
+                : usageAlertRepository.countByHousehold_Apartment_IdAndAlertType(
+                        apartmentId,
+                        UsageAlert.AlertType.ANOMALY_LEAK);
+
+        long highAlerts =
+                apartmentId == null
+                        ? usageAlertRepository.countByAlertType(
+                                UsageAlert.AlertType.THRESHOLD_BREACH)
+                        : usageAlertRepository.countByHousehold_Apartment_IdAndAlertType(
+                                apartmentId,
+                                UsageAlert.AlertType.THRESHOLD_BREACH);
+
+        long totalRecords =
+                apartmentId == null
+                        ? waterUsageLogRepository.count()
+                        : waterUsageLogRepository.countByHousehold_Apartment_Id(
+                                apartmentId);
         long normalCount = totalRecords > (criticalAlerts + highAlerts) ? totalRecords - (criticalAlerts + highAlerts) : 10;
         
         list.add(new UsageStatusResponse("Normal Usage", normalCount));

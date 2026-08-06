@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
+import com.aquatrack.aquatrack.dto.ApartmentOverviewResponse;
 import com.aquatrack.aquatrack.dto.ApartmentRequest;
 import com.aquatrack.aquatrack.dto.ApartmentResponse;
 import com.aquatrack.aquatrack.service.ApartmentService;
@@ -66,4 +69,16 @@ public class ApartmentController {
                 pageable
         );
     }
+
+    @GetMapping("/all")
+    public List<ApartmentResponse> getAllApartments() {
+        return apartmentService.getAll();
+    }
+
+    @GetMapping("/{id}/overview")
+    public ApartmentOverviewResponse getOverview(
+            @PathVariable Long id
+    ) {
+        return apartmentService.getOverview(id);
+}
 }

@@ -19,6 +19,7 @@ import Pagination from "../components/Pagination";
 import HouseholdTable from "../components/households/HouseholdTable";
 import AddHouseholdModal from "../components/households/AddHouseholdModal";
 import AssignResidentModal from "../components/households/AssignResidentModal";
+import { useWorkspace } from "../context/WorkspaceContext";
 
 import {
   createHousehold,
@@ -30,7 +31,7 @@ import {
   getHouseholdsByApartmentPage,
 } from "../services/householdService";
 
-import { getApartments } from "../services/apartmentService";
+import { getApartments, getAllApartments } from "../services/apartmentService";
 
 const initialForm = {
   flatNumber: "",
@@ -56,12 +57,26 @@ function Households() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [page, setPage] = useState(0);
   const [pageData, setPageData] = useState(null);
-  const [selectedApartment, setSelectedApartment] = useState("");
   const [isAssigning, setIsAssigning] = useState(false);
+  const { workspaceId } = useWorkspace();
 
   useEffect(() => {
     loadHouseholds();
-  }, [page, debouncedQuery, selectedApartment]);
+  }, [workspaceId, page, debouncedQuery]);
+
+  useEffect(() => {
+  if (workspaceId) {
+    setForm((prev) => ({
+      ...prev,
+      apartmentId: String(workspaceId),
+    }));
+  } else {
+    setForm((prev) => ({
+      ...prev,
+      apartmentId: "",
+    }));
+  }
+}, [workspaceId]);
 
   useEffect(() => {
 
@@ -80,26 +95,14 @@ function Households() {
     setIsLoading(true);
 
     let householdPromise;
-
-    if (selectedApartment) {
-
-        householdPromise =
-            getHouseholdsByApartmentPage(
-                selectedApartment,
-                page,
-                PAGE_SIZE
-            );
-
-    }
-    else if (debouncedQuery.trim()) {
-
+    
+    if (debouncedQuery.trim()) {
         householdPromise =
             searchHouseholds(
                 debouncedQuery,
                 page,
                 PAGE_SIZE
             );
-
     }
     else {
 
@@ -113,13 +116,17 @@ function Households() {
 
     const [householdData, apartmentData] = await Promise.all([
         householdPromise,
-        getApartments(),
+        getAllApartments(),
     ]);
 
     setHouseholds(householdData.content ?? []);
     setPageData(householdData);
 
-    setApartments(Array.isArray(apartmentData) ? apartmentData : []);
+    setApartments(
+      Array.isArray(apartmentData)
+          ? apartmentData
+          : apartmentData.content ?? []
+    );
   } catch (error) {
     console.error(error);
 
@@ -399,6 +406,8 @@ const handleRemoveResident = async (household) => {
 
         isSubmitting={isSubmitting}
 
+        workspaceId={workspaceId}
+
     />
 
       <AssignResidentModal
@@ -443,10 +452,6 @@ const handleRemoveResident = async (household) => {
                 households={households}
 
                 apartments={apartments}
-
-                selectedApartment={selectedApartment}
-
-                setSelectedApartment={setSelectedApartment}
 
                 handleRemoveResident={handleRemoveResident}
 

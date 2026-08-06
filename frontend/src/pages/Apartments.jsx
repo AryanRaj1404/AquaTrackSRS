@@ -12,15 +12,15 @@
   import Pagination from "../components/Pagination";
   import AddApartmentModal from "../components/apartments/AddApartmentModal";
   import ApartmentTable from "../components/apartments/ApartmentTable"; 
-  import ApartmentHouseholdsModal from "../components/apartments/ApartmentHouseholdsModal";
+  import ApartmentOverviewModal from "../components/apartments/ApartmentOverviewModal";
 
   import {
     createApartment,
     getApartments,
     searchApartments,
   } from "../services/apartmentService";
-  import { getHouseholdsByApartment } from "../services/householdService";
   import dashboardService from "../services/dashboardService";
+  import { getApartmentOverview } from "../services/apartmentService";
   const initialForm = {
     apartmentName: "",
     address: ""
@@ -35,13 +35,31 @@
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedApartment, setSelectedApartment] = useState(null);
-    const [households, setHouseholds] = useState([]);
     const [dashboardStats, setDashboardStats] = useState({
         totalApartments: 0,
         toatalHouseholds: 0,
         totalUsers: 0,
     });
     const [showHouseholdsModal, setShowHouseholdsModal] = useState(false);
+    const [overview, setOverview] = useState(null);
+    const [loadingOverview, setLoadingOverview] = useState(false);
+
+      const openOverview = async (apartment) => {
+  setSelectedApartment(apartment);
+  setOverview(null);
+  setShowHouseholdsModal(true);
+  setLoadingOverview(true);
+
+  try {
+    const data = await getApartmentOverview(apartment.id);
+    setOverview(data);
+  } catch (err) {
+    console.error(err);
+    toast.error("Unable to load apartment overview.");
+  } finally {
+    setLoadingOverview(false);
+  }
+};
 
     const PAGE_SIZE = 20;
     const SEARCH_DELAY = 300;
@@ -201,25 +219,6 @@ useEffect(() => {
       setShowForm(false);
     };
 
-    const handleViewHouseholds = async (apartment) => {
-
-      try {
-
-          const data = await getHouseholdsByApartment(apartment.id);
-
-          setSelectedApartment(apartment);
-          setHouseholds(data);
-
-          setShowHouseholdsModal(true);
-
-      } catch (error) {
-
-          toast.error("Unable to load households.");
-
-          console.error(error);
-      }
-    };
-
     return (
       <AdminPageShell
         title="Apartment Management"
@@ -293,7 +292,7 @@ useEffect(() => {
           <ApartmentTable
             isLoading={isLoading}
             apartments={apartments}
-            onViewHouseholds={handleViewHouseholds}
+            onViewOverview={openOverview}
           />
 
           {!isLoading && apartments.length > 0 && (
@@ -313,17 +312,17 @@ useEffect(() => {
 
         </section>
 
-        <ApartmentHouseholdsModal
-
-          showHouseholdsModal={showHouseholdsModal}
-
-          selectedApartment={selectedApartment}
-
-          households={households}
-
-          onClose={() => setShowHouseholdsModal(false)}
-
-        />  
+        <ApartmentOverviewModal
+            showHouseholdsModal={showHouseholdsModal}
+            selectedApartment={selectedApartment}
+            overview={overview}
+            loading={loadingOverview}
+            onClose={() => {
+                setShowHouseholdsModal(false);
+                setOverview(null);
+                setSelectedApartment(null);
+            }}
+        />
         
       </AdminPageShell>
     );

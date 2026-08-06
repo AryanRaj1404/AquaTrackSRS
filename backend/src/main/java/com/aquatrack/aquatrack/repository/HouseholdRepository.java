@@ -48,4 +48,22 @@ Page<Household> findByApartmentId(
         Long apartmentId,
         Pageable pageable
 );
+
+@Query("""
+    SELECT DISTINCT h
+    FROM Household h
+    LEFT JOIN User u ON u.household = h
+    WHERE h.apartment.id = :apartmentId
+      AND (
+            LOWER(h.flatNumber) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(h.apartment.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(CONCAT(u.firstName, ' ', u.lastName))
+                LIKE LOWER(CONCAT('%', :keyword, '%'))
+      )
+""")
+Page<Household> search(
+        @Param("apartmentId") Long apartmentId,
+        @Param("keyword") String keyword,
+        Pageable pageable
+);
 }

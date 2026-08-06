@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.aquatrack.aquatrack.dto.ApartmentOverviewResponse;
 import com.aquatrack.aquatrack.dto.ApartmentRequest;
 import com.aquatrack.aquatrack.dto.ApartmentResponse;
 
@@ -25,4 +26,6 @@ public interface ApartmentService {
     String keyword,
     Pageable pageable
 );
+
+ApartmentOverviewResponse getOverview(Long apartmentId);
 }

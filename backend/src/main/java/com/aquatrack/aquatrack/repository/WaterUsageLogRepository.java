@@ -195,4 +195,6 @@ public interface WaterUsageLogRepository extends JpaRepository<WaterUsageLog, Lo
     List<Object[]> getTopHouseholds(
             Long apartmentId
     );
+
+    long countByHousehold_Apartment_Id(Long apartmentId);
 }

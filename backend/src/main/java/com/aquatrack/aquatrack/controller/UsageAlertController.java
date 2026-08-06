@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,13 +77,27 @@ public class UsageAlertController {
     }
 
     @GetMapping("/recent")
-    public List<UsageAlertResponse> getRecentAlerts() {
+    public List<UsageAlertResponse> getRecentAlerts(
 
-        return usageAlertRepository
-            .findTop5ByAcknowledgedFalseOrderByCreatedAtDesc()
-            .stream()
-            .map(UsageAlertResponse::from)
-            .collect(Collectors.toList());
+            @RequestHeader(
+                    value = "X-Workspace-Id",
+                    required = false
+            )
+            Long apartmentId
+
+    ) {
+
+        List<UsageAlert> alerts =
+                apartmentId == null
+                        ? usageAlertRepository
+                            .findTop5ByAcknowledgedFalseOrderByCreatedAtDesc()
+                        : usageAlertRepository
+                            .findTop5ByHousehold_Apartment_IdAndAcknowledgedFalseOrderByCreatedAtDesc(
+                                    apartmentId);
+
+        return alerts.stream()
+                .map(UsageAlertResponse::from)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/{alertId}/acknowledge")

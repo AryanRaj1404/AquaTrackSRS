@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import GlassPanel from "../ui/GlassPanel";
+import { useWorkspace } from "../../context/WorkspaceContext";
 
 import {
   AlertTriangle,
@@ -17,9 +18,11 @@ export default function AlertPanel() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { workspaceId } = useWorkspace();
 
   const fetchAlerts = useCallback(async () => {
     try {
+      setLoading(true);
       const data = await getRecentAlerts();
       setAlerts(data);
     } catch {
@@ -27,7 +30,7 @@ export default function AlertPanel() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [workspaceId]);
 
   useEffect(() => {
     fetchAlerts();

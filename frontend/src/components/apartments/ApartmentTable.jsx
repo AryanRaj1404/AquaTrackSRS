@@ -9,7 +9,7 @@ function ApartmentTable({
 
     apartments,
 
-    onViewHouseholds,
+    onViewOverview,
 
 }) {
 
@@ -119,7 +119,7 @@ function ApartmentTable({
                                             type="button"
                                             className="mg-secondary-button"
                                             onClick={() =>
-                                                onViewHouseholds(apartment)
+                                                onViewOverview(apartment)
                                             }
                                         >
 

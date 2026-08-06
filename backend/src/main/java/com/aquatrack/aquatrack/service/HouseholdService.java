@@ -14,7 +14,7 @@ public interface HouseholdService {
 
     List<HouseholdResponse> getAll();
 
-    Page<HouseholdResponse> getAll(Pageable pageable);
+    Page<HouseholdResponse> getAll(Long apartmentId, Pageable pageable);
 
     HouseholdResponse getById(Long id);
 
@@ -36,6 +36,7 @@ public interface HouseholdService {
 );
 
     Page<HouseholdResponse> search(
+        Long apartmentId,
         String keyword,
         Pageable pageable
     );

@@ -1,23 +1,11 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:8080";
-
-const getAuthConfig = () => ({
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-});
+import api from "./api";
 
 /* ===========================
    Dashboard (Top 5 Alerts)
 =========================== */
 
 export const getRecentAlerts = async () => {
-  const response = await axios.get(
-    `${API_URL}/alerts/recent`,
-    getAuthConfig()
-  );
-
+  const response = await api.get("/alerts/recent");
   return response.data;
 };
 
@@ -30,27 +18,19 @@ export const getAllAlerts = async (
   size = 10,
   status = "ALL"
 ) => {
-  const response = await axios.get(
-    `${API_URL}/alerts`,
-    {
-      ...getAuthConfig(),
-      params: {
-        page,
-        size,
-        status,
-      },
-    }
-  );
+  const response = await api.get("/alerts", {
+    params: {
+      page,
+      size,
+      status,
+    },
+  });
 
   return response.data;
 };
 
 export const getAlertSummary = async () => {
-  const response = await axios.get(
-    `${API_URL}/api/admin/dashboard/alerts/summary`,
-    getAuthConfig()
-  );
-
+  const response = await api.get("/api/admin/dashboard/alerts/summary");
   return response.data;
 };
 
@@ -59,10 +39,8 @@ export const getAlertSummary = async () => {
 =========================== */
 
 export const acknowledgeAlert = async (alertId) => {
-  const response = await axios.post(
-    `${API_URL}/alerts/${alertId}/acknowledge`,
-    {},
-    getAuthConfig()
+  const response = await api.post(
+    `/alerts/${alertId}/acknowledge`
   );
 
   return response.data;
