@@ -24,7 +24,6 @@ import com.aquatrack.aquatrack.enums.InvoiceStatus;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.pdf.PdfInvoiceService;
 import com.aquatrack.aquatrack.repository.BillingCycleRepository;
-import com.aquatrack.aquatrack.repository.BulkWaterPurchaseRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.InvoiceRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;

@@ -121,7 +121,6 @@ class BillingCycleControllerTest {
     @Test
     void getAllBillingCycles() throws Exception {
 
-        Household household = createHousehold();
         TariffPlan tariffPlan = createTariffPlan();
 
         BillingCycle billingCycle = new BillingCycle();
@@ -268,8 +267,7 @@ class BillingCycleControllerTest {
 
     @Test
     void deleteBillingCycleSuccessfully() throws Exception {
-
-        Household household = createHousehold();
+        
         TariffPlan tariffPlan = createTariffPlan();
 
         BillingCycle billingCycle = new BillingCycle();
