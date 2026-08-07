@@ -54,7 +54,7 @@ function AdminPageShell({
     ].forEach(localStorage.removeItem.bind(localStorage));
 
     toast.success(t("adminShell.loggedOut"));
-    navigate("/login");
+    navigate("/");
   };
 
   const handleProfileClick = () => {
@@ -83,6 +83,12 @@ function AdminPageShell({
       to: "/households",
       label: t("adminShell.nav.households"),
       icon: Users,
+      adminOnly: true,
+    },
+    {
+      to: "/alerts",
+      label: t("adminShell.nav.alerts"),
+      icon: Bell,
       adminOnly: true,
     },
     {
@@ -115,6 +121,7 @@ function AdminPageShell({
       icon: ReceiptText,
       adminOnly: true,
     },
+    
   ];
 
   return (

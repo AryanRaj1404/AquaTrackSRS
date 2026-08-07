@@ -34,7 +34,34 @@ const COLORS = {
   textGray: "#64748b",
 };
 
-const CustomTooltip = ({
+export default function AdminDashboardCharts() {
+  const { t, i18n } = useTranslation();
+  const { workspaceId } = useWorkspace();
+
+  const localeMap = {
+    en: "en-IN",
+    hi: "hi-IN",
+    kn: "kn-IN",
+    ml: "ml-IN",
+    ta: "ta-IN",
+    te: "te-IN",
+};
+
+  const [chartData, setChartData] = useState([]);
+  const [dataApartment, setDataApartment] = useState([]);
+  const [dataUsage, setDataUsage] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [viewMode, setViewMode] = useState("daily");
+  const [timeRange, setTimeRange] = useState("1M");
+
+  const [lastUpdated, setLastUpdated] = useState(
+    new Date()
+  );
+
+  const CustomTooltip = ({
   active,
   payload,
   label,
@@ -45,7 +72,16 @@ const CustomTooltip = ({
     return (
       <div className="bg-white p-3 border border-slate-100 shadow-[0_4px_12px_-2px_rgba(6,51,75,0.1)] rounded-lg text-sm">
         <p className="font-semibold text-[#06334b] mb-1">
-          {label}
+          {
+            new Date(label).toLocaleDateString(
+              localeMap[i18n.language] || "en-IN",
+              {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              }
+            )
+          }
         </p>
 
         {payload.map((entry, index) => (
@@ -76,24 +112,6 @@ const CustomTooltip = ({
 
   return null;
 };
-
-export default function AdminDashboardCharts() {
-  const { t } = useTranslation();
-  const { workspaceId } = useWorkspace();
-
-  const [chartData, setChartData] = useState([]);
-  const [dataApartment, setDataApartment] = useState([]);
-  const [dataUsage, setDataUsage] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const [viewMode, setViewMode] = useState("daily");
-  const [timeRange, setTimeRange] = useState("1M");
-
-  const [lastUpdated, setLastUpdated] = useState(
-    new Date()
-  );
 
   const fetchChartsData = async () => {
     try {
@@ -338,7 +356,7 @@ export default function AdminDashboardCharts() {
     tickLine={false}
     minTickGap={50}
     label={{
-        value: "Date",
+        value: t("adminCharts.date"),
         position: "insideBottom",
         offset: -5,
         style: {
@@ -355,13 +373,13 @@ export default function AdminDashboardCharts() {
         const date = new Date(value);
 
         if (viewMode === "daily") {
-            return date.toLocaleDateString("en-IN", {
+            return date.toLocaleDateString(localeMap[i18n.language] || "en-IN", {
                 day: "numeric",
                 month: "short",
             });
         }
 
-        return date.toLocaleDateString("en-IN", {
+        return date.toLocaleDateString(localeMap[i18n.language] || "en-IN", {
             month: "short",
             year: "numeric",
         });
@@ -372,7 +390,7 @@ export default function AdminDashboardCharts() {
     axisLine={false}
     tickLine={false}
     label={{
-        value: "Consumption (KL)",
+        value: t("adminCharts.consumptionAxis"),
         angle: -90,
         position: "insideLeft",
         style: {
@@ -629,11 +647,25 @@ export default function AdminDashboardCharts() {
                     verticalAlign="bottom"
                     height={36}
                     iconType="circle"
-                    formatter={(value) => (
-                      <span className="text-slate-600 text-sm font-medium">
-                        {value}
-                      </span>
-                    )}
+                    formatter={(value) => {
+
+                      const map = {
+                          "Normal Usage":
+                              t("adminCharts.normalUsage"),
+
+                          "High Usage":
+                              t("adminCharts.highUsage"),
+
+                          "Critical Usage":
+                              t("adminCharts.criticalUsage"),
+                      };
+
+                      return (
+                          <span className="text-slate-600 text-sm font-medium">
+                              {map[value] || value}
+                          </span>
+                      );
+                  }}
                   />
 
                 </PieChart>

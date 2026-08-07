@@ -37,9 +37,21 @@
     "getStarted": "Get Started"
   },
   "footer": {
-    "tagline": "Smart Water Management System for Modern Apartments",
-    "copyright": "© 2026 AquaTrack | Built with React, Spring Boot & PostgreSQL"
-  },
+  "tagline": "Smart Water Management Platform",
+  "description": "AquaTrack empowers apartment communities to monitor water consumption, automate billing, detect leaks and manage households from one intelligent platform.",
+
+  "product": "Product",
+  "features": "Features",
+  "login": "Login",
+  "getStarted": "Get Started",
+
+  "contact": "Contact",
+  "contactDescription": "Designed for modern apartment communities focused on smarter water management and sustainable living.",
+
+  "rights": "All rights reserved.",
+  "builtWith": "Built with React, Spring Boot & PostgreSQL"
+}
+  ,
   "hero": {
   "badge": "Smart Water Intelligence",
 
@@ -58,23 +70,61 @@
 
   "liveUsage": "Live Usage",
   "leakDetection": "Leak Detection",
-  "systemNormal": "All Systems Normal"
+  "systemNormal": "All Systems Normal",
+  "dashboardPreview": "Dashboard Preview"
 },
   "features": {
-    "heading": "Why Choose AquaTrack?",
-    "apartmentManagement": {
+  "badge": "Features",
+  "heading": "Everything you need",
+  "description": "AquaTrack helps apartment communities monitor consumption, automate billing, reduce water waste and make smarter operational decisions from one modern platform.",
+
+  "cards": {
+    "waterMonitoring": {
+      "title": "Smart Water Monitoring",
+      "description": "Track water consumption across apartments with detailed real-time insights and historical trends."
+    },
+    "billing": {
+      "title": "Automated Billing",
+      "description": "Generate accurate invoices automatically using configurable tariff plans and consumption data."
+    },
+    "apartment": {
       "title": "Apartment Management",
-      "description": "Easily manage apartments, households and residents from one place."
+      "description": "Manage apartments, households and residents from one centralized platform."
     },
-    "waterTracking": {
-      "title": "Water Usage Tracking",
-      "description": "Monitor water consumption and gain useful insights into usage."
+    "leak": {
+      "title": "Leak Detection",
+      "description": "Identify unusual water usage patterns early and reduce unnecessary water wastage."
     },
-    "secureAuth": {
-      "title": "Secure Authentication",
-      "description": "Protected using JWT authentication and encrypted passwords."
+    "analytics": {
+      "title": "Powerful Analytics",
+      "description": "Understand water consumption with interactive charts, reports and performance metrics."
+    },
+    "security": {
+      "title": "Secure Access",
+      "description": "Role-based authentication keeps administrator and resident experiences secure and separate."
     }
-  },
+  }
+},
+"dashboardShowcase": {
+  "badge": "Dashboard",
+
+  "title1": "Everything you need,",
+  "title2": "all in one place.",
+
+  "description": "AquaTrack gives administrators complete visibility into water consumption, apartment management and billing through one intuitive dashboard designed for modern communities.",
+
+  "button": "Explore Dashboard",
+
+  "imageAlt": "AquaTrack Dashboard",
+
+  "features": {
+    "monitoring": "Live water consumption monitoring",
+    "billing": "Automated billing & invoice generation",
+    "leaks": "Real-time leak & anomaly detection",
+    "analytics": "Powerful analytics for apartment managers"
+  }
+}
+,
   "waterTips": {
     "todaysTip": "Today's Tip",
     "heading": "Water Conservation",
@@ -109,7 +159,8 @@
       "waterUsage": "Water Usage",
       "bulkWaterPurchase": "Bulk Water Purchase",
       "billingCycles": "Billing Cycles",
-      "invoices": "Invoices"
+      "invoices": "Invoices",
+      "alerts": "Alerts"
     },
     "saveEveryDrop": "Save every drop",
     "monitorEfficiently": "Monitor water usage efficiently.",
@@ -316,7 +367,8 @@
       "loadError": "Could not load alerts",
       "acknowledgedSuccess": "Alert acknowledged",
       "acknowledgeFailed": "Failed to acknowledge alert"
-    }
+    },
+    "viewAll": "View All"
   },
   "adminCharts": {
     "analytics": "Analytics",
@@ -334,7 +386,13 @@
     "usageStatusSubtitle": "Normal, High, and Critical usage distribution",
     "usageRecords": "Usage Records",
     "consumptionLabel": "Consumption:",
-    "consumption": "Consumption"
+    "consumption": "Consumption",
+    "date": "Date",
+    "consumptionAxis": "Consumption (KL)",
+
+    "normalUsage": "Normal Usage",
+    "highUsage": "High Usage",
+    "criticalUsage": "Critical Usage"
   },
   "residentDashboard": {
     "myDashboard": "My Dashboard",

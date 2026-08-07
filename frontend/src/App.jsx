@@ -58,6 +58,14 @@ function App() {
         }
       />
       <Route
+        path="/alerts"
+        element={
+          <ProtectedRoute role="ADMIN">
+            <Alerts />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/invoices"
         element={
           <ProtectedRoute role="ADMIN">

@@ -1,14 +1,17 @@
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const features = [
-  "Live water consumption monitoring",
-  "Automated billing & invoice generation",
-  "Real-time leak & anomaly detection",
-  "Powerful analytics for apartment managers",
-];
+import { useTranslation } from "react-i18next";
 
 export default function DashboardShowcase() {
+  const { t } = useTranslation();
+
+  const features = [
+    t("dashboardShowcase.features.monitoring"),
+    t("dashboardShowcase.features.billing"),
+    t("dashboardShowcase.features.leaks"),
+    t("dashboardShowcase.features.analytics"),
+  ];
+
   return (
     <section className="relative overflow-hidden bg-slate-50 py-32" id="dashboard">
 
@@ -48,25 +51,17 @@ export default function DashboardShowcase() {
         <div className="max-w-xl flex-1">
 
           <span className="text-sm font-semibold uppercase tracking-[0.35em] text-teal-700">
-            Dashboard
+            {t("dashboardShowcase.badge")}
           </span>
 
           <h2 className="mt-5 text-5xl font-black leading-tight text-slate-900">
-
-            Everything you need,
-
+            {t("dashboardShowcase.title1")}
             <br />
-
-            all in one place.
-
+            {t("dashboardShowcase.title2")}
           </h2>
 
           <p className="mt-8 text-lg leading-8 text-slate-600">
-
-            AquaTrack gives administrators complete visibility into
-            water consumption, apartment management and billing through
-            one intuitive dashboard designed for modern communities.
-
+            {t("dashboardShowcase.description")}
           </p>
 
           <div className="mt-10 space-y-5">
@@ -113,7 +108,7 @@ export default function DashboardShowcase() {
             "
           >
 
-            Explore Dashboard
+            {t("dashboardShowcase.button")}
 
             <ArrowRight size={18} />
 

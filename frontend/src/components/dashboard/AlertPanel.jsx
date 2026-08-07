@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+
 import GlassPanel from "../ui/GlassPanel";
+import { useWorkspace } from "../../context/WorkspaceContext";
 
 import {
   AlertTriangle,
@@ -8,218 +11,474 @@ import {
   Clock3,
   Droplets,
   Mail,
+  ArrowRight,
 } from "lucide-react";
 
-import { getRecentAlerts, acknowledgeAlert } from "../../services/alertService";
+import {
+  getRecentAlerts,
+  acknowledgeAlert,
+} from "../../services/alertService";
+
 import toast from "react-hot-toast";
 
 export default function AlertPanel() {
+
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
+
+  const { workspaceId } = useWorkspace();
+
   const [alerts, setAlerts] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
   const fetchAlerts = useCallback(async () => {
+
     try {
+
       setLoading(true);
+
       const data = await getRecentAlerts();
+
       setAlerts(data);
+
     } catch {
-      toast.error(t("alertPanel.toasts.loadError"));
+
+      toast.error(
+        t("alertPanel.toasts.loadError")
+      );
+
     } finally {
+
       setLoading(false);
+
     }
-  }, [t]);
+
+  }, [workspaceId, t]);
 
   useEffect(() => {
+
     fetchAlerts();
+
   }, [fetchAlerts]);
 
   const getRelativeTime = (date) => {
+
     const minutes = Math.floor(
       (Date.now() - new Date(date)) / 60000
     );
 
-    if (minutes < 1) return t("alertPanel.justNow");
-    if (minutes < 60) return t("alertPanel.minAgo", { count: minutes });
+    if (minutes < 1)
+      return t("alertPanel.justNow");
+
+    if (minutes < 60)
+      return t("alertPanel.minAgo", {
+        count: minutes,
+      });
 
     const hours = Math.floor(minutes / 60);
 
-    if (hours < 24) return hours > 1 ? t("alertPanel.hoursAgo", { count: hours }) : t("alertPanel.hourAgo", { count: hours });
+    if (hours < 24)
+      return hours > 1
+        ? t("alertPanel.hoursAgo", {
+            count: hours,
+          })
+        : t("alertPanel.hourAgo", {
+            count: hours,
+          });
 
     const days = Math.floor(hours / 24);
 
-    return days > 1 ? t("alertPanel.daysAgo", { count: days }) : t("alertPanel.dayAgo", { count: days });
+    return days > 1
+      ? t("alertPanel.daysAgo", {
+          count: days,
+        })
+      : t("alertPanel.dayAgo", {
+          count: days,
+        });
+
   };
 
   const getAlertMeta = (alert) => {
+
     switch (alert.alertType) {
+
       case "ANOMALY_LEAK":
+
         return {
+
           title: t("alertPanel.possibleLeak"),
+
           severity: "High",
-          severityLabel: t("alertPanel.severity.high"),
+
+          severityLabel:
+            t("alertPanel.severity.high"),
+
           icon: AlertTriangle,
-          color: "text-red-500 bg-red-100",
+
+          iconBg:
+            "bg-red-50 text-red-500",
+
+          badge:
+            "bg-red-100 text-red-700",
+
         };
 
       case "THRESHOLD_BREACH":
+
         return {
-          title: t("alertPanel.highConsumption"),
+
+          title:
+            t("alertPanel.highConsumption"),
+
           severity: "Medium",
-          severityLabel: t("alertPanel.severity.medium"),
+
+          severityLabel:
+            t("alertPanel.severity.medium"),
+
           icon: Droplets,
-          color: "text-amber-500 bg-amber-100",
+
+          iconBg:
+            "bg-amber-50 text-amber-500",
+
+          badge:
+            "bg-amber-100 text-amber-700",
+
         };
 
       default:
+
         return {
-          title: t("alertPanel.notification"),
+
+          title:
+            t("alertPanel.notification"),
+
           severity: "Info",
-          severityLabel: t("alertPanel.severity.info"),
+
+          severityLabel:
+            t("alertPanel.severity.info"),
+
           icon: Mail,
-          color: "text-blue-500 bg-blue-100",
+
+          iconBg:
+            "bg-sky-50 text-sky-500",
+
+          badge:
+            "bg-sky-100 text-sky-700",
+
         };
+
     }
+
   };
 
-  const severityStyles = {
-    High: "bg-red-100 text-red-700",
-    Medium: "bg-amber-100 text-amber-700",
-    Info: "bg-blue-100 text-blue-700",
-  };
+  const handleAcknowledge = async (id) => {
 
-  const handleAcknowledge = async (alertId) => {
     try {
-      await acknowledgeAlert(alertId);
+
+      await acknowledgeAlert(id);
+
+      toast.success(
+        t("alertPanel.toasts.acknowledgedSuccess")
+      );
 
       setAlerts((prev) =>
         prev.map((alert) =>
-          alert.id === alertId
-            ? { ...alert, acknowledged: true }
+          alert.id === id
+            ? {
+                ...alert,
+                acknowledged: true,
+              }
             : alert
         )
       );
 
-      toast.success(t("alertPanel.toasts.acknowledgedSuccess"));
-    } catch (error) {
-      console.error(error);
-      toast.error(t("alertPanel.toasts.acknowledgeFailed"));
+    } catch {
+
+      toast.error(
+        t("alertPanel.toasts.acknowledgeFailed")
+      );
+
     }
+
   };
 
   return (
-    <GlassPanel className="p-8 shadow-2xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-            {t("alertPanel.systemAlerts")}
-          </p>
 
-          <h2 className="mt-1 text-2xl font-bold text-slate-900">
-            {t("alertPanel.recentAlerts")}
-          </h2>
-        </div>
+    <GlassPanel>
 
-        <div className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
-          {alerts.filter(a => !a.acknowledged).length} {t("alertPanel.active")}
-        </div>
-      </div>
+      {/* Header */}
 
-      {loading && (
-        <div className="py-12 text-center text-slate-500">
-          {t("alertPanel.loadingAlerts")}
-        </div>
-      )}
+      {/* Header */}
 
-      {!loading && alerts.length === 0 && (
-        <div className="py-12 text-center text-slate-500">
-          {t("alertPanel.noAlerts")}
-        </div>
-      )}
+<div className="mb-6 flex items-start justify-between">
 
-      <div className="mt-5 max-h-[430px] space-y-2 overflow-y-auto pr-1">
-        {!loading &&
-          alerts.slice(0,5).map((alert) => {
-            const meta = getAlertMeta(alert);
-            const Icon = meta.icon;
+  <div className="space-y-1">
 
-            return (
-              <div
-                key={alert.id}
-                className="rounded-xl border border-slate-100 bg-white/80 p-3 transition hover:border-sky-200 hover:shadow-md"
-              >
-                <div className="flex gap-3">
+    <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-red-500">
 
-                  <div
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${meta.color}`}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </div>
+      {t("alertPanel.systemAlerts")}
 
-                  <div className="min-w-0 flex-1">
+    </p>
 
-                    <div className="flex items-center justify-between">
+    <h2 className="text-2xl font-bold text-slate-900">
 
-                      <h3 className="truncate text-sm font-semibold text-slate-900">
-                        {meta.title}
-                      </h3>
+      {t("alertPanel.recentAlerts")}
 
-                      <span className="text-xs text-slate-400 whitespace-nowrap">
-                        {getRelativeTime(alert.createdAt)}
-                      </span>
+    </h2>
 
-                    </div>
+  </div>
 
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      {alert.apartmentName} • {t("alertPanel.flatLabel", { name: alert.householdName })}
-                    </p>
+  <button
+    onClick={() => navigate("/alerts")}
+    className="
+      group
+      inline-flex
+      items-center
+      gap-1
+      rounded-lg
+      px-3
+      py-2
+      text-sm
+      font-semibold
+      text-teal-700
+      transition-all
+      hover:bg-teal-50
+    "
+  >
 
-                    <p className="mt-1 truncate text-sm text-slate-600">
-                      {alert.message}
-                    </p>
+    {t("alertPanel.viewAll")}
 
-                    <div className="mt-2 flex items-center justify-between">
+    <ArrowRight
+      size={15}
+      className="transition-transform group-hover:translate-x-1"
+    />
 
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                          severityStyles[meta.severity]
-                        }`}
-                      >
-                        {meta.severityLabel}
-                      </span>
+  </button>
 
-                      {alert.acknowledged ? (
-                        <div className="flex items-center gap-1 text-xs text-green-600">
-                          <CircleCheck className="h-3.5 w-3.5" />
-                          {t("alertPanel.acknowledged")}
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
+</div>
 
-                          <span className="flex items-center gap-1 text-xs text-orange-600">
-                              <Clock3 className="h-3.5 w-3.5"/>
-                              {t("alertPanel.acknowledgePending")}
-                          </span>
+{loading && (
 
-                          <button
-                              onClick={() => handleAcknowledge(alert.id)}
-                              className="rounded-md bg-sky-600 px-2 py-1 text-[10px] font-semibold text-white transition hover:bg-sky-700"
-                          >
-                              {t("alertPanel.acknowledgeButton")}
-                          </button>
+  <div className="py-16 text-center text-slate-500">
 
-                        </div>
-                      )}
+    {t("alertPanel.loadingAlerts")}
 
-                    </div>
+  </div>
 
-                  </div>
+)}
 
-                </div>
-              </div>
-            );
-          })}
-      </div>
-    </GlassPanel>
-  );
+{!loading && alerts.length === 0 && (
+
+  <div className="py-16 text-center text-slate-500">
+
+    {t("alertPanel.noAlerts")}
+
+  </div>
+
+)}
+
+<div className="mt-2 max-h-[420px] overflow-y-auto pr-2">
+
+{!loading &&
+alerts.slice(0,5).map((alert)=>{
+
+const meta=getAlertMeta(alert);
+const Icon=meta.icon;
+
+return(
+
+<div
+key={alert.id}
+className="
+mx-1
+border-b
+border-slate-100
+px-2
+py-4
+last:border-none
+transition
+hover:bg-slate-50
+rounded-xl
+"
+>
+
+<div className="flex items-start justify-between gap-4">
+
+{/* LEFT */}
+
+<div className="flex flex-1 gap-3 min-w-0">
+
+<div
+className={`
+flex
+h-10
+w-10
+shrink-0
+items-center
+justify-center
+rounded-xl
+${meta.iconBg}
+`}
+>
+
+<Icon className="h-4 w-4"/>
+
+</div>
+
+<div className="min-w-0 flex-1">
+
+{/* Top Row */}
+
+<div className="flex flex-wrap items-center gap-2">
+
+<h3 className="font-semibold text-[15px] text-slate-900">
+
+{meta.title}
+
+</h3>
+
+<span
+className={`
+rounded-full
+px-2
+py-0.5
+text-[10px]
+font-semibold
+${meta.badge}
+`}
+>
+
+{meta.severityLabel}
+
+</span>
+
+{!alert.acknowledged && (
+
+<span className="flex items-center gap-1 text-[10px] font-medium text-orange-600">
+
+<Clock3 className="h-3 w-3"/>
+
+{t("alertPanel.acknowledgePending")}
+
+</span>
+
+)}
+
+</div>
+
+{/* Apartment */}
+
+<p className="mt-1 text-xs text-slate-500">
+
+{alert.apartmentName}
+
+{" • "}
+
+{t("alertPanel.flatLabel",{
+name:alert.householdName,
+})}
+
+</p>
+
+{/* Message */}
+
+<p
+className="
+mt-2
+line-clamp-2
+text-[13px]
+leading-5
+text-slate-600
+pr-4
+"
+>
+
+{alert.message}
+
+</p>
+
+{/* Time */}
+
+<p className="mt-2 text-[11px] text-slate-400">
+
+{getRelativeTime(alert.createdAt)}
+
+</p>
+
+</div>
+
+</div>
+
+{/* RIGHT */}
+
+<div className="flex shrink-0 items-center pl-3">
+
+{alert.acknowledged ? (
+
+<div
+className="
+flex
+items-center
+gap-1
+rounded-lg
+bg-green-50
+px-3
+py-2
+text-xs
+font-medium
+text-green-600
+"
+>
+
+<CircleCheck className="h-4 w-4"/>
+
+{t("alertPanel.acknowledged")}
+
+</div>
+
+):(
+
+<button
+onClick={()=>handleAcknowledge(alert.id)}
+className="
+rounded-lg
+bg-gradient-to-r
+from-teal-700
+to-teal-600
+px-4
+py-2
+text-xs
+font-semibold
+text-white
+transition-all
+hover:shadow-md
+hover:brightness-110
+active:scale-95
+"
+>
+
+{t("alertPanel.acknowledgeButton")}
+
+</button>
+
+)}
+
+</div>
+
+</div>
+
+</div>
+
+);
+
+})}
+
+</div>
+
+</GlassPanel>
+
+);
+
 }

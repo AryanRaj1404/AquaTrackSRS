@@ -17,4 +17,6 @@ public class ConsumptionTrendResponse {
 
     private BigDecimal totalConsumption;
 
+    
+
 }
