@@ -11,17 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.aquatrack.aquatrack.billing.TariffCalculationResult;
 import com.aquatrack.aquatrack.billing.TariffCalculator;
 import com.aquatrack.aquatrack.dto.ResidentComparisonResponse;
+import com.aquatrack.aquatrack.dto.ResidentNotificationResponse;
 import com.aquatrack.aquatrack.dto.ResidentOverviewResponse;
 import com.aquatrack.aquatrack.dto.ResidentTrendPoint;
 import com.aquatrack.aquatrack.entity.BillingCycle;
 import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.Meter;
+import com.aquatrack.aquatrack.entity.UsageAlert;
 import com.aquatrack.aquatrack.entity.User;
 import com.aquatrack.aquatrack.enums.BillingCycleStatus;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.BillingCycleRepository;
 import com.aquatrack.aquatrack.repository.InvoiceRepository;
 import com.aquatrack.aquatrack.repository.TariffTierRepository;
+import com.aquatrack.aquatrack.repository.UsageAlertRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
@@ -35,6 +38,7 @@ public class ResidentDashboardServiceImpl implements ResidentDashboardService {
     private final InvoiceRepository invoiceRepository;
     private final TariffTierRepository tariffTierRepository;
     private final TariffCalculator tariffCalculator;
+    private final UsageAlertRepository usageAlertRepository;
 
     public ResidentDashboardServiceImpl(
             UserRepository userRepository,
@@ -42,7 +46,8 @@ public class ResidentDashboardServiceImpl implements ResidentDashboardService {
             WaterUsageLogRepository waterUsageLogRepository,
             InvoiceRepository invoiceRepository,
             TariffTierRepository tariffTierRepository,
-            TariffCalculator tariffCalculator) {
+            TariffCalculator tariffCalculator,
+            UsageAlertRepository usageAlertRepository) {
 
         this.userRepository = userRepository;
         this.billingCycleRepository = billingCycleRepository;
@@ -50,6 +55,7 @@ public class ResidentDashboardServiceImpl implements ResidentDashboardService {
         this.invoiceRepository = invoiceRepository;
         this.tariffTierRepository = tariffTierRepository;
         this.tariffCalculator = tariffCalculator;
+        this.usageAlertRepository = usageAlertRepository;
     }
 
     private Household getCurrentHousehold() {
@@ -252,6 +258,73 @@ public class ResidentDashboardServiceImpl implements ResidentDashboardService {
                 round2(householdValue),
                 round2(average),
                 rows.size());
+    }
+
+    @Override
+    public List<ResidentNotificationResponse> getNotifications() {
+
+        Household household = getCurrentHousehold();
+
+        return usageAlertRepository
+                .findByHouseholdIdOrderByCreatedAtDesc(household.getId())
+                .stream()
+                .map(ResidentDashboardServiceImpl::toNotificationResponse)
+                .toList();
+    }
+
+    @Override
+    public long getUnreadNotificationCount() {
+
+        Household household = getCurrentHousehold();
+
+        return usageAlertRepository
+                .countByHouseholdIdAndAcknowledgedFalse(household.getId());
+    }
+
+    @Override
+    @Transactional
+    public ResidentNotificationResponse markNotificationRead(Long alertId) {
+
+        Household household = getCurrentHousehold();
+
+        UsageAlert alert = usageAlertRepository.findById(alertId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Notification not found"));
+
+        if (!alert.getHousehold().getId().equals(household.getId())) {
+            throw new ResourceNotFoundException("Notification not found");
+        }
+
+        alert.setAcknowledged(true);
+
+        return toNotificationResponse(usageAlertRepository.save(alert));
+    }
+
+    @Override
+    @Transactional
+    public void markAllNotificationsRead() {
+
+        Household household = getCurrentHousehold();
+
+        List<UsageAlert> unread = usageAlertRepository
+                .findByHouseholdIdAndAcknowledgedFalse(household.getId());
+
+        unread.forEach(alert -> alert.setAcknowledged(true));
+
+        usageAlertRepository.saveAll(unread);
+    }
+
+    private static ResidentNotificationResponse toNotificationResponse(UsageAlert alert) {
+
+        return new ResidentNotificationResponse(
+                alert.getId(),
+                alert.getAlertType().name(),
+                alert.getMessage(),
+                alert.getTriggeredOn(),
+                alert.getCreatedAt(),
+                alert.isAcknowledged(),
+                alert.getLitersConsumed(),
+                alert.getThresholdValue());
     }
 
     private static Double round2(Double value) {

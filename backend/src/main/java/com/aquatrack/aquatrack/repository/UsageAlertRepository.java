@@ -18,6 +18,10 @@ public interface UsageAlertRepository extends JpaRepository<UsageAlert, Long> {
         LocalDateTime createdAt
     );
 
+    long countByHouseholdIdAndAcknowledgedFalse(Long householdId);
+
+    List<UsageAlert> findByHouseholdIdAndAcknowledgedFalse(Long householdId);
+
     List<UsageAlert> findByCreatedAtAfterOrderByCreatedAtDesc(
             LocalDateTime createdAt
     );

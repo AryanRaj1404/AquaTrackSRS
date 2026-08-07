@@ -87,7 +87,7 @@ class WaterUsageLogServiceImplTest {
                 .thenReturn(log);
 
         WaterUsageLogResponse response =
-                waterUsageLogService.create(request);
+                waterUsageLogService.create(null, request);
 
         assertEquals(500.0,
                 response.getLitersConsumed());
@@ -112,30 +112,41 @@ class WaterUsageLogServiceImplTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> waterUsageLogService.create(request));
+                () -> waterUsageLogService.create(null, request));
     }
 
     @Test
     void deleteUsageLogSuccessfully() {
 
-        when(waterUsageLogRepository.existsById(1L))
-                .thenReturn(true);
+        Apartment apartment = new Apartment();
+        apartment.setName("Green Valley");
 
-        waterUsageLogService.delete(1L);
+        Household household = new Household();
+        household.setId(1L);
+        household.setApartment(apartment);
+
+        WaterUsageLog log = new WaterUsageLog();
+        log.setId(1L);
+        log.setHousehold(household);
+
+        when(waterUsageLogRepository.findById(1L))
+                .thenReturn(Optional.of(log));
+
+        waterUsageLogService.delete(null, 1L);
 
         verify(waterUsageLogRepository)
-                .deleteById(1L);
+                .delete(log);
     }
 
     @Test
     void deleteShouldThrowWhenLogNotFound() {
 
-        when(waterUsageLogRepository.existsById(1L))
-                .thenReturn(false);
+        when(waterUsageLogRepository.findById(1L))
+                .thenReturn(Optional.empty());
 
         assertThrows(
                 RuntimeException.class,
-                () -> waterUsageLogService.delete(1L));
+                () -> waterUsageLogService.delete(null, 1L));
     }
 
     @Test
@@ -151,6 +162,7 @@ class WaterUsageLogServiceImplTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> waterUsageLogService.uploadCsv(
+                        null,
                         file,
                         1L));
     }

@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import LanguageSwitcher from "./LanguageSwitcher";
+import NotificationBell from "./NotificationBell";
 
 import {
   BadgeDollarSign,
@@ -90,6 +91,12 @@ function AdminPageShell({
       label: t("adminShell.nav.alerts"),
       icon: Bell,
       adminOnly: true,
+    },
+    {
+      to: "/my-alerts",
+      label: "My Alerts",
+      icon: Bell,
+      residentOnly: true,
     },
     {
       to: "/tariff-plans",
@@ -183,7 +190,11 @@ function AdminPageShell({
 
           <nav className="flex flex-1 flex-col gap-1.5 px-4">
             {navigationItems
-              .filter((item) => !item.adminOnly || role === "ADMIN")
+              .filter(
+                (item) =>
+                  (!item.adminOnly || role === "ADMIN") &&
+                  (!item.residentOnly || role === "RESIDENT")
+              )
               .map((item) => {
                 const Icon = item.icon;
 
@@ -360,34 +371,7 @@ function AdminPageShell({
 
         <div className="flex items-center gap-3">
 
-          <button
-            type="button"
-            className="
-              relative
-              flex
-              h-11
-              w-11
-              items-center
-              justify-center
-              rounded-2xl
-              border
-              border-slate-200
-              bg-white
-              transition
-              hover:border-teal-500
-              hover:text-teal-700
-            "
-            onClick={() =>
-              toast(t("adminShell.noNotifications"), {
-                icon: "🔔",
-              })
-            }
-            aria-label={t("adminShell.notifications")}
-          >
-            <Bell size={20} />
-
-            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-red-500" />
-          </button>
+          <NotificationBell />
 
           <LanguageSwitcher />
 

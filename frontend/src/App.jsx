@@ -20,6 +20,7 @@ import BulkWaterPurchases from "./pages/BulkWaterPurchases";
 import WaterRipples from "./components/WaterRipples";
 import ResidentDashboard from "./pages/ResidentDashboard";
 import Alerts from "./pages/Alerts";
+import ResidentAlerts from "./pages/ResidentAlerts";
 
 function App() {
   const location = useLocation();
@@ -62,6 +63,14 @@ function App() {
         element={
           <ProtectedRoute role="ADMIN">
             <Alerts />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-alerts"
+        element={
+          <ProtectedRoute role="RESIDENT">
+            <ResidentAlerts />
           </ProtectedRoute>
         }
       />
