@@ -86,6 +86,7 @@ for (WaterUsageLog currentLog : recentLogs) {
                 logDate,
                 liters,
                 dailyThresholdLiters,
+                0.0, // Placeholder for household average
                 String.format(
                         "Usage of %.1fL exceeds the %.1fL daily threshold.",
                         liters,
@@ -112,6 +113,7 @@ for (WaterUsageLog currentLog : recentLogs) {
                 logDate,
                 liters,
                 result.mean,
+                0.0, // Placeholder for household average       
                 String.format(
                         "Usage of %.1fL is over 2 std-dev above the household average of %.1fL — possible leak.",
                         liters,
@@ -123,13 +125,14 @@ for (WaterUsageLog currentLog : recentLogs) {
     }
 
     private void raiseAlert(Household household, UsageAlert.AlertType type, LocalDate date,
-                             double liters, double thresholdValue, String message) {
+                             double liters, double thresholdValue, double averageConsumption, String message) {
         UsageAlert alert = new UsageAlert();
         alert.setHousehold(household);
         alert.setAlertType(type);
         alert.setTriggeredOn(date);
         alert.setLitersConsumed(liters);
         alert.setThresholdValue(thresholdValue);
+        alert.setHouseholdAverage(averageConsumption);
         alert.setMessage(message);
         usageAlertRepository.save(alert);
 

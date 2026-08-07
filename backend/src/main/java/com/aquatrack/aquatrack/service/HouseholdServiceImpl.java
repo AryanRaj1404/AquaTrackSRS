@@ -153,6 +153,24 @@ public class HouseholdServiceImpl implements HouseholdService {
                 .map(this::toResponse);
         }
 
+        @Override
+public List<HouseholdResponse> getDropdown(
+        Long apartmentId
+) {
+
+    List<Household> households =
+            apartmentId == null
+                ? householdRepository.findAll()
+                : householdRepository.findByApartmentIdOrderByFlatNumber(
+                        apartmentId
+                  );
+
+    return households.stream()
+            .map(this::toResponse)
+            .toList();
+
+}
+
     @Transactional
     @Override
     public void delete(Long id) {

@@ -1,7 +1,5 @@
 package com.aquatrack.aquatrack.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseRequest;
 import com.aquatrack.aquatrack.dto.BulkWaterPurchaseResponse;
@@ -31,13 +30,22 @@ public class BulkWaterPurchaseController {
 
     @PostMapping
     public ResponseEntity<BulkWaterPurchaseResponse> create(
+            @RequestHeader(
+                value = "X-Workspace-Id",
+                required = false
+            ) Long apartmentId,
             @Validated @RequestBody BulkWaterPurchaseRequest request) {
 
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity.ok(service.create(apartmentId, request));
     }
 
     @GetMapping
 public ResponseEntity<Page<BulkWaterPurchaseResponse>> getAll(
+
+        @RequestHeader(
+            value = "X-Workspace-Id",
+            required = false
+        ) Long apartmentId,
 
         @RequestParam(defaultValue = "0")
         int page,
@@ -50,6 +58,8 @@ public ResponseEntity<Page<BulkWaterPurchaseResponse>> getAll(
     return ResponseEntity.ok(
 
             service.getAll(
+
+                    apartmentId,
 
                     page,
 
@@ -79,10 +89,14 @@ public ResponseEntity<Page<BulkWaterPurchaseResponse>> getAll(
     
     @PutMapping("/{id}")
     public ResponseEntity<BulkWaterPurchaseResponse> update(
+            @RequestHeader(
+                value = "X-Workspace-Id",
+                required = false
+            ) Long apartmentId,
             @PathVariable Long id,
             @Validated @RequestBody BulkWaterPurchaseRequest request) {
 
         return ResponseEntity.ok(
-                service.update(id, request));
+                service.update(apartmentId, id, request));
     }
 }

@@ -36,6 +36,8 @@ public class UsageAlert {
     private Double litersConsumed;
     private Double thresholdValue;
 
+    private Double householdAverage;
+
     @Column(length = 500)
     private String message;
 

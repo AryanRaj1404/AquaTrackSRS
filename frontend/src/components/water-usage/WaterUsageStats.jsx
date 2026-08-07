@@ -29,7 +29,7 @@ function WaterUsageStats({
             <StatCard
                 icon={Droplets}
                 title={t("waterUsage.stats.totalUsageTitle")}
-                value={`${totalUsage.toFixed(0)} L`}
+                value={`${totalUsage.toFixed(0)} KL`}
                 description={t("waterUsage.stats.totalUsageDesc")}
                 delay={0}
             />

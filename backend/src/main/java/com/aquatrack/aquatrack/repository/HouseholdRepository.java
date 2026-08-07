@@ -66,4 +66,7 @@ Page<Household> search(
         @Param("keyword") String keyword,
         Pageable pageable
 );
+List<Household> findByApartmentIdOrderByFlatNumber(
+        Long apartmentId
+);
 }

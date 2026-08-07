@@ -173,7 +173,13 @@
     "closeSidebar": "Close sidebar",
     "closeSidebarOverlay": "Close sidebar overlay",
     "openSidebar": "Open sidebar",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "currentWorkspace": "Current Workspace",
+    "workspace": "Workspace",
+    "workspaceSubtitle": "Manage your apartment community and monitor water usage from one secure dashboard.",
+    "globalWorkspaceSubtitle": "Viewing all apartments",
+    "workspaceTitle": "Current Workspace"
+
   },
   "pagination": {
     "showing": "Showing {{from}} - {{to}} of {{total}} {{label}}",
@@ -194,7 +200,6 @@
     "noData": "No usage data available",
     "loadError": "Could not load consumption trend"
   },
-  "landing": {},
   "login": {
     "welcomeBack": "Welcome Back!",
     "smartWaterManagement": "Smart Water Management",
@@ -441,6 +446,11 @@
       "aboveAverage": "You're using more water than the building average this cycle.",
       "atOrBelowAverage": "You're at or below the building average this cycle. Nice work!"
     },
+    "workspace":{
+      "title": "Current Workspace"
+    }
+    ,
+    
     "invoiceHistory": {
       "title": "Invoice History",
       "subtitle": "All invoices generated for your household",
@@ -928,6 +938,101 @@
       "deleteError": "Failed to delete billing cycle."
     }
   },
+  "alerts": {
+  "pageTitle": "Alert Management",
+  "pageSubtitle": "Monitor, investigate and acknowledge alerts generated across all apartments.",
+  "refreshAlerts": "Refresh Alerts",
+
+  "summary": {
+    "critical": "Critical",
+    "criticalDescription": "Leak alerts",
+
+    "pending": "Pending",
+    "pendingDescription": "Need review",
+
+    "acknowledged": "Acknowledged",
+    "acknowledgedDescription": "Reviewed",
+
+    "total": "Total",
+    "totalDescription": "Generated alerts"
+  },
+
+  "paginationLabel": "alerts",
+
+  "toasts": {
+    "acknowledging": "Acknowledging alert...",
+    "acknowledged": "Alert acknowledged.",
+    "acknowledgeFailed": "Unable to acknowledge alert."
+  }
+},
+"alertTable": {
+  "loadingTitle": "Loading alerts",
+  "loadingDescription": "Please wait while alerts are being fetched.",
+
+  "title": "Alert Records",
+  "subtitle": "Monitor all generated alerts across apartments.",
+
+  "filters": {
+    "all": "All Alerts",
+    "critical": "Critical",
+    "pending": "Pending",
+    "acknowledged": "Acknowledged"
+  },
+
+  "columns": {
+    "alert": "Alert",
+    "apartment": "Apartment",
+    "household": "Household",
+    "status": "Status",
+    "triggeredOn": "Triggered On",
+    "action": "Action"
+  },
+
+  "possibleLeak": "Possible Water Leak",
+  "highConsumption": "High Consumption",
+
+  "acknowledged": "Acknowledged",
+  "pending": "Pending",
+
+  "view": "View",
+
+  "emptyTitle": "No alerts found",
+  "emptyDescription": "Everything looks healthy."
+},
+"alertDetails": {
+  "possibleLeak": "Possible Water Leak",
+  "highConsumption": "High Consumption",
+
+  "alertId": "Alert ID",
+
+  "status": {
+    "acknowledged": "Acknowledged",
+    "pending": "Pending"
+  },
+
+  "type": {
+    "leak": "Leak Alert",
+    "consumption": "High Consumption"
+  },
+
+  "apartment": "Apartment",
+  "household": "Household",
+  "waterConsumption": "Water Consumption",
+  "triggeredOn": "Triggered On",
+  "createdAt": "Created At",
+  "description": "Alert Description",
+
+  "close": "Close",
+
+  "alreadyAcknowledged": "Already Acknowledged",
+
+  "acknowledge": "Acknowledge Alert",
+  "messages": {
+    "leak": "Usage of {{consumed}} L is over the household average of {{average}} L — possible leak.",
+    "threshold": "Usage of {{consumed}} L exceeds the daily threshold of {{threshold}} L."
+}
+}
+  ,
   "profile": {
     "pageTitle": "My Profile",
     "pageSubtitle": "View and update your personal information.",
@@ -947,7 +1052,16 @@
     "providerLocal": "AquaTrack",
     "providerGoogle": "Google",
     "saving": "Saving...",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "personalInformation": "Personal Information",
+    "accountInformation": "Account Information",
+    "residenceInformation": "Residence Information",
+    "residenceInformationSubtitle": "View and update your residence details.",
+    "apartment": "Apartment",
+    "flatNumber": "Flat Number",
+    "flatSize": "Flat Size",
+    "occupancy": "Occupancy",
+    "squareFeet": "sq.ft."
   },
   "invoices": {
     "pageTitle": "Invoice Management",

@@ -63,8 +63,8 @@ function AdminPageShell({
 
   const workspaceSubtitle = useMemo(() => {
     return isGlobalWorkspace
-      ? "Viewing all apartments"
-      : "Current Workspace";
+      ? t("adminShell.globalWorkspaceSubtitle")
+      : t("adminShell.workspaceSubtitle");
   }, [isGlobalWorkspace]);
 
   const navigationItems = [
@@ -365,6 +365,7 @@ function AdminPageShell({
             className="
               relative
               flex
+              hidden lg:flex
               h-11
               w-11
               items-center
@@ -394,6 +395,8 @@ function AdminPageShell({
           <div
             className="
               flex
+              hidden
+              lg:flex
               cursor-pointer
               items-center
               gap-3
@@ -448,24 +451,32 @@ function AdminPageShell({
       </div>
 
       {role === "ADMIN" && (
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.30em] text-teal-600">
-              Workspace
-            </p>
+  <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-center rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
 
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
-              {workspaceName}
-            </h2>
+    <div className="w-full lg:flex-1">
 
-            <p className="mt-1 text-sm text-slate-500">
-              {workspaceSubtitle}
-            </p>
-          </div>
+    <p className="text-sm font-medium uppercase tracking-wider text-slate-500">
+        {t("adminShell.workspace")}
+    </p>
 
-          <WorkspaceSelector />
-        </div>
-      )}
+    <h2 className="mt-1 text-xl font-bold text-slate-900">
+        {workspaceName}
+    </h2>
+
+    <p className="mt-1 text-sm text-slate-500">
+        {t("adminShell.workspaceSubtitle")}
+    </p>
+
+</div>
+
+    <div className="w-full lg:w-auto">
+
+    <WorkspaceSelector />
+
+</div>
+
+  </div>
+)}
 
     </div>
   </header>
@@ -543,7 +554,7 @@ function AdminPageShell({
 
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-teal-700">
-                          Current Workspace
+                          {t("adminShell.currentWorkspace")}
                         </p>
 
                         <p className="mt-1 font-semibold text-slate-800">

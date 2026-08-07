@@ -24,4 +24,11 @@ public class DemoDataSeederController {
 
     }
 
+    @PostMapping("/generate-august")
+    public ResponseEntity<String> generateAugust() {
+        return ResponseEntity.ok(
+                demoDataService.generateAugustDemoData()
+        );
+    }
+
 }

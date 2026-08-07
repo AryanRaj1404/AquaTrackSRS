@@ -22,7 +22,7 @@ const Footer = () => {
 
             <div className="flex items-center gap-4">
 
-              <div className="rounded-2xl bg-gradient-to-br from-teal-700 to-cyan-600 p-3 shadow-lg">
+              <div className="rounded-2xl bg-linear-to-br from-teal-700 to-cyan-600 p-3 shadow-lg">
                 <Droplets className="h-6 w-6 text-white" />
               </div>
 
@@ -71,7 +71,7 @@ const Footer = () => {
               </Link>
 
               <Link
-                to="/login"
+                to="/register"
                 className="inline-flex items-center gap-2 text-cyan-400 transition hover:text-cyan-300"
               >
                 {t("footer.getStarted")}

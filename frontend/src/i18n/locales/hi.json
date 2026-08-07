@@ -178,7 +178,12 @@
     "closeSidebar": "साइडबार बंद करें",
     "closeSidebarOverlay": "साइडबार ओवरले बंद करें",
     "openSidebar": "साइडबार खोलें",
-    "notifications": "सूचनाएं"
+    "notifications": "सूचनाएं",
+    "currentWorkspace": "वर्तमान कार्यक्षेत्र",
+    "workspace": "कार्यक्षेत्र",
+    "workspaceSubtitle": "अपार्टमेंट समुदाय का प्रबंधन करें और एक सुरक्षित डैशबोर्ड से जल उपयोग की निगरानी करें।",
+    "globalWorkspaceSubtitle": "सभी अपार्टमेंट देख रहे हैं",
+    "workspaceTitle": "वर्तमान कार्यक्षेत्र"
   },
   "pagination": {
     "showing": "{{total}} {{label}} में से {{from}} - {{to}} दिखा रहे हैं",
@@ -933,6 +938,101 @@
       "deleteError": "बिलिंग चक्र हटाने में विफल।"
     }
   },
+  "alerts": {
+  "pageTitle": "अलर्ट प्रबंधन",
+  "pageSubtitle": "सभी अपार्टमेंट्स में उत्पन्न अलर्ट की निगरानी करें, जांच करें और उन्हें स्वीकार करें।",
+  "refreshAlerts": "अलर्ट रीफ़्रेश करें",
+
+  "summary": {
+    "critical": "गंभीर",
+    "criticalDescription": "लीकेज अलर्ट",
+
+    "pending": "लंबित",
+    "pendingDescription": "समीक्षा आवश्यक",
+
+    "acknowledged": "स्वीकार किए गए",
+    "acknowledgedDescription": "समीक्षित",
+
+    "total": "कुल",
+    "totalDescription": "उत्पन्न अलर्ट"
+  },
+
+  "paginationLabel": "अलर्ट",
+
+  "toasts": {
+    "acknowledging": "अलर्ट स्वीकार किया जा रहा है...",
+    "acknowledged": "अलर्ट सफलतापूर्वक स्वीकार किया गया।",
+    "acknowledgeFailed": "अलर्ट स्वीकार नहीं किया जा सका।"
+  }
+},
+"alertTable": {
+  "loadingTitle": "अलर्ट लोड हो रहे हैं",
+  "loadingDescription": "कृपया प्रतीक्षा करें, अलर्ट प्राप्त किए जा रहे हैं।",
+
+  "title": "अलर्ट रिकॉर्ड",
+  "subtitle": "सभी अपार्टमेंट्स में उत्पन्न अलर्ट की निगरानी करें।",
+
+  "filters": {
+    "all": "सभी अलर्ट",
+    "critical": "गंभीर",
+    "pending": "लंबित",
+    "acknowledged": "स्वीकार किए गए"
+  },
+
+  "columns": {
+    "alert": "अलर्ट",
+    "apartment": "अपार्टमेंट",
+    "household": "परिवार",
+    "status": "स्थिति",
+    "triggeredOn": "ट्रिगर तिथि",
+    "action": "कार्य"
+  },
+
+  "possibleLeak": "संभावित पानी का रिसाव",
+  "highConsumption": "अधिक जल खपत",
+
+  "acknowledged": "स्वीकार किया गया",
+  "pending": "लंबित",
+
+  "view": "देखें",
+
+  "emptyTitle": "कोई अलर्ट नहीं मिला",
+  "emptyDescription": "सब कुछ सामान्य और सुरक्षित है।"
+},
+"alertDetails": {
+  "possibleLeak": "संभावित पानी का रिसाव",
+  "highConsumption": "अधिक जल खपत",
+
+  "alertId": "अलर्ट आईडी",
+
+  "status": {
+    "acknowledged": "स्वीकार किया गया",
+    "pending": "लंबित"
+  },
+
+  "type": {
+    "leak": "रिसाव अलर्ट",
+    "consumption": "अधिक जल खपत"
+  },
+
+  "apartment": "अपार्टमेंट",
+  "household": "परिवार",
+  "waterConsumption": "जल खपत",
+  "triggeredOn": "ट्रिगर तिथि",
+  "createdAt": "निर्मित समय",
+  "description": "अलर्ट विवरण",
+
+  "close": "बंद करें",
+
+  "alreadyAcknowledged": "पहले से स्वीकार किया गया",
+
+  "acknowledge": "अलर्ट स्वीकार करें",
+  "messages": {
+    "leak": "{{consumed}} लीटर पानी की खपत, परिवार के औसत {{average}} लीटर से अधिक है — संभावित रिसाव।",
+    "threshold": "{{consumed}} लीटर पानी की खपत दैनिक सीमा {{threshold}} लीटर से अधिक है।"
+}
+}
+  ,
   "profile": {
     "pageTitle": "मेरी प्रोफ़ाइल",
     "pageSubtitle": "अपनी व्यक्तिगत जानकारी देखें और अपडेट करें।",
@@ -952,7 +1052,16 @@
     "providerLocal": "एक्वाट्रैक",
     "providerGoogle": "गूगल",
     "saving": "सहेजा जा रहा है...",
-    "saveChanges": "परिवर्तन सहेजें"
+    "saveChanges": "परिवर्तन सहेजें",
+      "personalInformation": "व्यक्तिगत जानकारी",
+  "accountInformation": "खाता जानकारी",
+    "residenceInformation": "निवास जानकारी",
+  "residenceInformationSubtitle": "अपार्टमेंट और घर विवरण देखें।",
+  "apartment": "अपार्टमेंट",
+  "flatNumber": "फ्लैट नंबर",
+  "flatSize": "फ्लैट आकार",
+  "occupancy": "रहने वालों की संख्या",
+  "squareFeet": "वर्ग फुट"
   },
   "invoices": {
     "pageTitle": "चालान प्रबंधन",

@@ -67,5 +67,22 @@ long countByHousehold_Apartment_Id(
         Long apartmentId
 );
 
+    Page<UsageAlert> findByHousehold_Apartment_IdAndAcknowledged(
+            Long apartmentId,
+            boolean acknowledged,
+            Pageable pageable
+    );
+
+    Page<UsageAlert> findByHousehold_Apartment_IdAndAlertType(
+            Long apartmentId,
+            UsageAlert.AlertType alertType,
+            Pageable pageable
+    );
+
+        Page<UsageAlert> findByHousehold_Apartment_IdOrderByCreatedAtDesc(
+                Long apartmentId,
+                Pageable pageable
+        );
+
 
 }

@@ -27,4 +27,7 @@ public interface BillingCycleRepository extends JpaRepository<BillingCycle, Long
         Long apartmentId,
         BillingCycleStatus status
 );
+List<BillingCycle> findByApartmentIdOrderByStartDateDesc(
+        Long apartmentId
+);
 }

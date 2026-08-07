@@ -63,5 +63,13 @@ public interface InvoiceRepository
             InvoiceStatus status,
             Long apartmentId
     );
+    List<Invoice> findByHousehold_Apartment_IdOrderByGeneratedDateDesc(
+        Long apartmentId
+);
+
+List<Invoice> findByBillingCycleIdAndHousehold_Apartment_Id(
+        Long billingCycleId,
+        Long apartmentId
+);
 
 }

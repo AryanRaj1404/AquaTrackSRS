@@ -1,41 +1,54 @@
-import axios from "axios";
+import api from "./api";
 
-const API_URL = "http://localhost:8080/billing-cycles";
-
-const getAuthConfig = () => ({
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-});
+/* ===========================
+   Billing Cycles
+=========================== */
 
 export const getBillingCycles = async () => {
-  const response = await axios.get(API_URL, getAuthConfig());
-  return response.data;
+
+    const response = await api.get(
+        "/billing-cycles"
+    );
+
+    return response.data;
+
 };
 
-export const createBillingCycle = async (billingCycle) => {
-  const response = await axios.post(
-    API_URL,
-    billingCycle,
-    getAuthConfig()
-  );
+export const createBillingCycle = async (
+    billingCycle
+) => {
 
-  return response.data;
+    const response = await api.post(
+        "/billing-cycles",
+        billingCycle
+    );
+
+    return response.data;
+
 };
 
-export const updateBillingCycle = async (id, billingCycle) => {
-  const response = await axios.put(
-    `${API_URL}/${id}`,
-    billingCycle,
-    getAuthConfig()
-  );
+export const updateBillingCycle = async (
+    id,
+    billingCycle
+) => {
 
-  return response.data;
+    const response = await api.put(
+        `/billing-cycles/${id}`,
+        billingCycle
+    );
+
+    return response.data;
+
 };
 
-export const deleteBillingCycle = async (id) => {
-  await axios.delete(
-    `${API_URL}/${id}`,
-    getAuthConfig()
-  );
+export const deleteBillingCycle = async (
+    id
+) => {
+
+    const response = await api.delete(
+        `/billing-cycles/${id}`
+    );
+
+    return response.data;
+
 };

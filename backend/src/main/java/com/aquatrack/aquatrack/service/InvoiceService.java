@@ -9,11 +9,11 @@ public interface InvoiceService {
 
     void generateInvoices(Long billingCycleId);
 
-    List<InvoiceResponse> getAll();
+    List<InvoiceResponse> getAll(Long apartmentId);
 
     InvoiceResponse getById(Long invoiceId);
 
-    List<InvoiceResponse> getInvoices(Long billingCycleId);
+    List<InvoiceResponse> getInvoices(Long billingCycleId, Long apartmentId);
 
     List<InvoiceResponse> getByHousehold(Long householdId);
 

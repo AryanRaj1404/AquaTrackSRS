@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,10 +45,15 @@ public class InvoiceController {
 
     // Get every invoice
     @GetMapping
-    public ResponseEntity<List<InvoiceResponse>> getAll() {
+    public ResponseEntity<List<InvoiceResponse>> getAll(
+        @RequestHeader(
+                value = "X-Workspace-Id",
+                required = false) Long apartmentId
+        
+    ) {
 
         return ResponseEntity.ok(
-                invoiceService.getAll());
+                invoiceService.getAll(apartmentId));
     }
 
     // Get invoice by Invoice ID
@@ -62,10 +68,13 @@ public class InvoiceController {
     // Get invoices of a billing cycle
     @GetMapping("/billing-cycle/{billingCycleId}")
     public ResponseEntity<List<InvoiceResponse>> getByBillingCycle(
+                @RequestHeader(
+                        value = "X-Workspace-Id",
+                        required = false) Long apartmentId,
             @PathVariable Long billingCycleId) {
 
         return ResponseEntity.ok(
-                invoiceService.getInvoices(billingCycleId));
+                invoiceService.getInvoices(billingCycleId, apartmentId));
     }
 
     // Get invoices of a household

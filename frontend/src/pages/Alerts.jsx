@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import {useWorkspace} from "../context/WorkspaceContext";
 
 import {
     RefreshCw,
@@ -22,6 +24,10 @@ import {
 } from "../services/alertService";
 
 export default function Alerts() {
+
+    const { t } = useTranslation();
+
+    const { workspaceId } = useWorkspace();
 
     const PAGE_SIZE = 10;
 
@@ -82,7 +88,7 @@ export default function Alerts() {
     async function handleAcknowledge(alert) {
 
         const loadingToast = toast.loading(
-            "Acknowledging alert..."
+            t("alerts.toasts.acknowledging")
         );
 
         try {
@@ -90,7 +96,7 @@ export default function Alerts() {
             await acknowledgeAlert(alert.id);
 
             toast.success(
-                "Alert acknowledged.",
+                t("alerts.toasts.acknowledged"),
                 {
                     id: loadingToast,
                 }
@@ -109,7 +115,7 @@ export default function Alerts() {
             console.error(error);
 
             toast.error(
-                "Unable to acknowledge alert.",
+                t("alerts.toasts.acknowledgeFailed"),
                 {
                     id: loadingToast,
                 }
@@ -123,121 +129,142 @@ export default function Alerts() {
 
         loadAlerts();
 
-    }, [page, status]);
+    }, [page, status, workspaceId]);
 
     return (
 
         <AdminPageShell
 
-            title="Alert Management"
+    title={t("alerts.pageTitle")}
 
-            description="Monitor, investigate and acknowledge alerts generated across all apartments."
+    description={t("alerts.pageSubtitle")}
 
-            action={
+    action={
 
-                <button
-                    className="mg-primary-button"
-                    onClick={loadAlerts}
-                >
-
-                    <RefreshCw size={18} />
-
-                    Refresh Alerts
-
-                </button>
-
-            }
-
+        <button
+            className="mg-primary-button"
+            onClick={loadAlerts}
         >
 
-            <section className="mg-summary-grid">
+            <RefreshCw size={18} />
 
-                <StatCard
-                    icon={TriangleAlert}
-                    title="Critical"
-                    value={summary.critical}
-                    description="Leak alerts"
-                    animatedValue
-                />
+            {t("alerts.refreshAlerts")}
 
-                <StatCard
-                    icon={Clock3}
-                    title="Pending"
-                    value={summary.pending}
-                    description="Need review"
-                    animatedValue
-                />
+        </button>
 
-                <StatCard
-                    icon={CheckCircle2}
-                    title="Acknowledged"
-                    value={summary.acknowledged}
-                    description="Reviewed"
-                    animatedValue
-                />
+    }
 
-                <StatCard
-                    icon={Bell}
-                    title="Total"
-                    value={summary.total}
-                    description="Generated alerts"
-                    animatedValue
-                />
+>
 
-            </section>
+    <section className="mg-summary-grid">
 
-            <section className="mg-panel">
+        <StatCard
+            icon={TriangleAlert}
+            title={t("alerts.summary.critical")}
+            value={summary.critical}
+            description={t("alerts.summary.criticalDescription")}
+            animatedValue
+        />
 
-                <AlertTable
-                    loading={loading}
-                    alerts={alerts.content}
-                    status={status}
-                    setStatus={(value) => {
-                        setPage(0);
-                        setStatus(value);
-                    }}
-                    onView={(alert) => {
-                        setSelectedAlert(alert);
-                        setShowDetails(true);
-                    }}
-                />
+        <StatCard
+            icon={Clock3}
+            title={t("alerts.summary.pending")}
+            value={summary.pending}
+            description={t("alerts.summary.pendingDescription")}
+            animatedValue
+        />
 
-                {!loading && alerts.content.length > 0 && (
+        <StatCard
+            icon={CheckCircle2}
+            title={t("alerts.summary.acknowledged")}
+            value={summary.acknowledged}
+            description={t("alerts.summary.acknowledgedDescription")}
+            animatedValue
+        />
 
-                    <Pagination
+        <StatCard
+            icon={Bell}
+            title={t("alerts.summary.total")}
+            value={summary.total}
+            description={t("alerts.summary.totalDescription")}
+            animatedValue
+        />
 
-                        page={page}
+    </section>
 
-                        pageData={alerts}
+    <section className="mg-panel">
 
-                        pageSize={PAGE_SIZE}
+        <AlertTable
 
-                        currentCount={alerts.content.length}
+            loading={loading}
 
-                        label="alerts"
+            alerts={alerts.content}
 
-                        onPrevious={() => setPage(page - 1)}
+            status={status}
 
-                        onNext={() => setPage(page + 1)}
+            setStatus={(value) => {
 
-                        onPageChange={setPage}
+                setPage(0);
 
-                    />
+                setStatus(value);
 
-                )}
+            }}
 
-            </section>
-            <AlertDetailsModal
-                open={showDetails}
-                alert={selectedAlert}
-                onClose={() => {
-                    setShowDetails(false);
-                    setSelectedAlert(null);
-                }}
-                onAcknowledge={handleAcknowledge}
+            onView={(alert) => {
+
+                setSelectedAlert(alert);
+
+                setShowDetails(true);
+
+            }}
+
+        />
+
+        {!loading && alerts.content.length > 0 && (
+
+            <Pagination
+
+                page={page}
+
+                pageData={alerts}
+
+                pageSize={PAGE_SIZE}
+
+                currentCount={alerts.content.length}
+
+                label={t("alerts.paginationLabel")}
+
+                onPrevious={() => setPage(page - 1)}
+
+                onNext={() => setPage(page + 1)}
+
+                onPageChange={setPage}
+
             />
 
-        </AdminPageShell>
+        )}
+
+    </section>
+
+    <AlertDetailsModal
+
+        open={showDetails}
+
+        alert={selectedAlert}
+
+        onClose={() => {
+
+            setShowDetails(false);
+
+            setSelectedAlert(null);
+
+        }}
+
+        onAcknowledge={handleAcknowledge}
+
+    />
+
+</AdminPageShell>
 
     );
 
