@@ -34,7 +34,7 @@ function Pagination({
 
         <div className="flex items-center justify-between mt-6">
 
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 hidden sm:block">
 
                 {t("pagination.showing", {
                     from: page * pageSize + 1,

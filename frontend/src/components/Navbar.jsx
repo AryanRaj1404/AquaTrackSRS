@@ -67,34 +67,9 @@ function Navbar() {
 
       {/* Desktop Language */}
 
-      <div className="hidden md:block">
+      <div className="">
         <LanguageSwitcher />
       </div>
-
-      {/* Mobile Globe */}
-
-      <button
-        type="button"
-        className="
-          flex
-          h-11
-          w-11
-          items-center
-          justify-center
-          rounded-full
-          border
-          border-slate-200
-          bg-white
-          shadow-sm
-          transition-all
-          duration-300
-          hover:border-cyan-400
-          hover:bg-cyan-50
-          md:hidden
-        "
-      >
-        🌐
-      </button>
 
       {/* CTA */}
 
@@ -128,7 +103,7 @@ function Navbar() {
         </span>
 
         <span className="sm:hidden">
-          Get Started
+          {t("navbar.getStarted")}
         </span>
 
         <ArrowRight

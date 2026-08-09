@@ -763,7 +763,8 @@
       "cancel": "रद्द करें",
       "saving": "सहेजा जा रहा है...",
       "updateReading": "रीडिंग अपडेट करें",
-      "saveReading": "रीडिंग सहेजें"
+      "saveReading": "रीडिंग सहेजें",
+      "footerDesc": "सहेजने से पहले जानकारी की जाँच करें।"
     },
     "deleteDialog": {
       "title": "उपयोग लॉग हटाएं",

@@ -763,7 +763,8 @@
       "cancel": "Cancel",
       "saving": "Saving...",
       "updateReading": "Update Reading",
-      "saveReading": "Save Reading"
+      "saveReading": "Save Reading",
+      "footerDesc": "Review the details before saving."
     },
     "deleteDialog": {
       "title": "Delete Usage Log",

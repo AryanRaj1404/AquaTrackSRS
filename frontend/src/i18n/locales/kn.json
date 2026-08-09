@@ -763,7 +763,8 @@
       "cancel": "ರದ್ದುಮಾಡಿ",
       "saving": "ಉಳಿಸಲಾಗುತ್ತಿದೆ...",
       "updateReading": "ರೀಡಿಂಗ್ ನವೀಕರಿಸಿ",
-      "saveReading": "ರೀಡಿಂಗ್ ಉಳಿಸಿ"
+      "saveReading": "ರೀಡಿಂಗ್ ಉಳಿಸಿ",
+      "footerDesc": ""
     },
     "deleteDialog": {
       "title": "ಬಳಕೆ ಲಾಗ್ ಅಳಿಸಿ",

@@ -202,7 +202,20 @@ export default function AdminDashboardCharts() {
             {/* 1. Consumption Trends */}
       <div className="bg-white p-7 rounded-[30px] shadow-[0_4px_20px_-4px_rgba(6,51,75,0.05)] border border-slate-100 lg:col-span-2">
 
-        <div className="flex items-start justify-between mb-6 border-b border-slate-100 pb-4">
+        <div
+          className="
+            mb-6
+            flex
+            flex-col
+            gap-5
+            border-b
+            border-slate-100
+            pb-5
+            lg:flex-row
+            lg:items-start
+            lg:justify-between
+          "
+        >
 
           <div className="flex items-center gap-3">
 
@@ -233,12 +246,12 @@ export default function AdminDashboardCharts() {
               flex
               w-full
               flex-col
-              gap-3
+              gap-2
               rounded-2xl
               bg-slate-50
-              p-3
-              sm:w-auto
-              sm:items-end
+              p-2
+              lg:w-auto
+              lg:items-end
             "
           >
 
@@ -439,6 +452,8 @@ export default function AdminDashboardCharts() {
         </div>
 
       </div>
+
+
             {/* 2. Apartment-wise Consumption Chart */}
       <div className="bg-white p-7 rounded-[30px] shadow-[0_4px_20px_-4px_rgba(6,51,75,0.05)]">
         <div className="flex items-center gap-2 mb-6 border-b border-slate-100 pb-3">
