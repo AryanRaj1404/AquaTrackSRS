@@ -9,14 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aquatrack.aquatrack.billing.BillingEngineService;
-import com.aquatrack.aquatrack.billing.BillingSummary;
 import com.aquatrack.aquatrack.billing.HouseholdBill;
 import com.aquatrack.aquatrack.billing.InvoiceGenerator;
 import com.aquatrack.aquatrack.dto.BulkInvoiceEmailResponse;
 import com.aquatrack.aquatrack.dto.FailedInvoiceResponse;
 import com.aquatrack.aquatrack.dto.InvoiceResponse;
 import com.aquatrack.aquatrack.entity.BillingCycle;
-import com.aquatrack.aquatrack.entity.BulkWaterPurchase;
 import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.Invoice;
 import com.aquatrack.aquatrack.entity.User;
@@ -26,10 +24,8 @@ import com.aquatrack.aquatrack.enums.InvoiceStatus;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.pdf.PdfInvoiceService;
 import com.aquatrack.aquatrack.repository.BillingCycleRepository;
-import com.aquatrack.aquatrack.repository.BulkWaterPurchaseRepository;
 import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.InvoiceRepository;
-import com.aquatrack.aquatrack.repository.MeterRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
@@ -40,8 +36,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final BillingCycleRepository billingCycleRepository;
     private final HouseholdRepository householdRepository;
     private final WaterUsageLogRepository waterUsageLogRepository;
-    private final BulkWaterPurchaseRepository bulkWaterPurchaseRepository;
-    private final MeterRepository meterRepository;
 
     private final BillingEngineService billingEngineService;
     private final InvoiceGenerator invoiceGenerator;
@@ -57,8 +51,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             BillingCycleRepository billingCycleRepository,
             HouseholdRepository householdRepository,
             WaterUsageLogRepository waterUsageLogRepository,
-            BulkWaterPurchaseRepository bulkWaterPurchaseRepository,
-            MeterRepository meterRepository,
             BillingEngineService billingEngineService,
             InvoiceGenerator invoiceGenerator,
             EmailService emailService,
@@ -70,8 +62,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.billingCycleRepository = billingCycleRepository;
         this.householdRepository = householdRepository;
         this.waterUsageLogRepository = waterUsageLogRepository;
-        this.bulkWaterPurchaseRepository = bulkWaterPurchaseRepository;
-        this.meterRepository = meterRepository;
         this.billingEngineService = billingEngineService;
         this.invoiceGenerator = invoiceGenerator;
         this.emailService = emailService;
@@ -95,10 +85,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     List<Household> households =
             householdRepository.findByApartmentId(
                     billingCycle.getApartment().getId());
-
-    List<BulkWaterPurchase> purchases =
-            bulkWaterPurchaseRepository.findByBillingCycle(
-                    billingCycle);
 
     List<HouseholdBill> householdBills = new ArrayList<>();
     List<Invoice> invoices = new ArrayList<>();
@@ -127,11 +113,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         householdBills.add(bill);
     }
 
-    BillingSummary summary =
-        billingEngineService.summarizeBillingCycle(
-                purchases,
-                householdBills);
-
     for (int i = 0; i < households.size(); i++) {
 
             Invoice invoice =
@@ -153,20 +134,42 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         @Override
         @Transactional(readOnly = true)
-        public List<InvoiceResponse> getInvoices(Long billingCycleId) {
+        public List<InvoiceResponse> getInvoices(
+                Long billingCycleId,
+                Long apartmentId
+        ) {
 
-        return invoiceRepository.findByBillingCycleId(billingCycleId)
-                .stream()
+        List<Invoice> invoices =
+                apartmentId == null
+                        ? invoiceRepository.findByBillingCycleId(
+                                billingCycleId
+                        )
+                        : invoiceRepository
+                                .findByBillingCycleIdAndHousehold_Apartment_Id(
+                                        billingCycleId,
+                                        apartmentId
+                                );
+
+        return invoices.stream()
                 .map(this::toResponse)
                 .toList();
         }
 
         @Override
         @Transactional(readOnly = true)
-        public List<InvoiceResponse> getAll() {
+        public List<InvoiceResponse> getAll(
+                Long apartmentId
+        ) {
 
-        return invoiceRepository.findAll()
-                .stream()
+        List<Invoice> invoices =
+                apartmentId == null
+                        ? invoiceRepository.findAll()
+                        : invoiceRepository
+                                .findByHousehold_Apartment_IdOrderByGeneratedDateDesc(
+                                        apartmentId
+                                );
+
+        return invoices.stream()
                 .map(this::toResponse)
                 .toList();
         }

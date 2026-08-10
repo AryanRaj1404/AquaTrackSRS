@@ -24,7 +24,7 @@ import {
   uploadCsv,
 } from "../services/usageLogService";
 
-import { getHouseholds } from "../services/householdService";
+import { getHouseholdsForDropdown } from "../services/householdService";
 import { getBillingCycles } from "../services/billingCycleService";
 
 const emptyForm = {
@@ -74,13 +74,13 @@ function WaterUsage() {
 
     return () => clearTimeout(timer);
 
-}, [query]);
+}, [query, workspaceId]);
 
 useEffect(() => {
 
     setPage(0);
 
-}, [query]);
+}, [query, workspaceId]);
 
     useEffect(() => {
         loadUsageLogs();
@@ -106,7 +106,7 @@ useEffect(() => {
         debouncedQuery
     ),
 
-    getHouseholds(),
+    getHouseholdsForDropdown(),
 
     getBillingCycles(),
 

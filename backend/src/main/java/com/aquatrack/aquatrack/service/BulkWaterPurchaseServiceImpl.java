@@ -1,7 +1,6 @@
 package com.aquatrack.aquatrack.service;
 
 import java.time.format.TextStyle;
-import java.util.List;
 import java.util.Locale;
 
 import org.springframework.stereotype.Service;
@@ -36,9 +35,11 @@ public class BulkWaterPurchaseServiceImpl implements BulkWaterPurchaseService {
     }
 
     @Override
-    public BulkWaterPurchaseResponse create(BulkWaterPurchaseRequest request) {
+    public BulkWaterPurchaseResponse create(
+        Long apartmentId,
+        BulkWaterPurchaseRequest request) {
 
-        Apartment apartment = apartmentRepository.findById(request.getApartmentId())
+        Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Apartment not found"));
 
         BillingCycle billingCycle = billingCycleRepository.findById(request.getBillingCycleId())
@@ -63,6 +64,7 @@ public class BulkWaterPurchaseServiceImpl implements BulkWaterPurchaseService {
 
     @Override
 public Page<BulkWaterPurchaseResponse> getAll(
+        Long apartmentId,
 
         int page,
 
@@ -70,21 +72,24 @@ public Page<BulkWaterPurchaseResponse> getAll(
 
 ) {
 
-    return repository
+    Page<BulkWaterPurchase> purchases;
 
-            .findAll(
+if (apartmentId == null) {
 
-                    PageRequest.of(
+    purchases = repository.findAll(
+            PageRequest.of(page, size)
+    );
 
-                            page,
+} else {
 
-                            size
+    purchases = repository.findByApartment_Id(
+            apartmentId,
+            PageRequest.of(page, size)
+    );
 
-                    )
+}
 
-            )
-
-            .map(this::toResponse);
+return purchases.map(this::toResponse);
 
 }
 
@@ -108,6 +113,7 @@ public Page<BulkWaterPurchaseResponse> getAll(
 
     @Override
     public BulkWaterPurchaseResponse update(
+        Long apartmentId,
             Long id,
             BulkWaterPurchaseRequest request) {
 
@@ -115,7 +121,7 @@ public Page<BulkWaterPurchaseResponse> getAll(
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Purchase not found"));
 
-        Apartment apartment = apartmentRepository.findById(request.getApartmentId())
+        Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Apartment not found"));
 

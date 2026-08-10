@@ -9,7 +9,7 @@ public interface BillingCycleService {
 
     BillingCycleResponse create(BillingCycleRequest request);
 
-    List<BillingCycleResponse> getAll();
+    List<BillingCycleResponse> getAll(Long apartmentId);
 
     BillingCycleResponse getById(Long id);
 

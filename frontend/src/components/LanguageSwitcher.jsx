@@ -44,7 +44,7 @@ function LanguageSwitcher({ variant = "light" }) {
         }`}
       >
         <Globe size={16} />
-        <span>{current.nativeLabel}</span>
+        <span className="hidden sm:block">{current.nativeLabel}</span>
         <ChevronDown size={14} />
       </button>
 

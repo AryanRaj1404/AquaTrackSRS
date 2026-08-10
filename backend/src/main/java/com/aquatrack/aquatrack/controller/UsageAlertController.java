@@ -31,7 +31,10 @@ public class UsageAlertController {
 
     @GetMapping
     public Page<UsageAlertResponse> getAlerts(
-
+            @RequestHeader(
+                    value = "X-Workspace-Id",
+                    required = false
+            ) Long apartmentId,
             @RequestParam(defaultValue = "0") int page,
 
             @RequestParam(defaultValue = "10") int size,
@@ -44,34 +47,28 @@ public class UsageAlertController {
 
         Page<UsageAlert> alerts;
 
-        switch (status.toUpperCase()) {
-
-            case "PENDING":
-
-                alerts = usageAlertRepository.findByAcknowledged(
-                        false,
-                        pageable
-                );
-
-                break;
-
-            case "ACKNOWLEDGED":
-
-                alerts = usageAlertRepository.findByAcknowledged(
-                        true,
-                        pageable
-                );
-
-                break;
-
-            default:
-
-                alerts = usageAlertRepository.findAllByOrderByCreatedAtDesc(
-                        pageable
-                );
-
-        }
-
+        if(apartmentId == null){
+            switch (status.toUpperCase()){
+                case "PENDING":
+                    alerts = usageAlertRepository.findByAcknowledged(false, pageable);
+                    break;
+                case "ACKNOWLEDGED":
+                    alerts = usageAlertRepository.findByAcknowledged(true, pageable);
+                    break;
+                default:
+                    alerts = usageAlertRepository.findAllByOrderByCreatedAtDesc(pageable);
+            }
+        } 
+            else switch (status.toUpperCase()){
+                case "PENDING":
+                    alerts = usageAlertRepository.findByHousehold_Apartment_IdAndAcknowledged(apartmentId, false, pageable);
+                    break;
+                case "ACKNOWLEDGED":
+                    alerts = usageAlertRepository.findByHousehold_Apartment_IdAndAcknowledged(apartmentId, true, pageable);
+                    break;
+                default:
+                    alerts = usageAlertRepository.findByHousehold_Apartment_IdOrderByCreatedAtDesc(apartmentId, pageable);
+            }
         return alerts.map(UsageAlertResponse::from);
 
     }
@@ -116,6 +113,7 @@ public class UsageAlertController {
         public LocalDate triggeredOn;
         public Double litersConsumed;
         public Double thresholdValue;
+        public Double householdAverage;
         public String message;
         public boolean acknowledged;
         public LocalDateTime createdAt;
@@ -130,6 +128,7 @@ public class UsageAlertController {
             r.triggeredOn = a.getTriggeredOn();
             r.litersConsumed = a.getLitersConsumed();
             r.thresholdValue = a.getThresholdValue();
+            r.householdAverage = a.getHouseholdAverage();
             r.message = a.getMessage();
             r.acknowledged = a.isAcknowledged();
             r.createdAt = a.getCreatedAt();

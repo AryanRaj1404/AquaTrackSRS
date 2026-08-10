@@ -178,7 +178,12 @@
     "closeSidebar": "సైడ్‌బార్ మూసివేయి",
     "closeSidebarOverlay": "సైడ్‌బార్ ఓవర్‌లే మూసివేయి",
     "openSidebar": "సైడ్‌బార్ తెరవండి",
-    "notifications": "నోటిఫికేషన్‌లు"
+    "notifications": "నోటిఫికేషన్‌లు",
+    "currentWorkspace": "ప్రస్తుత వర్క్‌స్పేస్",
+    "workspace": "వర్క్‌స్పేస్",
+    "workspaceSubtitle": "మీ అపార్ట్‌మెంట్ కమ్యూనిటీని నిర్వహించండి మరియు ఒకే సురక్షిత డాష్‌బోర్డ్ నుండి నీటి వినియోగాన్ని పర్యవేక్షించండి.",
+    "globalWorkspaceSubtitle": "అన్ని అపార్ట్‌మెంట్‌లను వీక్షించడం",
+    "workspaceTitle": "ప్రస్తుత వర్క్‌స్పేస్"
   },
   "pagination": {
     "showing": "{{total}} {{label}} లో {{from}} - {{to}} చూపిస్తోంది",
@@ -933,6 +938,101 @@
       "deleteError": "బిల్లింగ్ చక్రాన్ని తొలగించడం విఫలమైంది."
     }
   },
+  "alerts": {
+  "pageTitle": "హెచ్చరికల నిర్వహణ",
+  "pageSubtitle": "అన్ని అపార్ట్‌మెంట్‌లలో రూపొందిన హెచ్చరికలను పర్యవేక్షించండి, పరిశీలించండి మరియు ధృవీకరించండి.",
+  "refreshAlerts": "హెచ్చరికలను రిఫ్రెష్ చేయండి",
+
+  "summary": {
+    "critical": "తీవ్రమైన",
+    "criticalDescription": "లీకేజీ హెచ్చరికలు",
+
+    "pending": "పెండింగ్",
+    "pendingDescription": "సమీక్ష అవసరం",
+
+    "acknowledged": "ధృవీకరించబడినవి",
+    "acknowledgedDescription": "సమీక్షించబడింది",
+
+    "total": "మొత్తం",
+    "totalDescription": "సృష్టించబడిన హెచ్చరికలు"
+  },
+
+  "paginationLabel": "హెచ్చరికలు",
+
+  "toasts": {
+    "acknowledging": "హెచ్చరికను ధృవీకరిస్తోంది...",
+    "acknowledged": "హెచ్చరిక విజయవంతంగా ధృవీకరించబడింది.",
+    "acknowledgeFailed": "హెచ్చరికను ధృవీకరించలేకపోయాము."
+  }
+},
+"alertTable": {
+  "loadingTitle": "హెచ్చరికలు లోడ్ అవుతున్నాయి",
+  "loadingDescription": "దయచేసి వేచి ఉండండి. హెచ్చరికలు పొందబడుతున్నాయి.",
+
+  "title": "హెచ్చరికల రికార్డులు",
+  "subtitle": "అన్ని అపార్ట్‌మెంట్‌లలో రూపొందిన హెచ్చరికలను పర్యవేక్షించండి.",
+
+  "filters": {
+    "all": "అన్ని హెచ్చరికలు",
+    "critical": "తీవ్రమైన",
+    "pending": "పెండింగ్",
+    "acknowledged": "ధృవీకరించబడినవి"
+  },
+
+  "columns": {
+    "alert": "హెచ్చరిక",
+    "apartment": "అపార్ట్‌మెంట్",
+    "household": "ఇంటి యూనిట్",
+    "status": "స్థితి",
+    "triggeredOn": "ట్రిగర్ తేదీ",
+    "action": "చర్య"
+  },
+
+  "possibleLeak": "సంభావ్య నీటి లీకేజీ",
+  "highConsumption": "అధిక నీటి వినియోగం",
+
+  "acknowledged": "ధృవీకరించబడింది",
+  "pending": "పెండింగ్",
+
+  "view": "చూడండి",
+
+  "emptyTitle": "హెచ్చరికలు కనుగొనబడలేదు",
+  "emptyDescription": "అన్నీ సక్రమంగా పనిచేస్తున్నాయి."
+},
+"alertDetails": {
+  "possibleLeak": "సంభావ్య నీటి లీకేజీ",
+  "highConsumption": "అధిక నీటి వినియోగం",
+
+  "alertId": "హెచ్చరిక ఐడి",
+
+  "status": {
+    "acknowledged": "ధృవీకరించబడింది",
+    "pending": "పెండింగ్"
+  },
+
+  "type": {
+    "leak": "లీక్ హెచ్చరిక",
+    "consumption": "అధిక నీటి వినియోగం"
+  },
+
+  "apartment": "అపార్ట్‌మెంట్",
+  "household": "ఇంటి యూనిట్",
+  "waterConsumption": "నీటి వినియోగం",
+  "triggeredOn": "ట్రిగర్ తేదీ",
+  "createdAt": "సృష్టించిన సమయం",
+  "description": "హెచ్చరిక వివరణ",
+
+  "close": "మూసివేయి",
+
+  "alreadyAcknowledged": "ఇప్పటికే ధృవీకరించబడింది",
+
+  "acknowledge": "హెచ్చరికను ధృవీకరించు",
+  "messages": {
+  "leak": "{{average}} లీటర్ల కుటుంబ సగటును మించి {{consumed}} లీటర్ల నీటి వినియోగం నమోదైంది — లీకేజ్ ఉండే అవకాశం ఉంది.",
+  "threshold": "{{consumed}} లీటర్ల నీటి వినియోగం రోజువారీ పరిమితి {{threshold}} లీటర్లను మించింది."
+}
+}
+  ,
   "profile": {
     "pageTitle": "నా ప్రొఫైల్",
     "pageSubtitle": "మీ వ్యక్తిగత సమాచారాన్ని చూడండి మరియు నవీకరించండి.",
@@ -952,7 +1052,16 @@
     "providerLocal": "అక్వాట్రాక్",
     "providerGoogle": "గూగుల్",
     "saving": "సేవ్ అవుతోంది...",
-    "saveChanges": "మార్పులను సేవ్ చేయండి"
+    "saveChanges": "మార్పులను సేవ్ చేయండి",
+    "personalInformation": "వ్యక్తిగత సమాచారం",
+  "accountInformation": "ఖాతా సమాచారం" ,
+  "residenceInformation": "నివాస సమాచారం",
+  "residenceInformationSubtitle": "మీ నివాస వివరాలను చూడండి మరియు నవీకరించండి.",
+  "apartment": "பார்ட்மென்ட்",
+  "flatNumber": "ஃபிளாட் எண்",
+  "flatSize": "ஃபிளாட் அளவு",
+  "occupancy": "செல்வது",
+  "squareFeet": "சதுர அடையன"
   },
   "invoices": {
     "pageTitle": "ఇన్వాయిస్ నిర్వహణ",

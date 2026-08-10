@@ -40,4 +40,7 @@ public interface HouseholdService {
         String keyword,
         Pageable pageable
     );
+    List<HouseholdResponse> getDropdown(
+    Long apartmentId
+);
 }

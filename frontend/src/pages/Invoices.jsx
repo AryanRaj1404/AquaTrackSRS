@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import {useWorkspace} from "../context/WorkspaceContext";
 
 import { generateInvoices } from "../services/invoiceService";
 import { getBillingCycles } from "../services/billingCycleService";
@@ -32,6 +33,7 @@ import {
 function Invoices() {
 
     const { t } = useTranslation();
+    const { workspace } = useWorkspace();
 
     const [invoices, setInvoices] = useState([]);
 
@@ -51,7 +53,7 @@ function Invoices() {
 
         loadBillingCycles();
 
-    }, []);
+    }, [workspace]);
 
     const loadInvoices = async () => {
 
@@ -508,15 +510,50 @@ function Invoices() {
                 action={
 
     <div
-        style={{
-            display: "flex",
-            gap: "10px",
-        }}
-    >
+    className="
+        flex
+        flex-col
+        gap-3
+        w-full
+        lg:w-auto
+        sm:flex-row
+        sm:items-center
+    "
+>
 
     <select
 
-        className="mg-select"
+        className="
+                    w-full
+                    sm:w-auto
+                    sm:flex-1
+                    sm:min-w-64
+                    lg:min-w-72
+                    appearance-none
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    px-5
+                    py-3
+                    pr-12
+                    text-sm
+                    font-medium
+                    text-slate-700
+                    shadow-sm
+                    transition-all
+                    duration-300
+                    outline-none
+                    hover:border-cyan-300
+                    hover:shadow-md
+                    focus:border-cyan-500
+                    focus:ring-4
+                    focus:ring-cyan-100
+                    focus:shadow-lg
+                    disabled:cursor-not-allowed
+                    disabled:bg-slate-100
+                    disabled:text-slate-400
+                "
 
         value={selectedBillingCycle}
 

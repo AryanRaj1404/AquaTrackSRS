@@ -12,6 +12,16 @@ export async function getHouseholds(page = 0, size = 20) {
   return response.data;
 }
 
+export const getHouseholdsForDropdown = async () => {
+
+    const response = await api.get(
+        "/households/dropdown"
+    );
+
+    return response.data;
+
+};
+
 export async function getHouseholdsByApartmentPage(
     apartmentId,
     page,

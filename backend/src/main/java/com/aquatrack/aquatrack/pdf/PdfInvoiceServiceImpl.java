@@ -54,9 +54,6 @@ public class PdfInvoiceServiceImpl implements PdfInvoiceService {
 
             document.open();
 
-            Font title =
-        FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22);
-
         Font heading =
                 FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13);
 

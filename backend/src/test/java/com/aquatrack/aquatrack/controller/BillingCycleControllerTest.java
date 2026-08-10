@@ -19,12 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.aquatrack.aquatrack.entity.Apartment;
 import com.aquatrack.aquatrack.entity.BillingCycle;
-import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.TariffPlan;
 import com.aquatrack.aquatrack.enums.BillingCycleStatus;
 import com.aquatrack.aquatrack.repository.ApartmentRepository;
 import com.aquatrack.aquatrack.repository.BillingCycleRepository;
-import com.aquatrack.aquatrack.repository.HouseholdRepository;
 import com.aquatrack.aquatrack.repository.TariffPlanRepository;
 
 @SpringBootTest
@@ -39,28 +37,18 @@ class BillingCycleControllerTest {
     private BillingCycleRepository billingCycleRepository;
 
     @Autowired
-    private HouseholdRepository householdRepository;
-
-    @Autowired
     private ApartmentRepository apartmentRepository;
 
     @Autowired
     private TariffPlanRepository tariffPlanRepository;
 
-    private Household createHousehold() {
+    private Apartment createApartment() {
 
         Apartment apartment = new Apartment();
         apartment.setName("Green Valley");
         apartment.setAddress("Lucknow");
-        apartment = apartmentRepository.save(apartment);
 
-        Household household = new Household();
-        household.setFlatNumber("A-101");
-        household.setFlatSize(1200.0);
-        household.setOccupancy(4);
-        household.setApartment(apartment);
-
-        return householdRepository.save(household);
+        return apartmentRepository.save(apartment);
     }
 
     private TariffPlan createTariffPlan() {
@@ -79,7 +67,7 @@ class BillingCycleControllerTest {
     @Test
     void createBillingCycleSuccessfully() throws Exception {
 
-        Household household = createHousehold();
+        Apartment apartment = createApartment();
         TariffPlan tariffPlan = createTariffPlan();
 
         String request = String.format("""
@@ -88,17 +76,17 @@ class BillingCycleControllerTest {
             "endDate":"2026-07-31",
             "totalAmount":1500,
             "status":"OPEN",
-            "householdId":%d,
+            "apartmentId":%d,
             "tariffPlanId":%d
         }
-        """, household.getId(), tariffPlan.getId());
+        """, apartment.getId(), tariffPlan.getId());
 
         mockMvc.perform(post("/billing-cycles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(request))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.householdId").value(household.getId()))
+                .andExpect(jsonPath("$.apartmentId").value(apartment.getId()))
                 .andExpect(jsonPath("$.tariffPlanId").value(tariffPlan.getId()))
                 .andExpect(jsonPath("$.status").value("OPEN"));
     }
@@ -121,7 +109,7 @@ class BillingCycleControllerTest {
     @Test
     void getAllBillingCycles() throws Exception {
 
-        Household household = createHousehold();
+        Apartment apartment = createApartment();
         TariffPlan tariffPlan = createTariffPlan();
 
         BillingCycle billingCycle = new BillingCycle();
@@ -129,10 +117,6 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026,7,31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        Apartment apartment = new Apartment();
-        apartment.setId(1L);
-        apartment.setName("ABC Residency");
-
         billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
@@ -146,7 +130,7 @@ class BillingCycleControllerTest {
     @Test
     void getBillingCycleById() throws Exception {
 
-        Household household = createHousehold();
+        Apartment apartment = createApartment();
         TariffPlan tariffPlan = createTariffPlan();
 
         BillingCycle billingCycle = new BillingCycle();
@@ -154,10 +138,6 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026,7,31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        Apartment apartment = new Apartment();
-        apartment.setId(1L);
-        apartment.setName("ABC Residency");
-
         billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
@@ -166,7 +146,7 @@ class BillingCycleControllerTest {
         mockMvc.perform(get("/billing-cycles/" + billingCycle.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(billingCycle.getId()))
-                .andExpect(jsonPath("$.householdId").value(household.getId()))
+                .andExpect(jsonPath("$.apartmentId").value(apartment.getId()))
                 .andExpect(jsonPath("$.tariffPlanId").value(tariffPlan.getId()));
     }
 
@@ -179,9 +159,9 @@ class BillingCycleControllerTest {
     }
 
     @Test
-    void getBillingCyclesByHousehold() throws Exception {
+    void getBillingCyclesByApartment() throws Exception {
 
-        Household household = createHousehold();
+        Apartment apartment = createApartment();
         TariffPlan tariffPlan = createTariffPlan();
 
         BillingCycle billingCycle = new BillingCycle();
@@ -189,23 +169,20 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026,7,31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        Apartment apartment = new Apartment();
-        apartment.setId(1L);
-        apartment.setName("ABC Residency");
-
         billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
         billingCycleRepository.save(billingCycle);
 
-        mockMvc.perform(get("/billing-cycles/household/" + household.getId()))
+        mockMvc.perform(get("/billing-cycles/apartment/" + apartment.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
-        @Test
+
+    @Test
     void updateBillingCycleSuccessfully() throws Exception {
 
-        Household household = createHousehold();
+        Apartment apartment = createApartment();
         TariffPlan tariffPlan = createTariffPlan();
 
         BillingCycle billingCycle = new BillingCycle();
@@ -213,10 +190,6 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026, 7, 31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        Apartment apartment = new Apartment();
-        apartment.setId(1L);
-        apartment.setName("ABC Residency");
-
         billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 
@@ -228,10 +201,10 @@ class BillingCycleControllerTest {
             "endDate":"2026-08-31",
             "totalAmount":1800,
             "status":"CLOSED",
-            "householdId":%d,
+            "apartmentId":%d,
             "tariffPlanId":%d
         }
-        """, household.getId(), tariffPlan.getId());
+        """, apartment.getId(), tariffPlan.getId());
 
         mockMvc.perform(put("/billing-cycles/" + billingCycle.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -245,7 +218,7 @@ class BillingCycleControllerTest {
     @Test
     void updateBillingCycleNotFound() throws Exception {
 
-        Household household = createHousehold();
+        Apartment apartment = createApartment();
         TariffPlan tariffPlan = createTariffPlan();
 
         String request = String.format("""
@@ -254,10 +227,10 @@ class BillingCycleControllerTest {
             "endDate":"2026-08-31",
             "totalAmount":1800,
             "status":"CLOSED",
-            "householdId":%d,
+            "apartmentId":%d,
             "tariffPlanId":%d
         }
-        """, household.getId(), tariffPlan.getId());
+        """, apartment.getId(), tariffPlan.getId());
 
         mockMvc.perform(put("/billing-cycles/999999")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -269,7 +242,7 @@ class BillingCycleControllerTest {
     @Test
     void deleteBillingCycleSuccessfully() throws Exception {
 
-        Household household = createHousehold();
+        Apartment apartment = createApartment();
         TariffPlan tariffPlan = createTariffPlan();
 
         BillingCycle billingCycle = new BillingCycle();
@@ -277,10 +250,6 @@ class BillingCycleControllerTest {
         billingCycle.setEndDate(LocalDate.of(2026, 7, 31));
         billingCycle.setTotalAmount(1500.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
-        Apartment apartment = new Apartment();
-        apartment.setId(1L);
-        apartment.setName("ABC Residency");
-
         billingCycle.setApartment(apartment);
         billingCycle.setTariffPlan(tariffPlan);
 

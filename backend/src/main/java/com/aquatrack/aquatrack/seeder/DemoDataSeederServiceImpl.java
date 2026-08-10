@@ -320,6 +320,234 @@ public class DemoDataSeederServiceImpl implements DemoDataSeederService{
 
 }
 
+private List<BillingCycle> generateAugustBillingCycles() {
+
+    List<Apartment> apartments =
+            apartmentRepository.findAll();
+
+    List<BillingCycle> billingCycles =
+            new ArrayList<>();
+
+    for (Apartment apartment : apartments) {
+
+        BillingCycle billingCycle =
+                new BillingCycle();
+
+        billingCycle.setApartment(apartment);
+
+        billingCycle.setStartDate(
+                LocalDate.of(2026, 8, 1));
+
+        billingCycle.setEndDate(
+                LocalDate.of(2026, 8, 31));
+
+        billingCycle.setStatus(
+                BillingCycleStatus.OPEN);
+
+        billingCycle.setTotalAmount(0.0);
+
+        billingCycle.setTariffPlan(null);
+
+        billingCycles.add(billingCycle);
+    }
+
+    return billingCycleRepository.saveAll(
+            billingCycles
+    );
+}
+
+private void generateAugustUsageLogs() {
+
+    List<Household> households =
+            householdRepository.findAll();
+
+    List<BillingCycle> augustCycles =
+            billingCycleRepository.findAll()
+                    .stream()
+                    .filter(cycle ->
+
+                        cycle.getStartDate().equals(
+                                LocalDate.of(2026,8,1)
+                        )
+
+                    )
+                    .toList();
+
+    Map<Long, BillingCycle> cycleMap =
+            new HashMap<>();
+
+    for (BillingCycle cycle : augustCycles) {
+
+        cycleMap.put(
+
+                cycle.getApartment().getId(),
+
+                cycle
+
+        );
+
+    }
+
+    List<WaterUsageLog> logs =
+            new ArrayList<>();
+
+    LocalDate endDate =
+            LocalDate.of(2026,8,7);
+
+    for (Household household : households) {
+
+        BillingCycle cycle =
+                cycleMap.get(
+                        household.getApartment().getId()
+                );
+
+        LocalDate current =
+                LocalDate.of(2026,8,1);
+
+        while (!current.isAfter(endDate)) {
+
+            WaterUsageLog log =
+                    new WaterUsageLog();
+
+            log.setHousehold(household);
+
+            log.setBillingCycle(cycle);
+
+            log.setUsageDate(current);
+
+            log.setSource(
+                    UsageSource.MANUAL_ENTRY
+            );
+
+            log.setLitersConsumed(
+
+                    randomDataGenerator
+                            .getDailyWaterUsage(
+                                    household.getOccupancy()
+                            )
+
+            );
+
+            logs.add(log);
+
+            if (logs.size() >= BATCH_SIZE) {
+
+                waterUsageLogRepository.saveAll(logs);
+
+                logs.clear();
+
+            }
+
+            current = current.plusDays(1);
+
+        }
+
+    }
+
+    if (!logs.isEmpty()) {
+
+        waterUsageLogRepository.saveAll(logs);
+
+    }
+
+}
+
+private void generateAugustBulkWaterPurchases() {
+
+    List<BillingCycle> augustCycles =
+            billingCycleRepository.findAll()
+                    .stream()
+                    .filter(cycle ->
+
+                        cycle.getStartDate().equals(
+                                LocalDate.of(2026,8,1)
+                        )
+
+                    )
+                    .toList();
+
+    List<BulkWaterPurchase> purchases =
+            new ArrayList<>();
+
+    for (BillingCycle cycle : augustCycles) {
+
+        int purchaseCount =
+                randomDataGenerator
+                        .getPurchaseCount();
+
+        for (int i = 0; i < purchaseCount; i++) {
+
+            BulkWaterPurchase purchase =
+                    new BulkWaterPurchase();
+
+            purchase.setApartment(
+                    cycle.getApartment()
+            );
+
+            purchase.setBillingCycle(cycle);
+
+            purchase.setPurchaseDate(
+
+                    randomDataGenerator.getPurchaseDate(
+
+                            LocalDate.of(2026,8,1),
+
+                            LocalDate.of(2026,8,7)
+
+                    )
+
+            );
+
+            purchase.setSource(
+                    PurchaseSource.MUNICIPAL
+            );
+
+            double volume =
+                    randomDataGenerator
+                            .getPurchaseVolumeKl();
+
+            double unitCost =
+                    randomDataGenerator
+                            .getUnitCost();
+
+            purchase.setVolumeKl(volume);
+
+            purchase.setUnitCost(unitCost);
+
+            purchase.setTotalCost(
+                    volume * unitCost
+            );
+
+            purchase.setSupplier(
+                    randomDataGenerator
+                            .getSupplier()
+            );
+
+            purchases.add(purchase);
+
+        }
+
+    }
+
+    bulkWaterPurchaseRepository.saveAll(
+            purchases
+    );
+
+}
+
+@Override
+public String generateAugustDemoData() {
+
+    generateAugustBillingCycles();
+
+    generateAugustUsageLogs();
+
+    generateAugustBulkWaterPurchases();
+
+    return "August demo data generated successfully.";
+
+}
+
 
 
     @Override

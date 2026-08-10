@@ -114,4 +114,19 @@ public class HouseholdController {
         );
 
     }
+
+    @GetMapping("/dropdown")
+    public List<HouseholdResponse> getDropdown(
+
+        @RequestHeader(
+            value = "X-Workspace-Id",
+            required = false
+        )
+        Long apartmentId
+
+    ) {
+
+        return householdService.getDropdown(apartmentId);
+
+    }
 }

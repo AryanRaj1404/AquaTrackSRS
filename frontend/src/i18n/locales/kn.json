@@ -178,7 +178,12 @@
     "closeSidebar": "ಸೈಡ್‌ಬಾರ್ ಮುಚ್ಚಿ",
     "closeSidebarOverlay": "ಸೈಡ್‌ಬಾರ್ ಓವರ್‌ಲೇ ಮುಚ್ಚಿ",
     "openSidebar": "ಸೈಡ್‌ಬಾರ್ ತೆರೆಯಿರಿ",
-    "notifications": "ಅಧಿಸೂಚನೆಗಳು"
+    "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+    "currentWorkspace": "ಪ್ರಸ್ತುತ ಕಾರ್ಯಕ್ಷೇತ್ರ",
+    "workspace": "ಕಾರ್ಯಕ್ಷೇತ್ರ",
+    "workspaceSubtitle": "ನಿಮ್ಮ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಸಮುದಾಯವನ್ನು ನಿರ್ವಹಿಸಿ ಮತ್ತು ಒಂದೇ ಸುರಕ್ಷಿತ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ನಿಂದ ನೀರಿನ ಬಳಕೆಯನ್ನು ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿ.",
+    "globalWorkspaceSubtitle": "ಎಲ್ಲಾ ಅಪಾರ್ಟ್‌ಮೆಂಟ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಲಾಗುತ್ತಿದೆ",
+    "workspaceTitle": "ಪ್ರಸ್ತುತ ಕಾರ್ಯಕ್ಷೇತ್ರ"
   },
   "pagination": {
     "showing": "{{total}} {{label}} ರಲ್ಲಿ {{from}} - {{to}} ತೋರಿಸಲಾಗುತ್ತಿದೆ",
@@ -933,6 +938,101 @@
       "deleteError": "ಬಿಲ್ಲಿಂಗ್ ಚಕ್ರ ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ."
     }
   },
+  "alerts": {
+  "pageTitle": "ಎಚ್ಚರಿಕೆ ನಿರ್ವಹಣೆ",
+  "pageSubtitle": "ಎಲ್ಲಾ ಅಪಾರ್ಟ್‌ಮೆಂಟ್‌ಗಳಲ್ಲಿ ಸೃಷ್ಟಿಯಾದ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿ, ಪರಿಶೀಲಿಸಿ ಮತ್ತು ದೃಢೀಕರಿಸಿ.",
+  "refreshAlerts": "ಎಚ್ಚರಿಕೆಗಳನ್ನು ಮರುಲೋಡ್ ಮಾಡಿ",
+
+  "summary": {
+    "critical": "ಗಂಭೀರ",
+    "criticalDescription": "ಸೋರಿಕೆ ಎಚ್ಚರಿಕೆಗಳು",
+
+    "pending": "ಬಾಕಿ",
+    "pendingDescription": "ಪರಿಶೀಲನೆ ಅಗತ್ಯ",
+
+    "acknowledged": "ದೃಢೀಕರಿಸಲಾಗಿದೆ",
+    "acknowledgedDescription": "ಪರಿಶೀಲಿಸಲಾಗಿದೆ",
+
+    "total": "ಒಟ್ಟು",
+    "totalDescription": "ರಚಿಸಲಾದ ಎಚ್ಚರಿಕೆಗಳು"
+  },
+
+  "paginationLabel": "ಎಚ್ಚರಿಕೆಗಳು",
+
+  "toasts": {
+    "acknowledging": "ಎಚ್ಚರಿಕೆಯನ್ನು ದೃಢೀಕರಿಸಲಾಗುತ್ತಿದೆ...",
+    "acknowledged": "ಎಚ್ಚರಿಕೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ದೃಢೀಕರಿಸಲಾಗಿದೆ.",
+    "acknowledgeFailed": "ಎಚ್ಚರಿಕೆಯನ್ನು ದೃಢೀಕರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ."
+  }
+},
+"alertTable": {
+  "loadingTitle": "ಎಚ್ಚರಿಕೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ",
+  "loadingDescription": "ದಯವಿಟ್ಟು ನಿರೀಕ್ಷಿಸಿ. ಎಚ್ಚರಿಕೆಗಳನ್ನು ಪಡೆಯಲಾಗುತ್ತಿದೆ.",
+
+  "title": "ಎಚ್ಚರಿಕೆ ದಾಖಲೆಗಳು",
+  "subtitle": "ಎಲ್ಲಾ ಅಪಾರ್ಟ್‌ಮೆಂಟ್‌ಗಳಲ್ಲಿ ಸೃಷ್ಟಿಯಾದ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿ.",
+
+  "filters": {
+    "all": "ಎಲ್ಲಾ ಎಚ್ಚರಿಕೆಗಳು",
+    "critical": "ಗಂಭೀರ",
+    "pending": "ಬಾಕಿ",
+    "acknowledged": "ದೃಢೀಕರಿಸಲಾಗಿದೆ"
+  },
+
+  "columns": {
+    "alert": "ಎಚ್ಚರಿಕೆ",
+    "apartment": "ಅಪಾರ್ಟ್‌ಮೆಂಟ್",
+    "household": "ಮನೆ",
+    "status": "ಸ್ಥಿತಿ",
+    "triggeredOn": "ಉಂಟಾದ ದಿನಾಂಕ",
+    "action": "ಕ್ರಿಯೆ"
+  },
+
+  "possibleLeak": "ಸಂಭಾವ್ಯ ನೀರಿನ ಸೋರಿಕೆ",
+  "highConsumption": "ಹೆಚ್ಚಿನ ನೀರಿನ ಬಳಕೆ",
+
+  "acknowledged": "ದೃಢೀಕರಿಸಲಾಗಿದೆ",
+  "pending": "ಬಾಕಿ",
+
+  "view": "ವೀಕ್ಷಿಸಿ",
+
+  "emptyTitle": "ಯಾವುದೇ ಎಚ್ಚರಿಕೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+  "emptyDescription": "ಎಲ್ಲವೂ ಸರಿಯಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದೆ."
+},
+"alertDetails": {
+  "possibleLeak": "ಸಂಭಾವ್ಯ ನೀರಿನ ಸೋರಿಕೆ",
+  "highConsumption": "ಹೆಚ್ಚಿನ ನೀರಿನ ಬಳಕೆ",
+
+  "alertId": "ಎಚ್ಚರಿಕೆ ಐಡಿ",
+
+  "status": {
+    "acknowledged": "ದೃಢೀಕರಿಸಲಾಗಿದೆ",
+    "pending": "ಬಾಕಿ"
+  },
+
+  "type": {
+    "leak": "ಸೋರಿಕೆ ಎಚ್ಚರಿಕೆ",
+    "consumption": "ಹೆಚ್ಚಿನ ನೀರಿನ ಬಳಕೆ"
+  },
+
+  "apartment": "ಅಪಾರ್ಟ್‌ಮೆಂಟ್",
+  "household": "ಮನೆ",
+  "waterConsumption": "ನೀರಿನ ಬಳಕೆ",
+  "triggeredOn": "ಉಂಟಾದ ದಿನಾಂಕ",
+  "createdAt": "ರಚಿಸಿದ ಸಮಯ",
+  "description": "ಎಚ್ಚರಿಕೆ ವಿವರ",
+
+  "close": "ಮುಚ್ಚಿ",
+
+  "alreadyAcknowledged": "ಈಗಾಗಲೇ ದೃಢೀಕರಿಸಲಾಗಿದೆ",
+
+  "acknowledge": "ಎಚ್ಚರಿಕೆಯನ್ನು ದೃಢೀಕರಿಸಿ",
+  "messages": {
+  "leak": "{{average}} ಲೀ ಮನೆಯ ಸರಾಸರಿ ಬಳಕೆಯನ್ನು ಮೀರಿ {{consumed}} ಲೀ ನೀರಿನ ಬಳಕೆ ದಾಖಲಾಗಿದೆ — ಸಂಭವನೀಯ ಸೋರಿಕೆ.",
+  "threshold": "{{consumed}} ಲೀ ನೀರಿನ ಬಳಕೆ ದಿನನಿತ್ಯದ ಮಿತಿ {{threshold}} ಲೀ ಅನ್ನು ಮೀರಿದೆ."
+}
+}
+  ,
   "profile": {
     "pageTitle": "ನನ್ನ ಪ್ರೊಫೈಲ್",
     "pageSubtitle": "ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಮಾಹಿತಿಯನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ನವೀಕರಿಸಿ.",
@@ -952,7 +1052,16 @@
     "providerLocal": "ಅಕ್ವಾಟ್ರ್ಯಾಕ್",
     "providerGoogle": "ಗೂಗಲ್",
     "saving": "ಉಳಿಸಲಾಗುತ್ತಿದೆ...",
-    "saveChanges": "ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ"
+    "saveChanges": "ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ",
+    "personalInformation": "ವೈಯಕ್ತಿಕ ಮಾಹಿತಿ",
+  "accountInformation": "ಖಾತೆ ಮಾಹಿತಿ",
+  "residenceInformation": "ನಿವಾಸ ಮಾಹಿತಿ",
+  "residenceInformationSubtitle": "ನಿಮ್ಮ ನಿವಾಸ ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ನವೀಕರಿಸಿ.",
+  "apartment": "ಅಪಾರ್ಟ್‌ಮೆಂಟ್",
+  "flatNumber": "ಫ್ಲಾಟ್ ಸಂಖ್ಯೆ",
+  "flatSize": "ಫ್ಲಾಟ್ ಪರಿಮಾಣ",
+  "occupancy": "ರಹಸಮಯ",
+  "squareFeet": "ಚದರ ಅಡಿ"
   },
   "invoices": {
     "pageTitle": "ಇನ್‌ವಾಯ್ಸ್ ನಿರ್ವಹಣೆ",

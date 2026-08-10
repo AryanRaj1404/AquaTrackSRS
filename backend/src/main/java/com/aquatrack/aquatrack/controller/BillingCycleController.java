@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.aquatrack.aquatrack.dto.BillingCycleRequest;
 import com.aquatrack.aquatrack.dto.BillingCycleResponse;
@@ -33,8 +34,13 @@ public class BillingCycleController {
     }
 
     @GetMapping
-    public List<BillingCycleResponse> getAll() {
-        return billingCycleService.getAll();
+    public List<BillingCycleResponse> getAll(
+        @RequestHeader(
+            value = "X-Workspace-Id",
+            required = false
+        ) Long apartmentId
+    ) {
+        return billingCycleService.getAll(apartmentId);
     }
 
     @GetMapping("/{id}")

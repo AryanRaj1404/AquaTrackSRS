@@ -176,7 +176,12 @@
     "closeSidebar": "സൈഡ്‌ബാർ അടയ്ക്കുക",
     "closeSidebarOverlay": "സൈഡ്‌ബാർ ഓവർലേ അടയ്ക്കുക",
     "openSidebar": "സൈഡ്‌ബാർ തുറക്കുക",
-    "notifications": "അറിയിപ്പുകൾ"
+    "notifications": "അറിയിപ്പുകൾ",
+    "currentWorkspace": "നിലവിലെ പ്രവർത്തന മേഖല",
+    "workspace": "പ്രവർത്തന മേഖല",
+    "workspaceSubtitle": "നിങ്ങളുടെ അപ്പാർട്ട്മെന്റ് സമൂഹം നിയന്ത്രിക്കുകയും ഒരു സുരക്ഷിത ഡാഷ്ബോർഡിൽ നിന്ന് ജല ഉപയോഗം നിരീക്ഷിക്കുകയും ചെയ്യുക.",
+    "globalWorkspaceSubtitle": "എല്ലാ അപ്പാർട്ട്മെന്റുകളും കാണുന്നു",
+    "workspaceTitle": "നിലവിലെ പ്രവർത്തന മേഖല"
   },
   "pagination": {
     "showing": "{{total}} {{label}} -ൽ {{from}} - {{to}} കാണിക്കുന്നു",
@@ -931,6 +936,101 @@
       "deleteError": "ബില്ലിംഗ് സൈക്കിൾ ഇല്ലാതാക്കുന്നതിൽ പരാജയപ്പെട്ടു."
     }
   },
+  "alerts": {
+  "pageTitle": "അലർട്ട് മാനേജ്മെന്റ്",
+  "pageSubtitle": "എല്ലാ അപാർട്ട്മെന്റുകളിലും സൃഷ്ടിച്ച അലർട്ടുകൾ നിരീക്ഷിക്കുകയും പരിശോധിക്കുകയും സ്ഥിരീകരിക്കുകയും ചെയ്യുക.",
+  "refreshAlerts": "അലർട്ടുകൾ പുതുക്കുക",
+
+  "summary": {
+    "critical": "ഗുരുതരം",
+    "criticalDescription": "ചോർച്ചാ അലർട്ടുകൾ",
+
+    "pending": "തീർപ്പാക്കാത്തത്",
+    "pendingDescription": "പരിശോധനം ആവശ്യമാണ്",
+
+    "acknowledged": "സ്ഥിരീകരിച്ചത്",
+    "acknowledgedDescription": "പരിശോധിച്ചു",
+
+    "total": "ആകെ",
+    "totalDescription": "സൃഷ്ടിച്ച അലർട്ടുകൾ"
+  },
+
+  "paginationLabel": "അലർട്ടുകൾ",
+
+  "toasts": {
+    "acknowledging": "അലർട്ട് സ്ഥിരീകരിക്കുന്നു...",
+    "acknowledged": "അലർട്ട് വിജയകരമായി സ്ഥിരീകരിച്ചു.",
+    "acknowledgeFailed": "അലർട്ട് സ്ഥിരീകരിക്കാൻ കഴിഞ്ഞില്ല."
+  }
+},
+"alertTable": {
+  "loadingTitle": "അലർട്ടുകൾ ലോഡ് ചെയ്യുന്നു",
+  "loadingDescription": "ദയവായി കാത്തിരിക്കുക. അലർട്ടുകൾ ലഭ്യമാക്കുന്നു.",
+
+  "title": "അലർട്ട് രേഖകൾ",
+  "subtitle": "എല്ലാ അപാർട്ട്മെന്റുകളിലും സൃഷ്ടിച്ച അലർട്ടുകൾ നിരീക്ഷിക്കുക.",
+
+  "filters": {
+    "all": "എല്ലാ അലർട്ടുകളും",
+    "critical": "ഗുരുതരം",
+    "pending": "തീർപ്പാക്കാത്തത്",
+    "acknowledged": "സ്ഥിരീകരിച്ചത്"
+  },
+
+  "columns": {
+    "alert": "അലർട്ട്",
+    "apartment": "അപാർട്ട്മെന്റ്",
+    "household": "വീട്",
+    "status": "നില",
+    "triggeredOn": "സംഭവിച്ച തീയതി",
+    "action": "നടപടി"
+  },
+
+  "possibleLeak": "സാധ്യമായ ജല ചോർച്ച",
+  "highConsumption": "ഉയർന്ന ജല ഉപഭോഗം",
+
+  "acknowledged": "സ്ഥിരീകരിച്ചു",
+  "pending": "തീർപ്പാക്കാത്തത്",
+
+  "view": "കാണുക",
+
+  "emptyTitle": "അലർട്ടുകളൊന്നും കണ്ടെത്തിയില്ല",
+  "emptyDescription": "എല്ലാം സാധാരണ നിലയിലാണ്."
+},
+"alertDetails": {
+  "possibleLeak": "സാധ്യമായ ജല ചോർച്ച",
+  "highConsumption": "ഉയർന്ന ജല ഉപഭോഗം",
+
+  "alertId": "അലർട്ട് ഐഡി",
+
+  "status": {
+    "acknowledged": "സ്ഥിരീകരിച്ചു",
+    "pending": "തീർപ്പാക്കാത്തത്"
+  },
+
+  "type": {
+    "leak": "ചോർച്ച അലർട്ട്",
+    "consumption": "ഉയർന്ന ജല ഉപഭോഗം"
+  },
+
+  "apartment": "അപ്പാർട്ട്മെന്റ്",
+  "household": "വീട്",
+  "waterConsumption": "ജല ഉപഭോഗം",
+  "triggeredOn": "സംഭവിച്ച തീയതി",
+  "createdAt": "സൃഷ്ടിച്ച സമയം",
+  "description": "അലർട്ട് വിവരണം",
+
+  "close": "അടയ്ക്കുക",
+
+  "alreadyAcknowledged": "ഇതിനകം സ്ഥിരീകരിച്ചു",
+
+  "acknowledge": "അലർട്ട് സ്ഥിരീകരിക്കുക",
+  "messages": {
+  "leak": "{{average}} ലിറ്റർ കുടുംബ ശരാശരിയേക്കാൾ {{consumed}} ലിറ്റർ ജല ഉപഭോഗം കൂടുതലാണ് — സാധ്യതയുള്ള ചോർച്ച.",
+  "threshold": "{{consumed}} ലിറ്റർ ജല ഉപഭോഗം ദിവസേനയുടെ {{threshold}} ലിറ്റർ പരിധി കവിയുന്നു."
+}
+}
+  ,
   "profile": {
     "pageTitle": "എന്റെ പ്രൊഫൈൽ",
     "pageSubtitle": "നിങ്ങളുടെ വ്യക്തിഗത വിവരങ്ങൾ കാണുകയും അപ്ഡേറ്റ് ചെയ്യുകയും ചെയ്യുക.",
@@ -950,7 +1050,16 @@
     "providerLocal": "അക്വാട്രാക്ക്",
     "providerGoogle": "ഗൂഗിൾ",
     "saving": "സേവ് ചെയ്യുന്നു...",
-    "saveChanges": "മാറ്റങ്ങൾ സേവ് ചെയ്യുക"
+    "saveChanges": "മാറ്റങ്ങൾ സേവ് ചെയ്യുക",
+     "personalInformation": "വ്യക്തിഗത വിവരങ്ങൾ",
+  "accountInformation": "അക്കൗണ്ട് വിവരങ്ങൾ",
+  "residenceInformation": "വാസസ്ഥല വിവരങ്ങൾ",
+  "residenceInformationSubtitle": "നിങ്ങളുടെ വാസസ്ഥല വിവരങ്ങൾ കാണുകയും അപ്ഡേറ്റ് ചെയ്യുകയും ചെയ്യുക.",
+  "apartment": "അപ്പാർട്ട്മെന്റ്",
+  "flatNumber": "ഫ്ലാറ്റ് നമ്പർ",
+  "flatSize": "ഫ്ലാറ്റ് വലുപ്പം",
+  "occupancy": "വസതി",
+  "squareFeet": "ചതുരശ്ര അടി"
   },
   "invoices": {
     "pageTitle": "ഇൻവോയ്സ് മാനേജ്മെന്റ്",

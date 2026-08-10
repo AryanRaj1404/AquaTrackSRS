@@ -70,12 +70,22 @@ public class BillingCycleServiceImpl implements BillingCycleService {
     }
 
     @Override
-    public List<BillingCycleResponse> getAll() {
-        return billingCycleRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+public List<BillingCycleResponse> getAll(
+        Long apartmentId
+) {
+
+    List<BillingCycle> billingCycles =
+            apartmentId == null
+                    ? billingCycleRepository.findAll()
+                    : billingCycleRepository
+                            .findByApartmentIdOrderByStartDateDesc(
+                                    apartmentId
+                            );
+
+    return billingCycles.stream()
+            .map(this::toResponse)
+            .toList();
+}
 
     @Override
     public BillingCycleResponse getById(Long id) {

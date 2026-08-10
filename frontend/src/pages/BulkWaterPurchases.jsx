@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import {useWorkspace} from "../context/WorkspaceContext";
 
 import {
     Loader2,
@@ -39,6 +40,7 @@ const PAGE_SIZE = 20;
 
 function BulkWaterPurchases() {
     const { t } = useTranslation();
+    const { workspace } = useWorkspace();
 
     const [purchases, setPurchases] = useState([]);
 
@@ -91,7 +93,7 @@ function BulkWaterPurchases() {
 
         loadData();
 
-    }, [page]);
+    }, [page, workspace]);
 
 const loadData = async () => {
 

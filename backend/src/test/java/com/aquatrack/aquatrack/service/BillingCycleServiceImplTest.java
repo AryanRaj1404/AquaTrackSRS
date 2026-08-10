@@ -19,13 +19,15 @@ import com.aquatrack.aquatrack.dto.BillingCycleRequest;
 import com.aquatrack.aquatrack.dto.BillingCycleResponse;
 import com.aquatrack.aquatrack.entity.Apartment;
 import com.aquatrack.aquatrack.entity.BillingCycle;
-import com.aquatrack.aquatrack.entity.Household;
 import com.aquatrack.aquatrack.entity.TariffPlan;
 import com.aquatrack.aquatrack.enums.BillingCycleStatus;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
+import com.aquatrack.aquatrack.repository.ApartmentRepository;
 import com.aquatrack.aquatrack.repository.BillingCycleRepository;
-import com.aquatrack.aquatrack.repository.HouseholdRepository;
+import com.aquatrack.aquatrack.repository.BulkWaterPurchaseRepository;
+import com.aquatrack.aquatrack.repository.InvoiceRepository;
 import com.aquatrack.aquatrack.repository.TariffPlanRepository;
+import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
 @ExtendWith(MockitoExtension.class)
 class BillingCycleServiceImplTest {
@@ -34,10 +36,19 @@ class BillingCycleServiceImplTest {
     private BillingCycleRepository billingCycleRepository;
 
     @Mock
-    private HouseholdRepository householdRepository;
+    private ApartmentRepository apartmentRepository;
 
     @Mock
     private TariffPlanRepository tariffPlanRepository;
+
+    @Mock
+    private BulkWaterPurchaseRepository bulkWaterPurchaseRepository;
+
+    @Mock
+    private WaterUsageLogRepository waterUsageLogRepository;
+
+    @Mock
+    private InvoiceRepository invoiceRepository;
 
     @InjectMocks
     private BillingCycleServiceImpl billingCycleService;
@@ -46,12 +57,8 @@ class BillingCycleServiceImplTest {
     void createBillingCycleSuccessfully() {
 
         Apartment apartment = new Apartment();
+        apartment.setId(1L);
         apartment.setName("Green Valley");
-
-        Household household = new Household();
-        household.setId(1L);
-        household.setFlatNumber("A101");
-        household.setApartment(apartment);
 
         TariffPlan tariffPlan = new TariffPlan();
         tariffPlan.setId(1L);
@@ -74,8 +81,8 @@ class BillingCycleServiceImplTest {
         billingCycle.setTotalAmount(850.0);
         billingCycle.setStatus(BillingCycleStatus.OPEN);
 
-        when(householdRepository.findById(1L))
-                .thenReturn(Optional.of(household));
+        when(apartmentRepository.findById(1L))
+                .thenReturn(Optional.of(apartment));
 
         when(tariffPlanRepository.findById(1L))
                 .thenReturn(Optional.of(tariffPlan));
@@ -93,12 +100,9 @@ class BillingCycleServiceImplTest {
     @Test
     void getBillingCycleByIdSuccessfully() {
 
-        Household household = new Household();
-        household.setId(1L);
-        household.setFlatNumber("A101");
-
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setId(1L);
+
         Apartment apartment = new Apartment();
         apartment.setId(1L);
         apartment.setName("ABC Residency");
@@ -128,12 +132,9 @@ class BillingCycleServiceImplTest {
     @Test
     void getAllBillingCyclesSuccessfully() {
 
-        Household household = new Household();
-        household.setId(1L);
-        household.setFlatNumber("A101");
-
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setId(1L);
+
         Apartment apartment = new Apartment();
         apartment.setId(1L);
         apartment.setName("ABC Residency");
@@ -144,7 +145,7 @@ class BillingCycleServiceImplTest {
                 .thenReturn(List.of(billingCycle));
 
         List<BillingCycleResponse> response =
-                billingCycleService.getAll();
+                billingCycleService.getAll(null);
 
         assertEquals(1, response.size());
     }
