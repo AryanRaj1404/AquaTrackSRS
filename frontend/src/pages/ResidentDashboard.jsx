@@ -12,15 +12,24 @@ import UsageComparison from "../components/resident-dashboard/UsageComparison";
 import InvoiceHistory from "../components/resident-dashboard/InvoiceHistory";
 import AnomalyAlerts from "../components/resident-dashboard/AnomalyAlerts";
 import WaterTipsFeed from "../components/resident-dashboard/WaterTipsFeed";
-import ProfileShortcut from "../components/resident-dashboard/ProfileShortcut";
-import UsageReportDownload from "../components/resident-dashboard/UsageReportDownload";
-import "../styles/management.css";
 
-function ResidentDashboard() {
+export default function ResidentDashboard() {
   const { t } = useTranslation();
+
   const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [highUsage, setHighUsage] = useState(false);
+
+  const hour = new Date().getHours();
+
+  const greeting =
+    hour < 12
+      ? "Good Morning"
+      : hour < 17
+      ? "Good Afternoon"
+      : hour < 21
+      ? "Good Evening"
+      : "Good Night";
 
   useEffect(() => {
     let ignore = false;
@@ -30,75 +39,89 @@ function ResidentDashboard() {
         const data = await residentDashboardService.getOverview();
         if (!ignore) setOverview(data);
       } catch {
-        if (!ignore) toast.error(t("residentDashboard.couldNotLoadDashboard"));
+        if (!ignore)
+          toast.error(t("residentDashboard.couldNotLoadDashboard"));
       } finally {
         if (!ignore) setLoading(false);
       }
     }
 
     load();
+
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [t]);
 
-  return (
-    <AdminPageShell
-      title={t("residentDashboard.myDashboard")}
-      description={t("residentDashboard.trackSubtitle")}
-    >
-      {/* Quick stats */}
-      <QuickStatsRow overview={overview} loading={loading} />
+ return (
+  <AdminPageShell
+    title="Resident Dashboard"
+    description="Track your household water usage, bills and activity."
+  >
+    <div className="space-y-6">
+      {/* Hero */}
+      <div className="rounded-3xl bg-gradient-to-r from-cyan-700 to-sky-600 p-5 sm:p-8 text-white shadow-xl">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.35em] text-cyan-100">
+              Welcome Back
+            </p>
 
-      {/* Billing cycle summary */}
-      <div style={{ marginTop: 20 }}>
-        <BillingCycleSummary overview={overview} loading={loading} />
+            <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
+              {greeting}
+            </h1>
+
+            <p className="mt-3 max-w-2xl text-sm text-cyan-100 sm:text-base">
+              Monitor your household water usage, billing progress and recent
+              activity from one place.
+            </p>
+          </div>
+
+          <button className="w-full rounded-xl bg-white px-5 py-3 font-semibold text-cyan-700 transition hover:scale-105 sm:w-auto">
+            Download Report
+          </button>
+        </div>
       </div>
 
-      {/* Consumption trend + usage comparison */}
+      {/* Quick Stats */}
+      <QuickStatsRow
+        overview={overview}
+        loading={loading}
+      />
+
+      {/* Billing Summary */}
+      <BillingCycleSummary
+        overview={overview}
+        loading={loading}
+      />
+
+      {/* Consumption Trend */}
+      <ConsumptionTrendChart />
+
+      {/* Usage Comparison + Water Tips */}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <UsageComparison
+          onLoaded={setHighUsage}
+        />
+
+        <WaterTipsFeed
+          highUsage={highUsage}
+        />
+      </div>
+
+      {/* Invoice History */}
+      <InvoiceHistory
+        householdId={overview?.householdId}
+      />
+
+      {/* Alerts */}
       <div
-        style={{
-          marginTop: 20,
-          display: "grid",
-          gridTemplateColumns: "1.4fr 1fr",
-          gap: 20,
-        }}
-        className="mg-responsive-grid"
+        id="resident-alerts"
+        className="rounded-3xl bg-white p-4 sm:p-6 shadow-sm"
       >
-        <ConsumptionTrendChart />
-        <UsageComparison onLoaded={setHighUsage} />
+          <AnomalyAlerts householdId={overview?.householdId} />
       </div>
-
-      {/* Invoice history + alerts */}
-      <div
-        style={{
-          marginTop: 20,
-          display: "grid",
-          gridTemplateColumns: "1.4fr 1fr",
-          gap: 20,
-        }}
-        className="mg-responsive-grid"
-      >
-        <InvoiceHistory householdId={overview?.householdId} />
-        <AnomalyAlerts householdId={overview?.householdId} />
-      </div>
-
-      {/* Tips, profile shortcut and usage report */}
-      <div
-        style={{
-          marginTop: 20,
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: 20,
-        }}
-        className="mg-responsive-grid-3"
-      >
-        <WaterTipsFeed highUsage={highUsage} />
-        <ProfileShortcut overview={overview} loading={loading} />
-        <UsageReportDownload householdId={overview?.householdId} />
-      </div>
-    </AdminPageShell>
-  );
+    </div>
+  </AdminPageShell>
+);
 }
-
-export default ResidentDashboard;

@@ -11,8 +11,10 @@ import com.aquatrack.aquatrack.dto.RegisterRequest;
 import com.aquatrack.aquatrack.dto.UpdateProfileRequest;
 import com.aquatrack.aquatrack.entity.User;
 import com.aquatrack.aquatrack.enums.AuthProvider;
+import com.aquatrack.aquatrack.enums.HouseholdJoinRequestStatus;
 import com.aquatrack.aquatrack.enums.Role;
 import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
+import com.aquatrack.aquatrack.repository.HouseholdJoinRequestRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.security.JwtService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -26,18 +28,21 @@ public class UserServiceImpl implements UserService{
     private final JwtService jwtService;
     private final GoogleIdTokenVerifier googleIdTokenVerifier;
     private final EmailService emailService;
+    private final HouseholdJoinRequestRepository requestRepository;
 
     public UserServiceImpl(UserRepository userRepository,
          PasswordEncoder passwordEncoder, 
          JwtService jwtService,
          GoogleIdTokenVerifier googleIdTokenVerifier,
-        EmailService emailService
+        EmailService emailService,
+        HouseholdJoinRequestRepository requestRepository
         ){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.googleIdTokenVerifier = googleIdTokenVerifier;
         this.emailService = emailService;
+        this.requestRepository = requestRepository;
     }
 
     @Override
@@ -143,6 +148,14 @@ public class UserServiceImpl implements UserService{
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        boolean hasHousehold = user.getHousehold() != null;
+
+        boolean pendingRequest =
+            requestRepository.existsByUserAndStatus(
+                    user,
+                    HouseholdJoinRequestStatus.PENDING
+            );
 
                 return new ProfileResponse(
                 user.getFirstName(),
@@ -166,7 +179,9 @@ public class UserServiceImpl implements UserService{
 
                 user.getHousehold() != null
                     ? user.getHousehold().getOccupancy()
-                    : null
+                    : null,
+                hasHousehold,
+                pendingRequest
         );
     }
     @Override
@@ -190,6 +205,14 @@ public class UserServiceImpl implements UserService{
 
         userRepository.save(user);
 
+        boolean hasHousehold = user.getHousehold() != null;
+
+        boolean pendingRequest =
+                requestRepository.existsByUserAndStatus(
+                        user,
+                        HouseholdJoinRequestStatus.PENDING
+                );
+
         return new ProfileResponse(
             user.getFirstName(),
             user.getLastName(),
@@ -212,7 +235,9 @@ public class UserServiceImpl implements UserService{
 
             user.getHousehold() != null
                     ? user.getHousehold().getOccupancy()
-                    : null
+                    : null,
+            hasHousehold,
+            pendingRequest
         );
     }
 }

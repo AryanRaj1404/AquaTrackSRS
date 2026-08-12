@@ -212,7 +212,7 @@ export default function AlertPanel() {
 
       {/* Header */}
 
-<div className="mb-6 flex items-start justify-between">
+<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 
   <div className="space-y-1">
 
@@ -279,7 +279,7 @@ export default function AlertPanel() {
 
 )}
 
-<div className="mt-2 max-h-[420px] overflow-y-auto pr-2">
+<div className="mt-2 max-h-[420px] overflow-y-auto sm:pr-2">
 
 {!loading &&
 alerts.slice(0,5).map((alert)=>{
@@ -304,7 +304,7 @@ rounded-xl
 "
 >
 
-<div className="flex items-start justify-between gap-4">
+<div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 
 {/* LEFT */}
 
@@ -370,7 +370,7 @@ ${meta.badge}
 
 {/* Apartment */}
 
-<p className="mt-1 text-xs text-slate-500">
+<p className="mt-1 break-words text-xs text-slate-500">
 
 {alert.apartmentName}
 
@@ -388,10 +388,11 @@ name:alert.householdName,
 className="
 mt-2
 line-clamp-2
+break-words
 text-[13px]
 leading-5
 text-slate-600
-pr-4
+sm:pr-4
 "
 >
 
@@ -413,22 +414,27 @@ pr-4
 
 {/* RIGHT */}
 
-<div className="flex shrink-0 items-center pl-3">
+<div className="flex w-full justify-end md:w-auto md:shrink-0 md:items-center md:pl-3">
 
 {alert.acknowledged ? (
 
 <div
 className="
-flex
-items-center
-gap-1
+w-full
+sm:w-auto
 rounded-lg
-bg-green-50
-px-3
+bg-gradient-to-r
+from-teal-700
+to-teal-600
+px-4
 py-2
 text-xs
-font-medium
-text-green-600
+font-semibold
+text-white
+transition-all
+hover:shadow-md
+hover:brightness-110
+active:scale-95
 "
 >
 

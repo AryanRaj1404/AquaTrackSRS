@@ -2,6 +2,7 @@ import { Building2, Loader2 } from "lucide-react";
 import EmptyState from "../EmptyState";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
+import "../../styles/management.css"
 
 function ApartmentTable({
 

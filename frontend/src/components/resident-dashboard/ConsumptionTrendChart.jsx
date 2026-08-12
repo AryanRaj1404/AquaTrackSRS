@@ -56,77 +56,122 @@ function ConsumptionTrendChart() {
   }, [range]);
 
   return (
-    <motion.div
-      className="mg-panel"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-    >
-      <div className="mg-toolbar">
-        <div>
-          <h2>{t("residentDashboard.consumptionTrend.title")}</h2>
-          <p>{t("residentDashboard.consumptionTrend.subtitle")}</p>
-        </div>
+  <motion.div
+    initial={{ opacity: 0, y: 15 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="rounded-3xl bg-white p-6 shadow-sm"
+  >
+    {/* Header */}
+    <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-600">
+          Analytics
+        </p>
 
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            type="button"
-            className={
-              range === "daily" ? "mg-primary-button" : "mg-secondary-button"
-            }
-            onClick={() => setRange("daily")}
-          >
-            {t("residentDashboard.consumptionTrend.daily")}
-          </button>
-          <button
-            type="button"
-            className={
-              range === "monthly"
-                ? "mg-primary-button"
-                : "mg-secondary-button"
-            }
-            onClick={() => setRange("monthly")}
-          >
-            {t("residentDashboard.consumptionTrend.monthly")}
-          </button>
-        </div>
+        <h2 className="mt-1 text-3xl font-bold">
+          Consumption Trend
+        </h2>
+
+        <p className="mt-1 text-slate-500">
+          Monitor your household water consumption over time.
+        </p>
       </div>
 
-      {loading && <div className="mg-empty-state">{t("residentDashboard.consumptionTrend.loading")}</div>}
+      <div className="flex rounded-xl bg-slate-100 p-1">
+        <button
+          onClick={() => setRange("daily")}
+          className={`rounded-lg px-5 py-2 text-sm font-medium transition ${
+            range === "daily"
+              ? "bg-cyan-600 text-white"
+              : "text-slate-600"
+          }`}
+        >
+          Daily
+        </button>
 
-      {!loading && data.length === 0 && (
-        <div className="mg-empty-state">{t("residentDashboard.consumptionTrend.noData")}</div>
-      )}
+        <button
+          onClick={() => setRange("monthly")}
+          className={`rounded-lg px-5 py-2 text-sm font-medium transition ${
+            range === "monthly"
+              ? "bg-cyan-600 text-white"
+              : "text-slate-600"
+          }`}
+        >
+          Monthly
+        </button>
+      </div>
+    </div>
 
-      {!loading && data.length > 0 && (
-        <div style={{ width: "100%", height: 260 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e6edf3" />
-              <XAxis
-                dataKey="label"
-                tick={{ fontSize: 10, fill: "#8792a2" }}
-                interval={range === "daily" ? 3 : 0}
-              />
-              <YAxis tick={{ fontSize: 10, fill: "#8792a2" }} />
-              <Tooltip
-                formatter={(value) => [`${value} KL`, t("residentDashboard.consumptionTrend.consumption")]}
-                contentStyle={{ fontSize: 12, borderRadius: 8 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="kl"
-                stroke="#0781a5"
-                strokeWidth={2.5}
-                dot={{ r: 3, stroke: "#075b78", strokeWidth: 1.5, fill: "#fff" }}
-                activeDot={{ r: 5 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </motion.div>
-  );
+    {loading ? (
+      <div className="flex h-80 items-center justify-center text-slate-500">
+        Loading...
+      </div>
+    ) : data.length === 0 ? (
+      <div className="flex h-80 items-center justify-center text-slate-500">
+        No consumption data available.
+      </div>
+    ) : (
+      <div className="h-[380px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={data}
+            margin={{
+              top: 20,
+              right: 20,
+              left: -20,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid
+              vertical={false}
+              stroke="#E2E8F0"
+              strokeDasharray="4 4"
+            />
+
+            <XAxis
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12 }}
+              interval={range === "daily" ? 3 : 0}
+            />
+
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12 }}
+            />
+
+            <Tooltip
+              contentStyle={{
+                borderRadius: 14,
+                border: "none",
+                boxShadow: "0 10px 30px rgba(0,0,0,.15)",
+              }}
+            />
+
+            <Line
+              type="monotone"
+              dataKey="kl"
+              stroke="#0891b2"
+              strokeWidth={4}
+              dot={{
+                r: 4,
+                fill: "#fff",
+                stroke: "#0891b2",
+                strokeWidth: 3,
+              }}
+              activeDot={{
+                r: 7,
+                fill: "#0891b2",
+              }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    )}
+  </motion.div>
+);
 }
 
 export default ConsumptionTrendChart;

@@ -87,7 +87,7 @@ class WaterUsageLogServiceImplTest {
                 .thenReturn(log);
 
         WaterUsageLogResponse response =
-                waterUsageLogService.create(request);
+                waterUsageLogService.create(1L,request);
 
         assertEquals(500.0,
                 response.getLitersConsumed());
@@ -112,7 +112,7 @@ class WaterUsageLogServiceImplTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> waterUsageLogService.create(request));
+                () -> waterUsageLogService.create(1L,request));
     }
 
     @Test
@@ -121,7 +121,7 @@ class WaterUsageLogServiceImplTest {
         when(waterUsageLogRepository.existsById(1L))
                 .thenReturn(true);
 
-        waterUsageLogService.delete(1L);
+        waterUsageLogService.delete(1L,1L);
 
         verify(waterUsageLogRepository)
                 .deleteById(1L);
@@ -135,7 +135,7 @@ class WaterUsageLogServiceImplTest {
 
         assertThrows(
                 RuntimeException.class,
-                () -> waterUsageLogService.delete(1L));
+                () -> waterUsageLogService.delete(1L,1L));
     }
 
     @Test
@@ -151,6 +151,7 @@ class WaterUsageLogServiceImplTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> waterUsageLogService.uploadCsv(
+                        1L,
                         file,
                         1L));
     }

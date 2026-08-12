@@ -61,6 +61,29 @@ function AdminPageShell({
     navigate("/profile");
   };
 
+  const handleNotificationClick = () => {
+    if (role === "ADMIN") {
+      navigate("/alerts");
+      return;
+    }
+
+    if (role === "RESIDENT") {
+      navigate("/dashboard");
+
+      // Wait for page navigation then scroll
+      setTimeout(() => {
+        const alertSection = document.getElementById("resident-alerts");
+
+        if (alertSection) {
+          alertSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 150);
+    }
+  };
+
   const workspaceSubtitle = useMemo(() => {
     return isGlobalWorkspace
       ? t("adminShell.globalWorkspaceSubtitle")
@@ -378,11 +401,7 @@ function AdminPageShell({
               hover:border-teal-500
               hover:text-teal-700
             "
-            onClick={() =>
-              toast(t("adminShell.noNotifications"), {
-                icon: "🔔",
-              })
-            }
+            onClick={handleNotificationClick}
             aria-label={t("adminShell.notifications")}
           >
             <Bell size={20} />

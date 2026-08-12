@@ -10,11 +10,12 @@ const Hero = () => {
 
   {/* Background Glow */}
 
-  <div className="absolute -left-40 top-0 h-[520px] w-[520px] rounded-full bg-cyan-300/20 blur-3xl" />
+  <div className="pointer-events-none absolute -left-40 top-0 h-[520px] w-[520px] rounded-full bg-cyan-300/20 blur-3xl" />
 
-  <div className="absolute -right-40 bottom-0 h-[420px] w-[420px] rounded-full bg-teal-300/20 blur-3xl" />
 
-  <div className="mx-auto flex max-w-7xl flex-col-reverse items-center gap-14 lg:flex-row lg:gap-20">
+  <div className="pointer-events-none absolute -right-40 bottom-0 h-[420px] w-[420px] rounded-full bg-teal-300/20 blur-3xl" />
+
+  <div className="relative z-10 mx-auto flex max-w-7xl flex-col-reverse items-center gap-14 lg:flex-row lg:gap-20">
 
     {/* ================= LEFT ================= */}
 
@@ -65,6 +66,8 @@ const Hero = () => {
       <Link
         to="/login"
         className="
+            relative
+            z-20
             mt-8
             inline-flex
             items-center
@@ -83,7 +86,7 @@ const Hero = () => {
             duration-300
             hover:-translate-y-1
             hover:shadow-2xl
-        "
+      "
       >
         {t("navbar.getStarted")}
         <ArrowRight className="h-5 w-5" />

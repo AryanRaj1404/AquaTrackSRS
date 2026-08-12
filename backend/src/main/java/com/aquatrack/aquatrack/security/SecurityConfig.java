@@ -40,8 +40,6 @@ public class SecurityConfig {
             ).permitAll()
 
             .requestMatchers(
-                    "/apartments/**",
-                    "/households/**",
                     "/meters/**",
                     "/tariff-plans/**",
                     "/billing-cycles/**",
@@ -49,9 +47,28 @@ public class SecurityConfig {
             ).hasRole("ADMIN")
 
             .requestMatchers(
+                    "/apartments",
+                    "/apartments/*/households"
+            ).hasAnyRole("ADMIN", "RESIDENT")
+
+            .requestMatchers(
+                    "/apartments/**",
+                    "/households/**"
+            ).hasRole("ADMIN")
+
+            .requestMatchers(
+                    "/household-requests/pending",
+                    "/household-requests/*/approve",
+                    "/household-requests/*/reject"
+            ).hasRole("ADMIN")
+
+            .requestMatchers(
                     "/usage-logs/**",
                     "/auth/profile",
-                    "/auth/profile/update"
+                    "/auth/profile/update",
+                    "/household-requests",
+                    "/household-requests/me",
+                    "/household-requests/cancel"
             ).hasAnyRole("ADMIN", "RESIDENT")
 
             .anyRequest().authenticated()

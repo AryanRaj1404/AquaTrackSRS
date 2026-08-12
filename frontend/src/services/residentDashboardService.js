@@ -28,6 +28,11 @@ const residentDashboardService = {
     const response = await api.get("/api/resident-dashboard/comparison");
     return response.data;
   },
+
+  getAlerts: async () => {
+    const response = await api.get("/api/resident-dashboard/alerts");
+    return response.data;
+  },
 };
 
 export default residentDashboardService;

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aquatrack.aquatrack.dto.ResidentAlertResponse;
 import com.aquatrack.aquatrack.dto.ResidentComparisonResponse;
 import com.aquatrack.aquatrack.dto.ResidentOverviewResponse;
 import com.aquatrack.aquatrack.dto.ResidentTrendPoint;
@@ -54,5 +55,12 @@ public class ResidentDashboardController {
 
         return ResponseEntity.ok(
                 residentDashboardService.getBuildingComparison());
+    }
+
+    @GetMapping("/alerts")
+    public ResponseEntity<List<ResidentAlertResponse>> getAlerts() {
+
+        return ResponseEntity.ok(
+                residentDashboardService.getResidentAlerts());
     }
 }

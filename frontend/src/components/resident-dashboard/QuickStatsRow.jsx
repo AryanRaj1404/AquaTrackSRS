@@ -3,17 +3,12 @@ import { useTranslation } from "react-i18next";
 import StatCard from "../StatCard";
 import SkeletonCard from "../SkeletonCard";
 
-/**
- * Row of quick stat cards summarising the resident's household.
- * Expects the `overview` object returned by
- * residentDashboardService.getOverview().
- */
-function QuickStatsRow({ overview, loading }) {
+export default function QuickStatsRow({ overview, loading }) {
   const { t } = useTranslation();
 
   if (loading || !overview) {
     return (
-      <section className="mg-summary-grid">
+      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
@@ -22,7 +17,7 @@ function QuickStatsRow({ overview, loading }) {
   }
 
   return (
-    <section className="mg-summary-grid">
+    <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard
         icon={Droplets}
         title={t("residentDashboard.quickStats.cycleUsageTitle")}
@@ -34,7 +29,7 @@ function QuickStatsRow({ overview, loading }) {
       <StatCard
         icon={IndianRupee}
         title={t("residentDashboard.quickStats.amountDueTitle")}
-        value={`\u20B9 ${(overview.amountDue ?? 0).toLocaleString("en-IN")}`}
+        value={`₹ ${(overview.amountDue ?? 0).toLocaleString("en-IN")}`}
         animatedValue={false}
         description={t("residentDashboard.quickStats.amountDueDescription")}
       />
@@ -57,5 +52,3 @@ function QuickStatsRow({ overview, loading }) {
     </section>
   );
 }
-
-export default QuickStatsRow;

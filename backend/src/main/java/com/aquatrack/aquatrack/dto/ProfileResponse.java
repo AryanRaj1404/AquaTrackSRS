@@ -21,4 +21,8 @@ public class ProfileResponse {
     private Double flatSize;
     private Integer occupancy;
 
+    private boolean hasHousehold;
+
+    private boolean pendingRequest;
+
 }

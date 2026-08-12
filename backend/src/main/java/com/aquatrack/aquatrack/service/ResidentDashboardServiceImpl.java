@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.aquatrack.aquatrack.billing.TariffCalculationResult;
 import com.aquatrack.aquatrack.billing.TariffCalculator;
+import com.aquatrack.aquatrack.dto.ResidentAlertResponse;
 import com.aquatrack.aquatrack.dto.ResidentComparisonResponse;
 import com.aquatrack.aquatrack.dto.ResidentOverviewResponse;
 import com.aquatrack.aquatrack.dto.ResidentTrendPoint;
@@ -22,6 +23,7 @@ import com.aquatrack.aquatrack.exception.ResourceNotFoundException;
 import com.aquatrack.aquatrack.repository.BillingCycleRepository;
 import com.aquatrack.aquatrack.repository.InvoiceRepository;
 import com.aquatrack.aquatrack.repository.TariffTierRepository;
+import com.aquatrack.aquatrack.repository.UsageAlertRepository;
 import com.aquatrack.aquatrack.repository.UserRepository;
 import com.aquatrack.aquatrack.repository.WaterUsageLogRepository;
 
@@ -35,6 +37,7 @@ public class ResidentDashboardServiceImpl implements ResidentDashboardService {
     private final InvoiceRepository invoiceRepository;
     private final TariffTierRepository tariffTierRepository;
     private final TariffCalculator tariffCalculator;
+    private final UsageAlertRepository usageAlertRepository;
 
     public ResidentDashboardServiceImpl(
             UserRepository userRepository,
@@ -42,7 +45,8 @@ public class ResidentDashboardServiceImpl implements ResidentDashboardService {
             WaterUsageLogRepository waterUsageLogRepository,
             InvoiceRepository invoiceRepository,
             TariffTierRepository tariffTierRepository,
-            TariffCalculator tariffCalculator) {
+            TariffCalculator tariffCalculator,
+        UsageAlertRepository usageAlertRepository) {
 
         this.userRepository = userRepository;
         this.billingCycleRepository = billingCycleRepository;
@@ -50,6 +54,7 @@ public class ResidentDashboardServiceImpl implements ResidentDashboardService {
         this.invoiceRepository = invoiceRepository;
         this.tariffTierRepository = tariffTierRepository;
         this.tariffCalculator = tariffCalculator;
+        this.usageAlertRepository = usageAlertRepository;
     }
 
     private Household getCurrentHousehold() {
@@ -211,6 +216,18 @@ public class ResidentDashboardServiceImpl implements ResidentDashboardService {
                         round2(((Number) obj[1]).doubleValue())))
                 .toList();
     }
+
+        @Override
+        public List<ResidentAlertResponse> getResidentAlerts() {
+
+        Household household = getCurrentHousehold();
+
+        return usageAlertRepository
+                .findByHouseholdIdOrderByCreatedAtDesc(household.getId())
+                .stream()
+                .map(ResidentAlertResponse::from)
+                .toList();
+        }
 
     @Override
     public ResidentComparisonResponse getBuildingComparison() {

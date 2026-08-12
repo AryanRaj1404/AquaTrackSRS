@@ -144,7 +144,7 @@ class BillingCycleServiceImplTest {
                 .thenReturn(List.of(billingCycle));
 
         List<BillingCycleResponse> response =
-                billingCycleService.getAll();
+                billingCycleService.getAll(1L);
 
         assertEquals(1, response.size());
     }
