@@ -56,6 +56,7 @@ function Login() {
           username: decoded.sub,
         })
       );
+      
 
       toast.success(t("login.toasts.loginSuccess"), {
         id: loadingToast,

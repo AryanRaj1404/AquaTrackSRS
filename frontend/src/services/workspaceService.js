@@ -9,7 +9,7 @@ const workspaceService = {
 
     async getWorkspaces() {
 
-        const response = await api.get("/apartments");
+        const response = await api.get("/apartments/all");
 
         /*
          * Supports both:
